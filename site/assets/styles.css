@@ -170,10 +170,11 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
   font-size: 18px;
   letter-spacing: -0.01em;
 }
-/* Avatar/logo em quadradinho — usado na marca (nav/footer) e no mock de chat */
+/* Avatar/logo em quadradinho — usado na marca (nav/footer) e no mock de chat.
+   Laranja (accent) para destacar a marca. */
 .dot {
   width: 26px; height: 26px; border-radius: 8px;
-  background: linear-gradient(135deg, var(--brand), var(--brand-strong));
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
   display: inline-flex; align-items: center; justify-content: center;
   color: #fff; font-size: 13px; font-weight: 800;
 }
