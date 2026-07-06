@@ -347,7 +347,7 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 .credits-row span { font-size: 14px; color: var(--ink-3); }
 
 /* ---------- Access (web + API) ---------- */
-.access { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.access { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
 @media (max-width: 880px) { .access { grid-template-columns: 1fr; } }
 .access-card { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--surface); box-shadow: var(--shadow-sm); }
 .access-card .top { padding: 26px 26px 18px; }
@@ -367,6 +367,35 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 .code .s { color: #ffd43b; }
 .code .c { color: #6b7772; }
 .code .p { color: #a5d8ff; }
+
+/* ---------- Mock de chat "Pela web" ---------- */
+.web-demo { border-top: 1px solid var(--border); background: var(--bg-sunken); }
+.browser-bar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--bg-soft);
+}
+.browser-bar .dots { display: inline-flex; gap: 6px; }
+.browser-bar .dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--border); display: block; }
+.browser-bar .dots i:nth-child(1) { background: #ff6b6b; }
+.browser-bar .dots i:nth-child(2) { background: #ffd43b; }
+.browser-bar .dots i:nth-child(3) { background: #51cf66; }
+.browser-bar .url {
+  flex: 1; text-align: center; font-size: 12.5px; color: var(--ink-3);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+  padding: 4px 12px; font-family: ui-monospace, Menlo, Consolas, monospace;
+}
+.web-chat { padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 10px; }
+.web-chat .msg { max-width: 88%; font-size: 14px; }
+.web-composer {
+  display: flex; align-items: center; gap: 10px; margin-top: 6px;
+  padding: 10px 14px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--ink-3); font-size: 13.5px;
+}
+.web-composer .mic {
+  margin-left: auto; width: 30px; height: 30px; flex: none; border-radius: 50%;
+  background: var(--brand); color: #04120d; display: flex; align-items: center; justify-content: center; font-size: 14px;
+}
 
 /* ---------- FAQ ---------- */
 .faq { max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
