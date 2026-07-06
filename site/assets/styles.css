@@ -1,29 +1,43 @@
 /* ============================================================
    LAB019 — landing page
-   Paleta e design system. Tema claro por padrão, dark opcional.
+   Paleta 60/30/10:
+     • Neutros (~60%) dominam o layout — fundos, bordas e texto.
+     • Azul (~30%) carrega a identidade — navegação, links e marca.
+     • Verde entra como apoio — seções secundárias e estados de sucesso.
+     • Laranja (~10%) fica reservado para ação — CTAs, badges e destaques.
+   Laranja é complementar do azul, então "salta" nos pontos de conversão.
+   Tema claro por padrão, dark opcional.
    ============================================================ */
 
 :root {
-  /* Marca — verde principal, azul e laranja como apoio */
-  --brand: #12b886;          /* verde LAB019 */
-  --brand-strong: #0ca678;
-  --brand-ink: #087f5b;
-  --accent: #1971c2;         /* azul */
-  --accent-ink: #1864ab;
-  --accent-soft: #e7f1fb;
-  --accent-2: #e8590c;       /* laranja */
-  --accent-2-ink: #d9480f;
-  --accent-2-soft: #fff0e6;
+  /* Azul — identidade da marca (nav, links, elementos de marca) ~30% */
+  --brand: #1971c2;
+  --brand-strong: #1864ab;
+  --brand-ink: #1864ab;       /* texto azul sobre fundo claro */
+  --brand-soft: #e7f1fb;
 
-  /* Neutros */
+  /* Verde — apoio e estados de sucesso */
+  --support: #12b886;
+  --support-strong: #0ca678;
+  --support-ink: #087f5b;
+  --support-soft: #e6fcf5;
+
+  /* Laranja — accent / ação (CTA, badges, destaques) ~10% */
+  --accent: #e8590c;
+  --accent-strong: #d9480f;
+  --accent-ink: #d9480f;
+  --accent-soft: #fff0e6;
+  --accent-contrast: #2b1206;  /* texto escuro sobre o laranja (contraste AA) */
+
+  /* Neutros — leve tom azulado para acompanhar a identidade */
   --bg: #ffffff;
-  --bg-soft: #f8faf9;
-  --bg-sunken: #f1f5f4;
+  --bg-soft: #f6f8fb;
+  --bg-sunken: #eef2f7;
   --surface: #ffffff;
-  --border: #e6ebe9;
-  --ink: #0f1b17;
-  --ink-2: #3d4a45;
-  --ink-3: #6b7772;
+  --border: #e4e9f0;
+  --ink: #0f1720;
+  --ink-2: #3d4a59;
+  --ink-3: #6b7889;
   --ink-inv: #ffffff;
 
   /* Escala tipográfica */
@@ -31,27 +45,28 @@
   --maxw: 1120px;
   --radius: 16px;
   --radius-sm: 10px;
-  --shadow-sm: 0 1px 2px rgba(15, 27, 23, 0.06), 0 1px 3px rgba(15, 27, 23, 0.05);
-  --shadow-md: 0 10px 30px rgba(15, 27, 23, 0.08);
-  --shadow-lg: 0 24px 60px rgba(8, 127, 91, 0.14);
+  --shadow-sm: 0 1px 2px rgba(15, 23, 32, 0.06), 0 1px 3px rgba(15, 23, 32, 0.05);
+  --shadow-md: 0 10px 30px rgba(15, 23, 32, 0.08);
+  --shadow-lg: 0 24px 60px rgba(24, 100, 171, 0.16);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0b1211;
-    --bg-soft: #0f1917;
-    --bg-sunken: #121e1b;
-    --surface: #101a18;
-    --border: #1e2b28;
-    --ink: #eef4f2;
-    --ink-2: #b9c6c1;
-    --ink-3: #869590;
-    /* verde mais claro no escuro para manter contraste AA em textos pequenos */
-    --brand-ink: #38d9a9;
-    --accent-ink: #74c0fc;
-    --accent-2-ink: #ffa94d;
-    --accent-soft: #12233a;
-    --accent-2-soft: #2a1a0f;
+    --bg: #0b1016;
+    --bg-soft: #0f151d;
+    --bg-sunken: #121a24;
+    --surface: #10161f;
+    --border: #1e2836;
+    --ink: #eef2f7;
+    --ink-2: #b9c3d0;
+    --ink-3: #86929f;
+    /* tons mais claros no escuro para manter contraste AA em textos pequenos */
+    --brand-ink: #74c0fc;
+    --support-ink: #38d9a9;
+    --accent-ink: #ffa94d;
+    --brand-soft: #12233a;
+    --support-soft: #0f2b22;
+    --accent-soft: #2a1a0f;
     --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.5);
   }
@@ -117,12 +132,13 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
   white-space: nowrap;
 }
+/* CTA principal = laranja (ponto de conversão) */
 .btn-primary {
-  background: var(--brand);
-  color: #04120d;
-  box-shadow: 0 8px 20px rgba(18, 184, 134, 0.28);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  box-shadow: 0 8px 20px rgba(232, 89, 12, 0.28);
 }
-.btn-primary:hover { background: var(--brand-strong); transform: translateY(-1px); }
+.btn-primary:hover { background: var(--accent-strong); transform: translateY(-1px); }
 .btn-ghost {
   background: transparent;
   color: var(--ink);
@@ -154,10 +170,11 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
   font-size: 18px;
   letter-spacing: -0.01em;
 }
-/* Avatar/logo em quadradinho — usado na marca (nav/footer) e no mock de chat */
+/* Avatar/logo em quadradinho — usado na marca (nav/footer) e no mock de chat.
+   Laranja (accent) para destacar a marca. */
 .dot {
   width: 26px; height: 26px; border-radius: 8px;
-  background: linear-gradient(135deg, var(--brand), var(--brand-ink));
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
   display: inline-flex; align-items: center; justify-content: center;
   color: #fff; font-size: 13px; font-weight: 800;
 }
@@ -186,8 +203,8 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
   inset: -20% -10% auto -10%;
   height: 640px;
   background:
-    radial-gradient(900px 420px at 18% 0%, rgba(18, 184, 134, 0.16), transparent 60%),
-    radial-gradient(680px 360px at 92% 6%, rgba(25, 113, 194, 0.13), transparent 60%),
+    radial-gradient(900px 420px at 18% 0%, rgba(25, 113, 194, 0.16), transparent 60%),
+    radial-gradient(680px 360px at 92% 6%, rgba(18, 184, 134, 0.10), transparent 60%),
     radial-gradient(520px 320px at 62% 0%, rgba(232, 89, 12, 0.08), transparent 62%);
   z-index: -1;
 }
@@ -228,8 +245,9 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
   border-bottom: 1px solid var(--border);
   background: var(--bg-soft);
 }
-.chat-head .status { margin-left: auto; font-size: 12px; color: var(--brand-ink); font-weight: 600; display: flex; align-items: center; gap: 6px; }
-.pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--brand); box-shadow: 0 0 0 0 rgba(18,184,134,.6); animation: pulse 2s infinite; }
+/* status "online" = verde (estado de sucesso) */
+.chat-head .status { margin-left: auto; font-size: 12px; color: var(--support-ink); font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--support); box-shadow: 0 0 0 0 rgba(18,184,134,.6); animation: pulse 2s infinite; }
 @keyframes pulse {
   0% { box-shadow: 0 0 0 0 rgba(18,184,134,.5); }
   70% { box-shadow: 0 0 0 10px rgba(18,184,134,0); }
@@ -237,12 +255,13 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 }
 .chat-body { padding: 20px 18px; display: flex; flex-direction: column; gap: 14px; }
 .msg { max-width: 82%; padding: 12px 15px; border-radius: 14px; font-size: 14.5px; }
-.msg.user { align-self: flex-end; background: var(--brand); color: #04120d; border-bottom-right-radius: 5px; }
+/* bolha do usuário = azul (identidade do produto) */
+.msg.user { align-self: flex-end; background: var(--brand); color: #fff; border-bottom-right-radius: 5px; }
 .msg.bot { align-self: flex-start; background: var(--bg-sunken); color: var(--ink); border-bottom-left-radius: 5px; border: 1px solid var(--border); }
 .msg .badge {
   display: inline-flex; align-items: center; gap: 5px;
   font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
-  background: var(--accent-soft); color: var(--accent);
+  background: var(--brand-soft); color: var(--brand-ink);
   padding: 2px 7px; border-radius: 999px; margin-bottom: 6px;
 }
 .chat-foot {
@@ -252,7 +271,7 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 }
 .chat-foot .mic {
   margin-left: auto; width: 34px; height: 34px; border-radius: 50%;
-  background: var(--brand); color: #04120d; display: flex; align-items: center; justify-content: center;
+  background: var(--brand); color: #fff; display: flex; align-items: center; justify-content: center;
 }
 
 /* ---------- Logos / models strip ---------- */
@@ -267,7 +286,8 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
   font-weight: 600; font-size: 14px; color: var(--ink-2);
 }
 .model-chip .flag { font-size: 15px; }
-.model-chip.br { border-color: var(--brand); color: var(--brand-ink); background: color-mix(in srgb, var(--brand) 8%, var(--surface)); }
+/* destaque do modelo brasileiro = verde (apoio) */
+.model-chip.br { border-color: var(--support); color: var(--support-ink); background: color-mix(in srgb, var(--support) 8%, var(--surface)); }
 
 /* ---------- Feature grid ---------- */
 .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
@@ -281,6 +301,7 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
   transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
 .feature:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: color-mix(in srgb, var(--brand) 40%, var(--border)); }
+/* ícone padrão = azul; .b = verde (apoio); .o = laranja (accent) */
 .feature .ico {
   width: 46px; height: 46px; border-radius: 12px;
   background: color-mix(in srgb, var(--brand) 12%, transparent);
@@ -288,8 +309,8 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
   display: flex; align-items: center; justify-content: center;
   font-size: 22px; margin-bottom: 16px;
 }
-.feature .ico.b { background: color-mix(in srgb, var(--accent) 13%, transparent); color: var(--accent-ink); }
-.feature .ico.o { background: color-mix(in srgb, var(--accent-2) 13%, transparent); color: var(--accent-2-ink); }
+.feature .ico.b { background: color-mix(in srgb, var(--support) 13%, transparent); color: var(--support-ink); }
+.feature .ico.o { background: color-mix(in srgb, var(--accent) 13%, transparent); color: var(--accent-ink); }
 .feature h3 { font-size: 19px; margin-bottom: 8px; }
 .feature p { margin: 0; color: var(--ink-2); font-size: 15px; }
 
@@ -297,13 +318,12 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
 @media (max-width: 880px) { .steps { grid-template-columns: 1fr; } }
 .step { position: relative; padding: 26px 24px; border-radius: var(--radius); background: var(--bg-soft); border: 1px solid var(--border); }
+/* numeração uniforme em azul: evita três cores saturadas lado a lado */
 .step .num {
   width: 34px; height: 34px; border-radius: 50%;
-  background: var(--brand); color: #04120d; font-weight: 800;
+  background: var(--brand); color: #fff; font-weight: 800;
   display: flex; align-items: center; justify-content: center; margin-bottom: 14px;
 }
-.step .num.b { background: var(--accent); color: #fff; }
-.step .num.o { background: var(--accent-2); color: #fff; }
 .step h3 { font-size: 18px; margin-bottom: 8px; }
 .step p { margin: 0; color: var(--ink-2); font-size: 15px; }
 
@@ -318,25 +338,27 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
   padding: 34px 32px;
   box-shadow: var(--shadow-lg);
 }
+/* selo "mais popular" = laranja (destaque de ação) */
 .plan .tag {
   position: absolute; top: 20px; right: 24px;
-  background: var(--accent-2); color: #fff; font-weight: 700; font-size: 12px;
+  background: var(--accent-strong); color: #fff; font-weight: 700; font-size: 12px;
   padding: 5px 12px; border-radius: 999px;
 }
 .plan h3 { font-size: 22px; }
 .plan .price { display: flex; align-items: baseline; gap: 6px; margin: 14px 0 6px; }
 .plan .price .amount { font-size: 52px; font-weight: 800; letter-spacing: -0.03em; }
 .plan .price .per { color: var(--ink-3); font-size: 16px; }
+/* callout de créditos = verde (valor entregue / sucesso) */
 .plan .credit-line {
-  background: color-mix(in srgb, var(--brand) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--brand) 35%, var(--border));
-  color: var(--brand-ink);
+  background: color-mix(in srgb, var(--support) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--support) 35%, var(--border));
+  color: var(--support-ink);
   border-radius: 12px; padding: 12px 14px; font-weight: 600; font-size: 15px;
   margin: 8px 0 22px;
 }
 .plan ul { list-style: none; padding: 0; margin: 0 0 26px; display: flex; flex-direction: column; gap: 12px; }
 .plan li { display: flex; gap: 10px; align-items: flex-start; font-size: 15.5px; color: var(--ink-2); }
-.plan li .ck { color: var(--brand); flex: none; margin-top: 2px; }
+.plan li .ck { color: var(--support); flex: none; margin-top: 2px; }
 .plan .btn { width: 100%; }
 
 .credits-card {
@@ -351,8 +373,8 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 .credits-card .how { display: flex; flex-direction: column; gap: 14px; margin-top: auto; }
 .credits-row { display: flex; gap: 12px; align-items: flex-start; }
 .credits-row .b { width: 30px; height: 30px; flex: none; border-radius: 9px; background: color-mix(in srgb, var(--brand) 14%, transparent); color: var(--brand-ink); display: flex; align-items: center; justify-content: center; font-weight: 700; }
-.credits-row .b.c2 { background: var(--accent-soft); color: var(--accent-ink); }
-.credits-row .b.c3 { background: var(--accent-2-soft); color: var(--accent-2-ink); }
+.credits-row .b.c2 { background: var(--support-soft); color: var(--support-ink); }
+.credits-row .b.c3 { background: var(--accent-soft); color: var(--accent-ink); }
 .credits-row strong { display: block; font-size: 15px; color: var(--ink); }
 .credits-row span { font-size: 14px; color: var(--ink-3); }
 
@@ -418,7 +440,7 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 }
 .web-composer .mic {
   margin-left: auto; width: 30px; height: 30px; flex: none; border-radius: 50%;
-  background: var(--brand); color: #04120d; display: flex; align-items: center; justify-content: center; font-size: 14px;
+  background: var(--brand); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px;
 }
 
 /* ---------- FAQ ---------- */
@@ -437,18 +459,19 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 .faq details p { margin: 0 0 18px; color: var(--ink-2); font-size: 15px; }
 
 /* ---------- CTA band ---------- */
+/* faixa de conversão: área azul (identidade) + botão laranja (ação) que "salta" */
 .cta-band {
-  background: linear-gradient(135deg, var(--brand-ink), var(--brand));
+  background: linear-gradient(135deg, var(--brand-strong), var(--brand));
   border-radius: 26px;
   padding: 56px 40px;
   text-align: center;
-  color: #04120d;
+  color: #fff;
   box-shadow: var(--shadow-lg);
 }
-.cta-band h2 { font-size: clamp(26px, 4vw, 38px); color: #04120d; margin-bottom: 12px; }
-.cta-band p { font-size: 18px; margin: 0 auto 26px; max-width: 540px; color: #063d2c; }
-.cta-band .btn-primary { background: #04120d; color: #fff; box-shadow: none; }
-.cta-band .btn-primary:hover { background: #0b241c; }
+.cta-band h2 { font-size: clamp(26px, 4vw, 38px); color: #fff; margin-bottom: 12px; }
+.cta-band p { font-size: 18px; margin: 0 auto 26px; max-width: 540px; color: rgba(255, 255, 255, 0.85); }
+.cta-band .btn-primary { background: var(--accent); color: var(--accent-contrast); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18); }
+.cta-band .btn-primary:hover { background: var(--accent-strong); }
 
 /* ---------- Footer ---------- */
 .footer { border-top: 1px solid var(--border); padding: 48px 0 40px; background: var(--bg-soft); }
