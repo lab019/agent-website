@@ -347,9 +347,11 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 .credits-row span { font-size: 14px; color: var(--ink-3); }
 
 /* ---------- Access (web + API) ---------- */
-.access { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+.access { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: stretch; }
 @media (max-width: 880px) { .access { grid-template-columns: 1fr; } }
-.access-card { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--surface); box-shadow: var(--shadow-sm); }
+.access-card { display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--surface); box-shadow: var(--shadow-sm); }
+.access-card .top { flex: none; }
+.web-demo, .api-demo { flex: 1 1 auto; display: flex; flex-direction: column; }
 .access-card .top { padding: 26px 26px 18px; }
 .access-card h3 { font-size: 20px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
 .access-card p { margin: 0; color: var(--ink-2); font-size: 15px; }
@@ -410,10 +412,10 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 .term-body .cur { color: var(--brand); animation: blink 1.1s steps(1) infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 
-.web-chat { padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 10px; }
+.web-chat { flex: 1; padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 10px; }
 .web-chat .msg { max-width: 88%; font-size: 14px; }
 .web-composer {
-  display: flex; align-items: center; gap: 10px; margin-top: 6px;
+  display: flex; align-items: center; gap: 10px; margin-top: auto;
   padding: 10px 14px; border-radius: 999px;
   border: 1px solid var(--border); background: var(--surface);
   color: var(--ink-3); font-size: 13.5px;
