@@ -262,15 +262,24 @@
             <h3>⚡ Pela API</h3>
             <p>Converse com o agente direto do seu sistema. Respostas em tempo real (streaming), voz por WebRTC e os mesmos modelos e ferramentas da web.</p>
           </div>
-          <div class="code">
+          <div class="api-demo">
+            <div class="term-bar">
+              <span class="dots"><i></i><i></i><i></i></span>
+              <span class="term-title">terminal — streaming SSE</span>
+            </div>
+            <div class="term-body"><code><span class="c"># envie a mensagem</span>
 <span class="k">curl</span> -N https://api.lab019.com/runtime/v1/\
 conversations/<span class="p">minha-conversa</span>/messages \
   -H <span class="s">"Authorization: Bearer SEU_TOKEN"</span> \
-  -H <span class="s">"Content-Type: application/json"</span> \
   -d <span class="s">'{"messageId":"1",
-      "content":"Resuma os pedidos de hoje"}'</span>
+       "content":"Resuma os pedidos de hoje"}'</span>
 
-<span class="c"># resposta em streaming (SSE), token a token</span>
+<span class="c"># resposta chega token a token (SSE)</span>
+<span class="g">event: message_delta</span>
+<span class="g">data: {"text":"Hoje você teve "}</span>
+<span class="g">data: {"text":"12 pedidos, "}</span>
+<span class="g">data: {"text":"R$ 574,80 no total."}</span>
+<span class="g">event: done</span> <span class="cur">▋</span></code></div>
           </div>
         </div>
       </div>
