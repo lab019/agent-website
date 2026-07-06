@@ -46,6 +46,10 @@
     --ink: #eef4f2;
     --ink-2: #b9c6c1;
     --ink-3: #869590;
+    /* verde mais claro no escuro para manter contraste AA em textos pequenos */
+    --brand-ink: #38d9a9;
+    --accent-ink: #74c0fc;
+    --accent-2-ink: #ffa94d;
     --accent-soft: #12233a;
     --accent-2-soft: #2a1a0f;
     --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.4);
@@ -150,7 +154,8 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
   font-size: 18px;
   letter-spacing: -0.01em;
 }
-.brand .dot {
+/* Avatar/logo em quadradinho — usado na marca (nav/footer) e no mock de chat */
+.dot {
   width: 26px; height: 26px; border-radius: 8px;
   background: linear-gradient(135deg, var(--brand), var(--brand-ink));
   display: inline-flex; align-items: center; justify-content: center;
@@ -162,6 +167,11 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 .nav-cta { display: flex; align-items: center; gap: 12px; }
 @media (max-width: 860px) {
   .nav-links { display: none; }
+}
+@media (max-width: 520px) {
+  /* em telas estreitas mantém só o CTA principal para não estourar a largura */
+  .nav-cta .btn-ghost { display: none; }
+  .nav-cta .btn-primary { padding: 11px 16px; font-size: 15px; }
 }
 
 /* ---------- Hero ---------- */
@@ -355,20 +365,6 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 .access-card .top { padding: 26px 26px 18px; }
 .access-card h3 { font-size: 20px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
 .access-card p { margin: 0; color: var(--ink-2); font-size: 15px; }
-.code {
-  background: #0c1512;
-  color: #d6e4df;
-  font-family: "SFMono-Regular", ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
-  font-size: 13px;
-  line-height: 1.65;
-  padding: 20px 22px;
-  overflow-x: auto;
-  border-top: 1px solid var(--border);
-}
-.code .k { color: #63e6be; }
-.code .s { color: #ffd43b; }
-.code .c { color: #6b7772; }
-.code .p { color: #a5d8ff; }
 
 /* ---------- Mock de chat "Pela web" ---------- */
 .web-demo { border-top: 1px solid var(--border); background: var(--bg-sunken); }
