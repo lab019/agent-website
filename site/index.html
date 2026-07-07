@@ -3,440 +3,203 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>LAB019 — Inteligência artificial de verdade, a preço de gente</title>
-<meta name="description" content="LAB019 é a plataforma de agentes de IA para o pequeno empreendedor. Chat inteligente, voz em tempo real e os melhores modelos do mundo — incluindo o brasileiro Sabiá. A partir de R$25/mês, com R$25 em créditos inclusos." />
+<title>LAB019 — Estamos construindo algo novo</title>
+<meta name="description" content="A LAB019 está chegando: a plataforma de agentes de IA para o pequeno empreendedor. Chat, voz e os melhores modelos do mundo — incluindo o brasileiro Sabiá. Aguarde o lançamento." />
 <meta name="theme-color" content="#1971c2" />
 <link rel="canonical" href="https://lab019.ai/" />
 
 <meta property="og:type" content="website" />
-<meta property="og:title" content="LAB019 — IA de verdade, a preço de gente" />
-<meta property="og:description" content="Agentes de IA com voz, chat e vários modelos — do Claude ao brasileiro Sabiá. R$25/mês com R$25 em créditos inclusos." />
+<meta property="og:title" content="LAB019 — Estamos construindo algo novo" />
+<meta property="og:description" content="A plataforma de agentes de IA para o pequeno empreendedor está chegando. Aguarde o lançamento." />
 <meta property="og:url" content="https://lab019.ai/" />
 <meta property="og:image" content="https://lab019.ai/assets/og-image.png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="LAB019 — IA de verdade, a preço de gente" />
-<meta name="twitter:description" content="Agentes de IA com voz, chat e vários modelos — do Claude ao brasileiro Sabiá. R$25/mês com R$25 em créditos inclusos." />
+<meta name="twitter:title" content="LAB019 — Estamos construindo algo novo" />
+<meta name="twitter:description" content="A plataforma de agentes de IA para o pequeno empreendedor está chegando. Aguarde o lançamento." />
 <meta name="twitter:image" content="https://lab019.ai/assets/og-image.png" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<script>document.documentElement.classList.add("js");</script>
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 <link rel="stylesheet" href="assets/styles.css" />
+<style>
+  /* ============================================================
+     Página "Em breve" — reaproveita os tokens de assets/styles.css
+     (cores, tipografia, marca). Temporária: enquanto o serviço
+     não é lançado. Para voltar o site no ar, restaure index-full.html.
+     ============================================================ */
+  html, body { height: 100%; }
+  body {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .soon {
+    position: relative;
+    flex: 1 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 72px 24px;
+  }
+  /* mesmo brilho radial do hero, centralizado */
+  .soon::before {
+    content: "";
+    position: absolute;
+    inset: -20% -10%;
+    background:
+      radial-gradient(760px 460px at 30% 8%, rgba(25, 113, 194, 0.18), transparent 60%),
+      radial-gradient(620px 380px at 78% 18%, rgba(18, 184, 134, 0.12), transparent 60%),
+      radial-gradient(520px 340px at 55% 96%, rgba(232, 89, 12, 0.10), transparent 62%);
+    z-index: -1;
+  }
+
+  .soon-inner {
+    width: 100%;
+    max-width: 640px;
+    text-align: center;
+    animation: rise 0.7s ease both;
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .soon .brand {
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 30px;
+  }
+  .soon .brand .dot { width: 34px; height: 34px; border-radius: 10px; font-size: 17px; }
+
+  .soon .badge-soon {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 15px;
+    border-radius: 999px;
+    background: var(--brand-soft);
+    color: var(--brand-ink);
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .soon .badge-soon .pulse {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--support);
+    box-shadow: 0 0 0 0 rgba(18, 184, 134, 0.6);
+    animation: pulse 1.8s infinite;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(18, 184, 134, 0.55); }
+    70%  { box-shadow: 0 0 0 10px rgba(18, 184, 134, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(18, 184, 134, 0); }
+  }
+
+  .soon h1 {
+    font-size: clamp(32px, 6vw, 52px);
+    margin: 0 0 18px;
+  }
+  .soon h1 .hl { color: var(--brand-ink); }
+
+  .soon p.lead {
+    font-size: clamp(17px, 2.4vw, 20px);
+    color: var(--ink-2);
+    max-width: 520px;
+    margin: 0 auto 30px;
+  }
+
+  .soon .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 34px;
+  }
+  .soon .chips span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-2);
+  }
+
+  .soon .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: center;
+  }
+  .soon .note {
+    margin-top: 22px;
+    font-size: 14px;
+    color: var(--ink-3);
+  }
+
+  .soon-footer {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 24px;
+    font-size: 13px;
+    color: var(--ink-3);
+    border-top: 1px solid var(--border);
+  }
+  .soon-footer a { color: var(--brand-ink); font-weight: 500; }
+  .soon-footer .legal { margin-top: 6px; color: var(--ink-3); }
+</style>
 </head>
 <body>
 
-<!-- ===================== NAV ===================== -->
-<header class="nav">
-  <div class="wrap nav-inner">
-    <a class="brand" href="#top" aria-label="LAB019">
+<main class="soon">
+  <div class="soon-inner">
+    <a class="brand" href="https://lab019.com" aria-label="LAB019">
       <span class="dot">L</span> LAB019
     </a>
-    <nav class="nav-links">
-      <a href="#recursos">Recursos</a>
-      <a href="#como-funciona">Como funciona</a>
-      <a href="#preco">Preço</a>
-      <a href="#acesso">Acesso</a>
-      <a href="#faq">Dúvidas</a>
-    </nav>
-    <div class="nav-cta">
-      <a class="btn btn-ghost" href="https://app.lab019.com">Entrar</a>
-      <a class="btn btn-primary" href="https://app.lab019.com">Começar por R$25</a>
+
+    <span class="badge-soon"><span class="pulse"></span> Em breve · Building something new</span>
+
+    <h1>Estamos construindo <span class="hl">algo novo</span>.</h1>
+
+    <p class="lead">
+      A plataforma de agentes de IA para o pequeno empreendedor está quase pronta.
+      Chat, voz e os melhores modelos do mundo — incluindo o brasileiro Sabiá.
+      <strong>Aguarde o lançamento.</strong>
+    </p>
+
+    <div class="chips">
+      <span>💬 Chat inteligente</span>
+      <span>🎙️ Voz em tempo real</span>
+      <span>🧠 Vários modelos de IA</span>
+      <span>🇧🇷 Feito no Brasil</span>
     </div>
+
+    <div class="actions">
+      <a class="btn btn-primary btn-lg" href="mailto:contato@lab019.ai?subject=Quero%20saber%20do%20lançamento%20da%20LAB019">Avise-me no lançamento</a>
+    </div>
+
+    <p class="note">Dúvidas? Fale com a gente em <a href="mailto:contato@lab019.ai" style="color:var(--brand-ink);font-weight:500;">contato@lab019.ai</a></p>
   </div>
-</header>
-
-<main id="top">
-  <!-- ===================== HERO ===================== -->
-  <section class="hero">
-    <div class="wrap hero-grid">
-      <div class="reveal">
-        <span class="eyebrow">🇧🇷 Feito para o pequeno empreendedor</span>
-        <h1>Inteligência artificial de verdade, <span class="hl">a preço de gente</span>.</h1>
-        <p class="hero-sub">
-          Coloque uma equipe de agentes de IA para trabalhar no seu negócio: atende por
-          <strong>chat</strong> e por <strong>voz</strong>, usa os melhores modelos do mundo —
-          incluindo o brasileiro <strong>Sabiá</strong> — e cobra só pelo que você usar.
-        </p>
-        <div class="hero-actions">
-          <a class="btn btn-primary btn-lg" href="#preco">Assinar por R$25/mês</a>
-          <a class="btn btn-ghost btn-lg" href="#como-funciona">Ver como funciona</a>
-        </div>
-        <p class="hero-note">✓ R$25 em créditos de IA já inclusos &nbsp;·&nbsp; ✓ Sem fidelidade &nbsp;·&nbsp; ✓ Cancele quando quiser</p>
-      </div>
-
-      <div class="reveal">
-        <div class="chat-card" role="img" aria-label="Exemplo de conversa com um agente LAB019">
-          <div class="chat-head">
-            <span class="dot" style="width:22px;height:22px;font-size:11px;">L</span>
-            <strong>Assistente da Loja</strong>
-            <span class="status"><span class="pulse"></span> online</span>
-          </div>
-          <div class="chat-body">
-            <div class="msg user">Bom dia! Vocês entregam em Barão Geraldo hoje?</div>
-            <div class="msg bot">
-              <span class="badge">🎙️ voz</span>
-              Bom dia! Sim, entregamos em Barão Geraldo hoje até as 18h. 🛵
-              Quer que eu já registre seu pedido?
-            </div>
-            <div class="msg user">Quero. 2 marmitas fitness.</div>
-            <div class="msg bot">Anotado: 2 marmitas fitness, entrega em Barão Geraldo. Total R$47,80. Confirmo?</div>
-          </div>
-          <div class="chat-foot">
-            Digite ou fale com o agente…
-            <span class="mic" aria-hidden="true">🎙️</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== MODELS STRIP ===================== -->
-  <section class="strip">
-    <div class="wrap strip-inner">
-      <p>Os melhores modelos do mundo — e o brasileiro — em um só lugar</p>
-      <div class="model-chips">
-        <span class="model-chip br"><span class="flag">🇧🇷</span> Sabiá · Maritaca</span>
-        <span class="model-chip"><span class="flag">✦</span> Claude · Anthropic</span>
-        <span class="model-chip"><span class="flag">✦</span> Gemini · Google</span>
-        <span class="model-chip"><span class="flag">✦</span> GPT · OpenAI</span>
-        <span class="model-chip">+ traga sua própria chave (BYOK)</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== RECURSOS ===================== -->
-  <section id="recursos" class="section">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow">O que você recebe</span>
-        <h2>Uma plataforma completa, sem complicação</h2>
-        <p>Tudo o que uma grande empresa usa em IA, pronto para o seu negócio — sem precisar de time técnico.</p>
-      </div>
-
-      <div class="features">
-        <div class="feature reveal">
-          <div class="ico">💬</div>
-          <h3>Chat que pensa antes de responder</h3>
-          <p>Seu agente conversa em tempo real, entende o pedido, consulta informações e responde na hora — com o raciocínio à vista, para você confiar na resposta.</p>
-        </div>
-        <div class="feature reveal">
-          <div class="ico b">🎙️</div>
-          <h3>Atendimento por voz</h3>
-          <p>O cliente liga e conversa naturalmente. Reconhece fala em português, responde falando e ainda pode ser interrompido no meio — igual a uma pessoa. A transcrição fica salva no histórico.</p>
-        </div>
-        <div class="feature reveal">
-          <div class="ico o">🧠</div>
-          <h3>Vários modelos, escolha inteligente</h3>
-          <p>Do Sabiá brasileiro ao Claude, Gemini e GPT. A plataforma escolhe sozinha o modelo certo para cada pergunta — o mais barato quando dá, o mais forte quando precisa.</p>
-        </div>
-        <div class="feature reveal">
-          <div class="ico">🧩</div>
-          <h3>Equipe de agentes e ferramentas</h3>
-          <p>Monte um agente principal que delega para sub-agentes especialistas e usa ferramentas externas (busca na web, sistemas, planilhas) via conectores MCP. Uma equipe inteira, 24 horas.</p>
-        </div>
-        <div class="feature reveal">
-          <div class="ico b">🔑</div>
-          <h3>Traga sua própria chave (BYOK)</h3>
-          <p>Já tem conta na OpenAI, Anthropic ou Google? Conecte sua chave e use seus próprios créditos. Suas chaves ficam protegidas e nunca são expostas.</p>
-        </div>
-        <div class="feature reveal">
-          <div class="ico o">🛡️</div>
-          <h3>Você no controle do gasto</h3>
-          <p>Defina um teto de custo por conversa e acompanhe quanto cada atendimento custou, em reais. Nada de surpresa na fatura no fim do mês.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== COMO FUNCIONA ===================== -->
-  <section id="como-funciona" class="section section-sm" style="background:var(--bg-soft);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow">Simples assim</span>
-        <h2>Do zero ao atendimento em minutos</h2>
-        <p>Sem instalar nada, sem contrato de consultoria. Você mesmo coloca no ar.</p>
-      </div>
-      <div class="steps">
-        <div class="step reveal">
-          <div class="num">1</div>
-          <h3>Assine por R$25</h3>
-          <p>Crie sua conta e ative o plano. Já entram R$25 em créditos de IA para você usar os modelos — é como começar com o tanque cheio.</p>
-        </div>
-        <div class="step reveal">
-          <div class="num b">2</div>
-          <h3>Configure seu agente</h3>
-          <p>Diga o que ele deve fazer, o tom de voz da sua marca e quais ferramentas pode usar. Teste na hora no chat, pelo navegador.</p>
-        </div>
-        <div class="step reveal">
-          <div class="num o">3</div>
-          <h3>Atenda e cresça</h3>
-          <p>Coloque o agente para atender por chat ou voz. Acabaram os créditos? Compre mais quando precisar e siga no seu ritmo.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== PREÇO ===================== -->
-  <section id="preco" class="section">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow">Preço honesto</span>
-        <h2>Um plano. Sem pegadinha.</h2>
-        <p>Você paga R$25 por mês e recebe R$25 em créditos de IA de volta. Na prática, a plataforma sai de graça — você só investe no que usar de verdade.</p>
-      </div>
-
-      <div class="pricing-wrap">
-        <div class="plan reveal">
-          <span class="tag">Mais popular</span>
-          <h3>Plano LAB019</h3>
-          <div class="price">
-            <span class="amount">R$25</span>
-            <span class="per">/ mês</span>
-          </div>
-          <div class="credit-line">✓ R$25 em créditos de IA inclusos todo mês</div>
-          <ul>
-            <li><span class="ck">✓</span> Acesso completo pela web e pela API</li>
-            <li><span class="ck">✓</span> Chat inteligente com raciocínio em tempo real</li>
-            <li><span class="ck">✓</span> Atendimento por voz (WebRTC) em português</li>
-            <li><span class="ck">✓</span> Todos os modelos: Sabiá, Claude, Gemini e GPT</li>
-            <li><span class="ck">✓</span> Agentes, sub-agentes e ferramentas via MCP</li>
-            <li><span class="ck">✓</span> Traga sua própria chave (BYOK), se quiser</li>
-            <li><span class="ck">✓</span> Teto de gasto por conversa e histórico de custos</li>
-            <li><span class="ck">✓</span> Sem fidelidade — cancele quando quiser</li>
-          </ul>
-          <a class="btn btn-primary btn-lg" href="https://app.lab019.com">Começar agora</a>
-        </div>
-
-        <div class="credits-card reveal">
-          <h3>E quando os créditos acabam?</h3>
-          <p>Simples: você compra mais, na hora, e continua atendendo. Os créditos são usados diretamente nos modelos de IA — você só paga pelo que consome.</p>
-          <div class="how">
-            <div class="credits-row">
-              <span class="b">1</span>
-              <div><strong>R$25 já vêm inclusos</strong><span>Todo mês, junto com a assinatura.</span></div>
-            </div>
-            <div class="credits-row">
-              <span class="b c2">2</span>
-              <div><strong>Gastou de forma transparente</strong><span>Cada conversa mostra o custo em reais. Sem letra miúda.</span></div>
-            </div>
-            <div class="credits-row">
-              <span class="b c3">3</span>
-              <div><strong>Recarregue quando quiser</strong><span>Comprou mais créditos, seguiu usando. Sem pacote gigante obrigatório.</span></div>
-            </div>
-            <div class="credits-row">
-              <span class="b">4</span>
-              <div><strong>Economize com o modelo certo</strong><span>A escolha automática usa o modelo mais barato que dá conta — seus créditos rendem mais.</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== ACESSO (WEB + API) ===================== -->
-  <section id="acesso" class="section section-sm" style="background:var(--bg-soft);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow">Do seu jeito</span>
-        <h2>Use pela web ou conecte no seu sistema</h2>
-        <p>Não é técnico? Use tudo pelo navegador. Tem desenvolvedor? Integre a IA ao seu site ou sistema pela nossa API.</p>
-      </div>
-
-      <div class="access">
-        <div class="access-card reveal">
-          <div class="top">
-            <h3>🌐 Pela web</h3>
-            <p>Entre pelo navegador e comece a conversar com seu agente na hora. Configure especialistas, teste por texto ou voz e acompanhe o histórico — sem instalar nada.</p>
-          </div>
-          <div class="web-demo">
-            <div class="browser-bar">
-              <span class="dots"><i></i><i></i><i></i></span>
-              <span class="url">app.lab019.com</span>
-            </div>
-            <div class="web-chat">
-              <div class="msg bot">Oi! Sou o assistente da sua loja. Como posso ajudar? 😊</div>
-              <div class="msg user">Quanto ficou o pedido da Ana?</div>
-              <div class="msg bot">O pedido da Ana (2 marmitas fitness) ficou <strong>R$47,80</strong>, com entrega hoje em Barão Geraldo.</div>
-              <div class="web-composer">
-                <span>Digite ou fale com o agente…</span>
-                <span class="mic" aria-hidden="true">🎙️</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="access-card reveal">
-          <div class="top">
-            <h3>⚡ Pela API</h3>
-            <p>Converse com o agente direto do seu sistema. Respostas em tempo real (streaming), voz por WebRTC e os mesmos modelos e ferramentas da web.</p>
-          </div>
-          <div class="api-demo">
-            <div class="term-bar">
-              <span class="dots"><i></i><i></i><i></i></span>
-              <span class="term-title">terminal — streaming SSE</span>
-            </div>
-            <div class="term-body"><code><span class="c"># envie a mensagem</span>
-<span class="k">curl</span> -N https://api.lab019.com/runtime/v1/\
-conversations/<span class="p">minha-conversa</span>/messages \
-  -H <span class="s">"Authorization: Bearer SEU_TOKEN"</span> \
-  -d <span class="s">'{"messageId":"1",
-       "content":"Resuma os pedidos de hoje"}'</span>
-
-<span class="c"># resposta chega token a token (SSE)</span>
-<span class="g">event: message_delta</span>
-<span class="g">data: {"text":"Hoje você teve "}</span>
-<span class="g">data: {"text":"12 pedidos, "}</span>
-<span class="g">data: {"text":"R$ 574,80 no total."}</span>
-<span class="g">event: done</span> <span class="cur">▋</span></code></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== PARA QUEM ===================== -->
-  <section class="section">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow">Feito para você</span>
-        <h2>Do comércio de bairro ao escritório de serviços</h2>
-        <p>Se você atende cliente, responde no WhatsApp, tira dúvida ou faz pré-venda — a LAB019 trabalha por você.</p>
-      </div>
-      <div class="features">
-        <div class="feature reveal">
-          <div class="ico">🛍️</div>
-          <h3>Comércio e delivery</h3>
-          <p>Um agente que responde horário, estoque e entrega, registra pedido e nunca deixa o cliente no vácuo — nem de madrugada.</p>
-        </div>
-        <div class="feature reveal">
-          <div class="ico b">💼</div>
-          <h3>Serviços e profissionais</h3>
-          <p>Agende, qualifique clientes e responda perguntas repetidas por voz ou texto, enquanto você foca no que sabe fazer.</p>
-        </div>
-        <div class="feature reveal">
-          <div class="ico o">📞</div>
-          <h3>Primeiro atendimento</h3>
-          <p>Coloque um assistente de voz no seu site para receber quem chega, tirar dúvidas e encaminhar para uma pessoa quando for preciso.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== FAQ ===================== -->
-  <section id="faq" class="section section-sm">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow">Perguntas frequentes</span>
-        <h2>Ainda com dúvida? A gente responde.</h2>
-      </div>
-      <div class="faq reveal">
-        <details>
-          <summary>O que está incluso nos R$25 por mês?</summary>
-          <p>Acesso completo à plataforma (web e API) e <strong>R$25 em créditos de IA</strong> para usar os modelos. Na prática, a mensalidade volta em créditos — você só investe além disso se usar mais.</p>
-        </details>
-        <details>
-          <summary>O que são os créditos e como funcionam?</summary>
-          <p>Os créditos pagam o uso dos modelos de inteligência artificial (as respostas de chat e voz). Cada conversa mostra quanto custou, em reais. Quando os R$25 acabam, você compra mais quando quiser — sem pacote gigante obrigatório.</p>
-        </details>
-        <details>
-          <summary>Preciso entender de programação?</summary>
-          <p>Não. Você faz tudo pelo navegador: cria o agente, escreve as instruções e testa por texto ou voz. Se tiver um desenvolvedor, dá para integrar ao seu sistema pela API — mas isso é opcional.</p>
-        </details>
-        <details>
-          <summary>Quais modelos de IA posso usar?</summary>
-          <p>O brasileiro <strong>Sabiá</strong> (da Maritaca), além de Claude (Anthropic), Gemini (Google) e GPT (OpenAI). A plataforma escolhe automaticamente o modelo mais econômico que resolve cada pergunta, e você pode fixar um modelo específico quando quiser.</p>
-        </details>
-        <details>
-          <summary>Posso usar minha própria conta de IA?</summary>
-          <p>Sim. Com o BYOK (traga sua própria chave), você conecta sua conta da OpenAI, Anthropic ou Google e usa os seus créditos. Suas chaves ficam protegidas e nunca são devolvidas ou expostas pela plataforma.</p>
-        </details>
-        <details>
-          <summary>O atendimento por voz funciona em português?</summary>
-          <p>Sim. A voz é ajustada para o português do Brasil: entende a fala do cliente, responde falando e pode ser interrompida no meio da frase, como numa conversa de verdade. Tudo fica registrado como texto no histórico.</p>
-        </details>
-        <details>
-          <summary>Tem fidelidade ou multa?</summary>
-          <p>Não. É mês a mês. Cancele quando quiser, sem multa.</p>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== CTA BAND ===================== -->
-  <section class="section" style="padding-top:0;">
-    <div class="wrap">
-      <div class="cta-band reveal">
-        <h2>Sua IA começa hoje, por R$25.</h2>
-        <p>Assine, ganhe R$25 em créditos e coloque um agente para atender seu cliente por chat e por voz — ainda hoje.</p>
-        <a class="btn btn-primary btn-lg" href="https://app.lab019.com">Quero começar</a>
-      </div>
-    </div>
-  </section>
 </main>
 
-<!-- ===================== FOOTER ===================== -->
-<footer class="footer">
-  <div class="wrap">
-    <div class="footer-grid">
-      <div>
-        <div class="brand"><span class="dot">L</span> LAB019</div>
-        <p>Plataforma de agentes de inteligência artificial para o pequeno empreendedor brasileiro. Nascida em Campinas, feita para todo o Brasil.</p>
-      </div>
-      <div class="footer-cols">
-        <div class="footer-col">
-          <h4>Produto</h4>
-          <a href="#recursos">Recursos</a>
-          <a href="#como-funciona">Como funciona</a>
-          <a href="#preco">Preço</a>
-          <a href="#acesso">Acesso</a>
-        </div>
-        <div class="footer-col">
-          <h4>Plataforma</h4>
-          <a href="#recursos">Chat inteligente</a>
-          <a href="#recursos">Voz em tempo real</a>
-          <a href="#recursos">Modelos e BYOK</a>
-          <a href="#acesso">API para desenvolvedores</a>
-        </div>
-        <div class="footer-col">
-          <h4>Empresa</h4>
-          <a href="mailto:contato@lab019.ai">contato@lab019.ai</a>
-          <a href="https://lab019.com">lab019.com</a>
-          <a href="https://lab019.ai">lab019.ai</a>
-          <a href="#faq">Dúvidas</a>
-        </div>
-      </div>
-    </div>
-    <div class="footer-legal">
-      LAB019 é nome fantasia de <strong>INDRA CONSULTORIA EMPRESARIAL LTDA</strong> ·
-      CNPJ 04.022.591/0001-59 · Campinas, SP · Contato:
-      <a href="mailto:contato@lab019.ai">contato@lab019.ai</a>
-    </div>
-    <div class="footer-bottom">
-      <span>© 2026 LAB019 · Feito com 💚 em Campinas, SP</span>
-      <span>Inteligência artificial de verdade, a preço de gente.</span>
-    </div>
+<footer class="soon-footer">
+  <div>© 2026 LAB019 · Feito com 💚 em Campinas, SP</div>
+  <div class="legal">
+    LAB019 é nome fantasia de INDRA CONSULTORIA EMPRESARIAL LTDA · CNPJ 04.022.591/0001-59
   </div>
 </footer>
 
-<script>
-  // Revelação suave ao rolar
-  (function () {
-    var els = document.querySelectorAll(".reveal");
-    if (!("IntersectionObserver" in window)) {
-      els.forEach(function (el) { el.classList.add("in"); });
-      return;
-    }
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.12 });
-    els.forEach(function (el) { io.observe(el); });
-  })();
-</script>
 </body>
 </html>
