@@ -12,7 +12,8 @@ pequeno empreendedor. Site estático, hospedado no **GitHub Pages**.
 
 ```
 site/
-├── index.html          # landing page (single page)
+├── index.html          # página "Em breve" (ativa enquanto o serviço não lança)
+├── index-full.html     # landing page completa (backup, restaurar no lançamento)
 ├── 404.html            # página de erro
 ├── assets/
 │   ├── styles.css      # design system + estilos
@@ -23,6 +24,22 @@ site/
 .github/workflows/
 └── deploy.yml          # publica site/ no GitHub Pages a cada push na main
 ```
+
+## Página "Em breve" (pré-lançamento)
+
+Enquanto o serviço não é lançado, o `site/index.html` mostra uma página
+**"Estamos construindo algo novo"** (aguarde o lançamento). A landing page
+completa fica guardada em `site/index-full.html` — nada foi perdido.
+
+**No lançamento**, para voltar o site completo no ar, restaure a landing e
+faça o deploy:
+
+```bash
+cp site/index-full.html site/index.html   # volta a landing completa
+rm site/index-full.html                    # (opcional) remove o backup
+```
+
+Depois faça commit e merge na `main` — o deploy publica automaticamente.
 
 O site é 100% estático (HTML + CSS + um pouco de JS), sem etapa de build.
 Fonte carregada via Google Fonts (Inter).
