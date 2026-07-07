@@ -18,7 +18,7 @@ site/
 ├── assets/
 │   ├── styles.css      # design system + estilos
 │   └── favicon.svg
-├── CNAME               # domínio custom do GitHub Pages (lab019.com)
+├── CNAME               # domínio custom do GitHub Pages (lab019.ai)
 ├── robots.txt
 └── sitemap.xml
 .github/workflows/
@@ -62,11 +62,11 @@ O deploy é automático: ao dar merge na branch `main`, o workflow
 ### Configuração de domínio (uma vez)
 
 1. Em **Settings → Pages**, defina a origem como **GitHub Actions**.
-2. O arquivo `site/CNAME` já aponta para `lab019.com`. Configure o DNS do
+2. O arquivo `site/CNAME` já aponta para `lab019.ai`. Configure o DNS do
    domínio com um `CNAME`/`ALIAS` para `<org>.github.io` (ou os `A` records
    do GitHub Pages) e ative **Enforce HTTPS**.
-3. Para o domínio `lab019.ai`, configure um redirecionamento (a nível de DNS
-   ou registrador) apontando para `lab019.com` — o GitHub Pages aceita um
+3. Para o domínio `lab019.com`, configure um redirecionamento (a nível de DNS
+   ou registrador) apontando para `lab019.ai` — o GitHub Pages aceita um
    único domínio custom por repositório via `CNAME`.
 
 ## Conteúdo
