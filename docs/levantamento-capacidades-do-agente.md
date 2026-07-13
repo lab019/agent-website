@@ -348,17 +348,18 @@ O Agente **inicia** conversas, não só responde:
 - **Na UI:** barra de status com **ocupação da janela de contexto** (`[████░░] % ctx`)
   e contagem de turnos (`agent-web` `StatusBar.tsx`).
 
-### 3.21 "Plan mode" — ⚠️ VALIDAR / não existe como recurso nomeado
+### 3.21 Plan mode (planejamento de tarefas) — `PRONTO` (via `write_todos` + prompt)
 
-- **Situação real:** **não há** um "plan mode" (nenhuma ocorrência de `plan_mode`/
-  "modo plano" no runtime nem no front). O que existe são os **built-ins do
-  deepagents** disponíveis a todo agente: **`write_todos`** (lista de tarefas/
-  planejamento) + um **filesystem virtual por conversa** (`ls`/`read_file`/`write_file`
-  /`edit_file`/`glob`/`grep`) que persiste entre turnos.
-- **Recomendação:** ou **não anunciar** "plan mode", ou reposicionar como
-  **"planejamento de tarefas em vários passos"** (o Agente organiza um checklist e
-  mantém um rascunho de trabalho). Vender como "plan mode tipo Claude Code" seria
-  impreciso.
+- **O que é:** o Agente **planeja a tarefa em passos** antes de executar — organiza um
+  checklist e vai trabalhando em cima dele. É o "plan mode" do produto.
+- **Como funciona:** implementado com o built-in **`write_todos`** do deepagents (lista
+  de tarefas mantida no estado da conversa), acionado por um **prompt adequado** no
+  especialista — não é um toggle separado, é o comportamento de planejar guiado pela
+  instrução. Acompanha um **filesystem virtual por conversa** (`ls`/`read_file`/
+  `write_file`/`edit_file`/`glob`/`grep`) que persiste entre turnos e aparece na
+  timeline como qualquer ferramenta.
+- **Benefício:** em tarefas de vários passos, o Agente não se perde — mostra o plano,
+  risca o que já fez e mantém um rascunho de trabalho.
 
 ---
 
@@ -366,13 +367,12 @@ O Agente **inicia** conversas, não só responde:
 
 - **Créditos:** unidade em micro-dólares (`US$1 = 1.000.000 créditos`). Carteira
   **append-only** (razão imutável, saldo derivado por soma) — trilha auditável.
-- **Plano base:** **R$25/mês** → concede **5.000.000 créditos (US$5)** de franquia
-  mensal (a franquia expira no fim do ciclo; créditos **comprados** não expiram).
-  ⚠️ **Divergência a corrigir antes de publicar:** o backend está em **R$25/mês** (repricing
-  `0005`), mas a UI de billing ainda mostra o rótulo hardcoded **"R$ 50/mês"**
-  (`agent-web` `BillingScreen.tsx`) e o top-up default é R$50. A home atual fala em
-  R$25 com R$25 de créditos — **conferir os números reais** (R$25 → US$5 ≈ R$25 em
-  crédito ao câmbio seed de R$5/USD).
+- **Plano base (confirmado):** **R$25/mês de assinatura que se convertem em créditos na
+  plataforma** — a mensalidade "volta" como saldo de uso. No backend, R$25 concede
+  **5.000.000 créditos (US$5)** de franquia mensal ao câmbio seed de R$5/USD (a franquia
+  expira no fim do ciclo; créditos **comprados** avulsos não expiram).
+  ⚠️ **Corrigir na UI:** o `agent-web` ainda mostra o rótulo hardcoded **"R$ 50/mês"**
+  (`BillingScreen.tsx`) e top-up default R$50 — atualizar para R$25.
 - **Trial freemium:** **14 dias, US$1 (~10 min de voz), sem cartão**, 1 por e-mail
   verificado.
 - **Metering por dimensão:** LLM (por token), **Voz STT+TTS US$0,05/min**, **PSTN
@@ -434,25 +434,32 @@ O Agente **inicia** conversas, não só responde:
 
 ---
 
-## 7. Pendências a validar antes de virar copy do site
+## 7. Decisões tomadas e pendências
 
-1. **Preço do plano (⚠️):** backend **R$25/mês**; UI ainda mostra **"R$ 50/mês"**.
-   Alinhar backend + UI + site num número só.
-2. **Sabiá / Maritaca (⚠️):** o site atual destaca o modelo brasileiro **Sabiá**, mas
-   **não encontrei Sabiá/Maritaca no catálogo de modelos** dos perfis (que usam
-   OpenAI/Gemini/Mistral/DeepSeek/Bedrock). O catálogo LiteLLM é aberto (dá para
-   adicionar), mas **hoje não está configurado** — confirmar antes de manter esse
-   destaque.
-3. **"Plan mode" (⚠️):** não existe como recurso nomeado — reposicionar ou remover
-   (§3.21).
-4. **Handoff — não prometer:** notificação ativa ao atendente, SLA, roteamento por
-   skill e presença de atendentes **não existem** (modelo é polling).
-5. **Multi-agente:** vender como **sub-agentes** (profundidade 1); A2A entre instâncias
-   é roadmap.
-6. **BYOK / agent-secrets:** cofre é **PoC** (JSON local, sem cripto at-rest). Namespace
-   `http` do `http_request` ainda não modelado no cofre.
-7. **Preço de LLM não seedado:** garantir que a margem esteja configurada antes de
-   qualquer promessa de "custo por conversa".
+**Decisões (confirmadas pelo dono do produto):**
+
+1. **Preço — R$25/mês vira crédito.** A assinatura de **R$25/mês se converte em créditos
+   de uso** na plataforma. É o número oficial do site. Falta só corrigir o rótulo
+   **"R$ 50"** ainda hardcoded no `agent-web` (§4).
+2. **Sabiá / Maritaca — fora por enquanto.** Não vamos usar o modelo brasileiro agora:
+   é **caro** e depende de um **acordo comercial** com a Maritaca antes. **Remover Sabiá
+   do site** (hero, meta description, strip de modelos, FAQ) até fechar o acordo. O strip
+   de modelos passa a listar Claude / Gemini / GPT / DeepSeek (+ BYOK).
+3. **Plan mode existe.** É o **`write_todos` com um prompt adequado** (§3.21) — pode ser
+   anunciado como planejamento de tarefas em vários passos.
+4. **Handoff é MVP.** A transferência para humano é a **versão simples/MVP**: funciona
+   (voz e texto, "assumir agora", monitoramento ao vivo), mas **sem** SLA, notificação
+   ativa ao atendente, roteamento por skill ou presença. Comunicar sem prometer o que
+   ainda não tem.
+5. **Multi-agente = sub-agentes hoje; A2A logo mais.** Vender como equipe de
+   **sub-agentes especialistas** (profundidade 1); o A2A entre instâncias vem a seguir.
+
+**Pendências técnicas (independentes do site):**
+
+6. **BYOK / agent-secrets:** cofre é **PoC** (JSON local, sem cripto at-rest; Vault/AWS
+   via seam de Protocol). Namespace `http` do `http_request` ainda não modelado no cofre.
+7. **Preço de LLM não seedado:** a margem por token precisa estar configurada no
+   `agent-billing` antes de qualquer promessa de "custo por conversa".
 
 ---
 
@@ -464,6 +471,8 @@ O Agente **inicia** conversas, não só responde:
   CTA: testar grátis 14 dias (sem cartão) / assinar por R$25.
 - **Prova rápida (strip):** atende por **chat, voz e WhatsApp**, escolhe o modelo mais
   barato que resolve, e passa para uma pessoa quando precisa.
+- **Strip de modelos:** Claude, Gemini, GPT e DeepSeek (+ BYOK) — **sem Sabiá** por ora
+  (§7.2). O gancho é "vários modelos, escolha automática do mais barato que resolve".
 
 **Blocos de capacidade na home (os 6 mais fortes e verdadeiros):**
 
