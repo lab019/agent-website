@@ -190,11 +190,13 @@ organização (`org_id`), com modos `standalone` (single-tenant) e `oidc`
     Fable 5, só escala ao topo nas mensagens mais difíceis.
   - Dentro de um tier, `cost-based-routing` pega o deployment mais barato disponível;
     há retries e **fallbacks cross-provider**.
-- **Modelo brasileiro (Maritaca.ai):** o catálogo inclui o provider **Maritaca.ai** com
-  o **Sabiá-4**, incluindo variantes que rodam **100% no Brasil** — os dados não saem do
-  país (forte ângulo de **soberania de dados / LGPD** para o público-alvo). Selecionável
-  por especialista ou fixado pelo cliente. ⚠️ Config: garantir os deployments da Maritaca
-  no `litellm-proxy/config.yaml`.
+- **Provider brasileiro (Maritaca.ai):** o catálogo inclui o provider **Maritaca.ai** com
+  **todos os seus modelos** (Sabiá-4 e família), **incluindo os que rodam em
+  infraestrutura 100% brasileira** — os dados não saem do país (forte ângulo de
+  **soberania de dados / LGPD** para o público-alvo). Selecionável por especialista ou
+  fixado pelo cliente. ⚠️ Config: o owner adicionou o provider Maritaca.ai; **confirmar os
+  deployments no `litellm-proxy/config.yaml` do ambiente** — não aparece neste checkout
+  local do `agent-runtime` (provável branch/ambiente separado).
 - **Exposto na UI:** dropdown de modelo (grupos "Plataforma" e "BYOK"), perfis
   roteados marcados **"· roteado"**, e na tela de billing o **modelo real que rodou**
   aparece junto do alias do perfil (`agent-web` `InputBar.tsx`, `BillingScreen.tsx`).
@@ -446,13 +448,13 @@ O Agente **inicia** conversas, não só responde:
 1. **Preço — R$25/mês vira crédito.** A assinatura de **R$25/mês se converte em créditos
    de uso** na plataforma. É o número oficial do site. Falta só corrigir o rótulo
    **"R$ 50"** ainda hardcoded no `agent-web` (§4).
-2. **Sabiá / Maritaca — incluído, com soberania de dados.** O catálogo passa a incluir o
-   provider **Maritaca.ai** e o **Sabiá-4**, incluindo modelos que rodam **100% no
-   Brasil** (os dados não saem do país) — diferencial forte de **LGPD / soberania de
-   dados** para o pequeno negócio. **Destacar no site** (strip de modelos, meta, FAQ
-   "meus dados ficam no Brasil?"). ⚠️ Tarefa de config: garantir os deployments da
-   Maritaca no `litellm-proxy/config.yaml` (e a margem no `agent-billing`, já que LLM
-   não é seedado — §7.7).
+2. **Maritaca.ai — incluído como provider, com soberania de dados.** O catálogo passa a
+   incluir o provider **Maritaca.ai** e **todos os seus modelos** (Sabiá-4 e família),
+   **incluindo os que rodam em infraestrutura 100% brasileira** (os dados não saem do
+   país) — diferencial forte de **LGPD / soberania de dados** para o pequeno negócio.
+   **Destacar no site** (strip de modelos, meta, FAQ "meus dados ficam no Brasil?"). ⚠️
+   Config: confirmar os deployments da Maritaca no `litellm-proxy/config.yaml` do ambiente
+   (não visível neste checkout) e a margem no `agent-billing` (LLM não é seedado — §7.7).
 3. **Plan mode existe.** É o **`write_todos` com um prompt adequado** (§3.21) — pode ser
    anunciado como planejamento de tarefas em vários passos.
 4. **Handoff é MVP.** A transferência para humano é a **versão simples/MVP**: funciona
@@ -509,6 +511,6 @@ O Agente **inicia** conversas, não só responde:
 - `/preco` — plano, créditos, trial, cost cap.
 
 **Diferenciais para enfatizar (verdadeiros e raros no segmento):** roteamento
-automático de custo, **IA que roda 100% no Brasil** (Sabiá-4/Maritaca — soberania de
-dados/LGPD), BYOK multi-provider, MCP com OAuth 2.1 real, handoff de **voz** ao vivo, e o
-onboarding no-code conversando com o `aura`.
+automático de custo, **IA em infraestrutura 100% brasileira** (Maritaca/Sabiá-4 —
+soberania de dados/LGPD), BYOK multi-provider, MCP com OAuth 2.1 real, handoff de **voz**
+ao vivo, e o onboarding no-code conversando com o `aura`.
