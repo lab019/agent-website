@@ -190,6 +190,11 @@ organização (`org_id`), com modos `standalone` (single-tenant) e `oidc`
     Fable 5, só escala ao topo nas mensagens mais difíceis.
   - Dentro de um tier, `cost-based-routing` pega o deployment mais barato disponível;
     há retries e **fallbacks cross-provider**.
+- **Modelo brasileiro (Maritaca.ai):** o catálogo inclui o provider **Maritaca.ai** com
+  o **Sabiá-4**, incluindo variantes que rodam **100% no Brasil** — os dados não saem do
+  país (forte ângulo de **soberania de dados / LGPD** para o público-alvo). Selecionável
+  por especialista ou fixado pelo cliente. ⚠️ Config: garantir os deployments da Maritaca
+  no `litellm-proxy/config.yaml`.
 - **Exposto na UI:** dropdown de modelo (grupos "Plataforma" e "BYOK"), perfis
   roteados marcados **"· roteado"**, e na tela de billing o **modelo real que rodou**
   aparece junto do alias do perfil (`agent-web` `InputBar.tsx`, `BillingScreen.tsx`).
@@ -441,10 +446,13 @@ O Agente **inicia** conversas, não só responde:
 1. **Preço — R$25/mês vira crédito.** A assinatura de **R$25/mês se converte em créditos
    de uso** na plataforma. É o número oficial do site. Falta só corrigir o rótulo
    **"R$ 50"** ainda hardcoded no `agent-web` (§4).
-2. **Sabiá / Maritaca — fora por enquanto.** Não vamos usar o modelo brasileiro agora:
-   é **caro** e depende de um **acordo comercial** com a Maritaca antes. **Remover Sabiá
-   do site** (hero, meta description, strip de modelos, FAQ) até fechar o acordo. O strip
-   de modelos passa a listar Claude / Gemini / GPT / DeepSeek (+ BYOK).
+2. **Sabiá / Maritaca — incluído, com soberania de dados.** O catálogo passa a incluir o
+   provider **Maritaca.ai** e o **Sabiá-4**, incluindo modelos que rodam **100% no
+   Brasil** (os dados não saem do país) — diferencial forte de **LGPD / soberania de
+   dados** para o pequeno negócio. **Destacar no site** (strip de modelos, meta, FAQ
+   "meus dados ficam no Brasil?"). ⚠️ Tarefa de config: garantir os deployments da
+   Maritaca no `litellm-proxy/config.yaml` (e a margem no `agent-billing`, já que LLM
+   não é seedado — §7.7).
 3. **Plan mode existe.** É o **`write_todos` com um prompt adequado** (§3.21) — pode ser
    anunciado como planejamento de tarefas em vários passos.
 4. **Handoff é MVP.** A transferência para humano é a **versão simples/MVP**: funciona
@@ -471,8 +479,9 @@ O Agente **inicia** conversas, não só responde:
   CTA: testar grátis 14 dias (sem cartão) / assinar por R$25.
 - **Prova rápida (strip):** atende por **chat, voz e WhatsApp**, escolhe o modelo mais
   barato que resolve, e passa para uma pessoa quando precisa.
-- **Strip de modelos:** Claude, Gemini, GPT e DeepSeek (+ BYOK) — **sem Sabiá** por ora
-  (§7.2). O gancho é "vários modelos, escolha automática do mais barato que resolve".
+- **Strip de modelos:** Sabiá-4 (Maritaca) + Claude, Gemini, GPT e DeepSeek (+ BYOK). O
+  gancho é "vários modelos, escolha automática do mais barato que resolve" — com o
+  **Sabiá rodando 100% no Brasil** (soberania de dados) como diferencial (§7.2).
 
 **Blocos de capacidade na home (os 6 mais fortes e verdadeiros):**
 
@@ -500,5 +509,6 @@ O Agente **inicia** conversas, não só responde:
 - `/preco` — plano, créditos, trial, cost cap.
 
 **Diferenciais para enfatizar (verdadeiros e raros no segmento):** roteamento
-automático de custo, BYOK multi-provider, MCP com OAuth 2.1 real, handoff de **voz**
-ao vivo, e o onboarding no-code conversando com o `aura`.
+automático de custo, **IA que roda 100% no Brasil** (Sabiá-4/Maritaca — soberania de
+dados/LGPD), BYOK multi-provider, MCP com OAuth 2.1 real, handoff de **voz** ao vivo, e o
+onboarding no-code conversando com o `aura`.
