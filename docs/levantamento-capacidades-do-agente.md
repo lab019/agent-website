@@ -190,13 +190,15 @@ organização (`org_id`), com modos `standalone` (single-tenant) e `oidc`
     Fable 5, só escala ao topo nas mensagens mais difíceis.
   - Dentro de um tier, `cost-based-routing` pega o deployment mais barato disponível;
     há retries e **fallbacks cross-provider**.
-- **Provider brasileiro (Maritaca.ai):** o catálogo inclui o provider **Maritaca.ai** com
-  **todos os seus modelos** (Sabiá-4 e família), **incluindo os que rodam em
-  infraestrutura 100% brasileira** — os dados não saem do país (forte ângulo de
-  **soberania de dados / LGPD** para o público-alvo). Selecionável por especialista ou
-  fixado pelo cliente. ⚠️ Config: o owner adicionou o provider Maritaca.ai; **confirmar os
-  deployments no `litellm-proxy/config.yaml` do ambiente** — não aparece neste checkout
-  local do `agent-runtime` (provável branch/ambiente separado).
+- **Provider brasileiro (Maritaca.ai) — CONFIRMADO no config.** O
+  `litellm-proxy/config.yaml` do `agent-runtime` já traz os deployments Maritaca:
+  `sabia-4`, `sabia-4-thinking`, `sabiazinho-4` e as variantes **`-br-sp`**
+  (`sabia-4-br-sp`, `sabia-4-thinking-br-sp`, `sabiazinho-4-br-sp`), que — pelo próprio
+  comentário do config — **"fazem inferência 100% em território nacional"** (~30% mais
+  caras). Roteado via handler OpenAI-compatible (`api_base: https://chat.maritaca.ai/api`,
+  `MARITALK_API_KEY`), com `model_info.id = maritalk/<id>` para agrupar como "Maritaca" e
+  precificar via `llm/custom_model_prices.py` (registrado no startup — billing coberto).
+  Forte ângulo de **soberania de dados / LGPD** para o público-alvo.
 - **Exposto na UI:** dropdown de modelo (grupos "Plataforma" e "BYOK"), perfis
   roteados marcados **"· roteado"**, e na tela de billing o **modelo real que rodou**
   aparece junto do alias do perfil (`agent-web` `InputBar.tsx`, `BillingScreen.tsx`).
@@ -448,13 +450,12 @@ O Agente **inicia** conversas, não só responde:
 1. **Preço — R$25/mês vira crédito.** A assinatura de **R$25/mês se converte em créditos
    de uso** na plataforma. É o número oficial do site. Falta só corrigir o rótulo
    **"R$ 50"** ainda hardcoded no `agent-web` (§4).
-2. **Maritaca.ai — incluído como provider, com soberania de dados.** O catálogo passa a
-   incluir o provider **Maritaca.ai** e **todos os seus modelos** (Sabiá-4 e família),
-   **incluindo os que rodam em infraestrutura 100% brasileira** (os dados não saem do
-   país) — diferencial forte de **LGPD / soberania de dados** para o pequeno negócio.
-   **Destacar no site** (strip de modelos, meta, FAQ "meus dados ficam no Brasil?"). ⚠️
-   Config: confirmar os deployments da Maritaca no `litellm-proxy/config.yaml` do ambiente
-   (não visível neste checkout) e a margem no `agent-billing` (LLM não é seedado — §7.7).
+2. **Maritaca.ai — incluído e confirmado no config, com soberania de dados.** O
+   `litellm-proxy/config.yaml` já traz `sabia-4`, `sabia-4-thinking`, `sabiazinho-4` e as
+   variantes **`-br-sp`** que **rodam 100% em território nacional** (infraestrutura
+   brasileira) — diferencial forte de **LGPD / soberania de dados**. Preço registrado via
+   `llm/custom_model_prices.py` no startup (billing coberto). **Destacado no site** (strip,
+   meta, FAQ "meus dados ficam no Brasil?", página `/modelos`). ✅ Sem pendência de config.
 3. **Plan mode existe.** É o **`write_todos` com um prompt adequado** (§3.21) — pode ser
    anunciado como planejamento de tarefas em vários passos.
 4. **Handoff é MVP.** A transferência para humano é a **versão simples/MVP**: funciona
