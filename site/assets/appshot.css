@@ -250,3 +250,13 @@
 .appshot .as-row .as-rbtn { margin-left: auto; font-size: 12px; font-weight: 600; color: #fff; background: var(--brand); padding: 6px 12px; border-radius: 999px; flex: none; }
 .appshot .as-row .as-rbtn.ghost { background: transparent; color: var(--brand-ink); border: 1px solid var(--border); }
 .appshot .as-tab-live { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--support-ink); font-weight: 700; }
+
+/* ---------- Aprovação de ação (HITL) ---------- */
+.appshot .as-approve { display: flex; gap: 8px; margin-top: 12px; }
+.appshot .as-abtn {
+  flex: 1; text-align: center; font-size: 12.5px; font-weight: 600;
+  padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);
+}
+.appshot .as-abtn.approve { background: var(--brand); color: #fff; border-color: transparent; }
+.appshot .as-abtn.edit { background: var(--surface); color: var(--ink-2); }
+.appshot .as-abtn.reject { background: var(--surface); color: #e03131; border-color: color-mix(in srgb, #e03131 30%, var(--border)); }
