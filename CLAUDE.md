@@ -5,9 +5,9 @@ Orientações para o Claude Code neste repositório.
 ## Projeto
 
 `agent-website` — landing page pública da LAB019 (lab019.ai), voltada ao
-pequeno empreendedor (linguagem de negócio, pt-BR). Site estático puro —
-HTML/CSS em `site/` — publicado no GitHub Pages via GitHub Actions a cada
-push na `main` (sem build, sem framework).
+pequeno empreendedor (linguagem de negócio, pt-BR). Site estático — HTML +
+CSS + um pouco de JS em `site/` — publicado no GitHub Pages via GitHub
+Actions a cada push na `main` (sem build, sem framework).
 
 Nota: não confundir com o `lab019-website` (site institucional Hugo +
 Tailwind) — são repos e deploys distintos.
@@ -21,8 +21,11 @@ como está:
 - Deploy: automático no push para `main` (`.github/workflows/deploy.yml`);
   também acionável via workflow_dispatch.
 
-Gate de qualidade aqui: HTML/CSS válidos, links e assets funcionando no
-preview local e o deploy do Pages verde.
+Como não há lint nem suíte de testes, o equivalente aqui ao "lint e testes
+verdes" e ao "toda mudança vem com teste" dos padrões da plataforma é:
+HTML/CSS válidos, links e assets funcionando no preview local e o deploy do
+Pages verde — mudanças se provam no preview, sem inventar harness de teste
+para o site estático.
 
 ## Padrões da plataforma LAB019
 
