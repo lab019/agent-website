@@ -26,6 +26,7 @@
 <script>document.documentElement.classList.add("js");</script>
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 <link rel="stylesheet" href="assets/styles.css" />
+<link rel="stylesheet" href="assets/appshot.css" />
 </head>
 <body>
 
@@ -170,6 +171,43 @@
           <span class="model-chip">🔑 BYOK (sua própria chave)</span>
           <span class="model-chip">⚡ Acesso via API</span>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MOCKUP: CHAT ===================== -->
+  <section class="section section-sm">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Veja por dentro</span>
+        <h2>Raciocínio e ferramentas à vista</h2>
+        <p>Você acompanha o que o Agente pensou e fez em cada resposta — e quanto custou, em reais.</p>
+      </div>
+      <div class="reveal" style="max-width:600px;margin:0 auto;">
+        <div class="appshot">
+          <div class="as-chrome">
+            <span class="as-dots"><i></i><i></i><i></i></span>
+            <span class="as-url">app.lab019.com</span>
+          </div>
+          <div class="as-screen">
+            <div class="as-chat">
+              <div class="as-msg as-user">Resuma os pedidos de hoje</div>
+              <div class="as-turn">
+                <div class="as-node as-reason">
+                  <div class="as-node-head">💭 Pensando <span class="as-muted">210 tokens</span></div>
+                  <div class="as-reason-body">Vou buscar os pedidos de hoje, somar o total e calcular o ticket médio…</div>
+                </div>
+                <div class="as-node as-tool">
+                  <div class="as-node-head">🔧 buscar_pedidos <span class="as-ok">✓ 0,4s</span></div>
+                </div>
+                <div class="as-answer">Hoje você teve <strong>12 pedidos</strong>, somando <strong>R$ 574,80</strong>. O ticket médio ficou em R$ 47,90. 🛵</div>
+                <div class="as-meta"><span>sabia-4-br-sp</span><span class="as-tag">· roteado</span><span>↑ 1,2k</span><span>↓ 340</span><span>💭 210</span><span>⚡ 0,6s</span></div>
+              </div>
+              <div class="as-statusbar"><span class="on">● pronto</span><b>sabia-4-br-sp</b><span>think:medium</span><span>[████░░░░] 32% ctx</span><span>4 turnos</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="appshot-cap">Ilustração da conversa — a interface real pode variar.</p>
       </div>
     </div>
   </section>
