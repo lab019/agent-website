@@ -488,6 +488,75 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 .footer-legal a:hover { text-decoration: underline; }
 .footer-bottom { margin-top: 16px; padding-top: 18px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; color: var(--ink-3); font-size: 13.5px; }
 
+/* ---------- Páginas de detalhe ---------- */
+/* Link "saiba mais" nos cards da home */
+.feature .more {
+  display: inline-block; margin-top: 14px;
+  color: var(--brand-ink); font-weight: 600; font-size: 14px;
+}
+.feature .more:hover { text-decoration: underline; }
+
+/* Migalha de volta para a home */
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 14px; font-weight: 500; color: var(--ink-3);
+}
+.back-link:hover { color: var(--brand-ink); }
+
+/* Hero das páginas de detalhe (centralizado) */
+.page-hero { position: relative; padding: 40px 0 8px; overflow: hidden; }
+.page-hero::before {
+  content: "";
+  position: absolute; inset: -30% -10% auto -10%; height: 460px;
+  background:
+    radial-gradient(760px 360px at 22% 0%, rgba(25, 113, 194, 0.14), transparent 60%),
+    radial-gradient(560px 300px at 88% 4%, rgba(18, 184, 134, 0.10), transparent 60%);
+  z-index: -1;
+}
+.page-hero .inner { max-width: 780px; margin: 0 auto; text-align: center; }
+.page-hero .eyebrow { justify-content: center; }
+.page-hero h1 { font-size: clamp(30px, 5vw, 50px); margin: 16px 0 18px; }
+.page-hero h1 .hl { color: var(--brand-ink); }
+.page-hero .lead { font-size: clamp(17px, 2.2vw, 20px); color: var(--ink-2); max-width: 660px; margin: 0 auto 26px; }
+.page-hero .hero-actions { justify-content: center; }
+
+/* Callout destacado (ex.: soberania de dados) */
+.callout {
+  background: var(--brand-soft);
+  border: 1px solid color-mix(in srgb, var(--brand) 28%, var(--border));
+  border-radius: var(--radius); padding: 30px 30px;
+  display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: center;
+}
+.callout.br { background: color-mix(in srgb, var(--support) 9%, var(--surface)); border-color: color-mix(in srgb, var(--support) 38%, var(--border)); }
+.callout .ico-lg { font-size: 40px; line-height: 1; }
+.callout h3 { font-size: 21px; margin-bottom: 8px; }
+.callout p { margin: 0; color: var(--ink-2); font-size: 15.5px; }
+@media (max-width: 620px) { .callout { grid-template-columns: 1fr; gap: 14px; padding: 24px 22px; } }
+
+/* Duas colunas (ex.: QR vs Cloud API) */
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: stretch; }
+@media (max-width: 880px) { .split { grid-template-columns: 1fr; } }
+.split .card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 30px 28px; box-shadow: var(--shadow-sm);
+  display: flex; flex-direction: column;
+}
+.split .card .tag {
+  align-self: flex-start; font-size: 12px; font-weight: 700; letter-spacing: .03em;
+  text-transform: uppercase; padding: 4px 11px; border-radius: 999px;
+  background: var(--brand-soft); color: var(--brand-ink); margin-bottom: 14px;
+}
+.split .card .tag.b { background: var(--support-soft); color: var(--support-ink); }
+.split .card h3 { font-size: 20px; margin-bottom: 8px; }
+.split .card > p { color: var(--ink-2); font-size: 15px; margin: 0 0 16px; }
+.split .card ul { list-style: none; padding: 0; margin: 0 0 4px; display: flex; flex-direction: column; gap: 10px; }
+.split .card li { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; color: var(--ink-2); }
+.split .card li .ck { color: var(--support); flex: none; margin-top: 2px; }
+
+/* Prosa simples para blocos de texto de detalhe */
+.prose { max-width: 720px; margin: 0 auto; }
+.prose p { color: var(--ink-2); font-size: 16px; margin: 0 0 16px; }
+
 /* ---------- util ---------- */
 .center { text-align: center; }
 .mt-24 { margin-top: 24px; }
