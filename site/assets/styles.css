@@ -567,3 +567,49 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   .js .reveal { opacity: 1; transform: none; transition: none; }
 }
+
+/* ---------- Banner de consentimento (cookies / LGPD) ---------- */
+/* Injetado por assets/analytics.js só quando não há escolha registrada. */
+.consent-banner {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 100;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  animation: consent-in 0.35s ease both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .consent-banner { animation: none; }
+}
+@keyframes consent-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+.consent-inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.consent-text {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 14.5px;
+  line-height: 1.55;
+  flex: 1 1 320px;
+}
+.consent-text a { color: var(--brand-ink); text-decoration: underline; }
+.consent-actions { display: flex; gap: 10px; flex: 0 0 auto; }
+.consent-actions .btn { font-size: 15px; padding: 10px 20px; }
+@media (max-width: 560px) {
+  .consent-actions { width: 100%; }
+  .consent-actions .btn { flex: 1; }
+}

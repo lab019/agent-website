@@ -1,0 +1,147 @@
+/*
+ * Google Tag Manager + consentimento (LGPD) para lab019.ai
+ * -----------------------------------------------------------------------------
+ * Carrega o GTM (que por sua vez dispara o GA4) SOMENTE depois de consentimento
+ * explícito do visitante. Enquanto não há escolha, nada da Google é carregado —
+ * cookies de análise/marketing são não essenciais e dependem de opt-in.
+ *
+ * Um único arquivo compartilhado por todas as páginas do site, para o ID do
+ * contêiner e a lógica de consentimento viverem em um só lugar.
+ *
+ * Configuração: substitua GTM_ID pelo ID real do contêiner (formato GTM-XXXXXXX).
+ * O GA4 é adicionado como tag DENTRO do GTM (interface web), não aqui no código.
+ * Enquanto GTM_ID estiver com o placeholder, este script é inerte: não carrega
+ * nada e não mostra o banner — deploy seguro até o ID real ser definido.
+ */
+;(function () {
+  'use strict'
+
+  // === Configuração ===
+  var PLACEHOLDER = 'GTM-XXXXXXX'
+  var GTM_ID = PLACEHOLDER // TODO: trocar pelo ID real do contêiner do GTM
+  var STORAGE_KEY = 'lab019-consent' // valor: 'granted' | 'denied'
+
+  // Sem ID configurado → recurso inerte (nada carrega, banner não aparece).
+  // (O placeholder casa com o formato geral, então é barrado explicitamente.)
+  if (GTM_ID === PLACEHOLDER || !/^GTM-[A-Z0-9]+$/.test(GTM_ID)) return
+
+  var isEn = (document.documentElement.lang || '').toLowerCase().indexOf('en') === 0
+  var dnt =
+    navigator.doNotTrack === '1' ||
+    window.doNotTrack === '1' ||
+    navigator.msDoNotTrack === '1'
+
+  window.dataLayer = window.dataLayer || []
+  function gtag() {
+    window.dataLayer.push(arguments)
+  }
+
+  // Consent Mode v2 — tudo negado por padrão até o visitante decidir.
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    wait_for_update: 500,
+  })
+
+  function loadGtm() {
+    if (window.__lab019GtmLoaded) return
+    window.__lab019GtmLoaded = true
+    window.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' })
+    var s = document.createElement('script')
+    s.async = true
+    s.src = 'https://www.googletagmanager.com/gtm.js?id=' + encodeURIComponent(GTM_ID)
+    document.head.appendChild(s)
+  }
+
+  function grant() {
+    try {
+      localStorage.setItem(STORAGE_KEY, 'granted')
+    } catch (e) {}
+    gtag('consent', 'update', {
+      ad_storage: 'granted',
+      ad_user_data: 'granted',
+      ad_personalization: 'granted',
+      analytics_storage: 'granted',
+    })
+    loadGtm()
+  }
+
+  function deny() {
+    try {
+      localStorage.setItem(STORAGE_KEY, 'denied')
+    } catch (e) {}
+    // Permanece tudo negado; nada da Google é carregado.
+  }
+
+  var stored = null
+  try {
+    stored = localStorage.getItem(STORAGE_KEY)
+  } catch (e) {}
+
+  // Escolha explícita anterior vence qualquer heurística (inclusive DNT).
+  if (stored === 'granted') return grant()
+  if (stored === 'denied') return
+  // Sem escolha ainda: respeita Do Not Track como recusa silenciosa.
+  if (dnt) return deny()
+
+  // Sem escolha e sem DNT → mostra o banner quando o corpo existir.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', showBanner)
+  } else {
+    showBanner()
+  }
+
+  function showBanner() {
+    if (document.getElementById('lab019-consent')) return
+
+    var txt = isEn
+      ? 'We use analytics and marketing cookies to understand how the site is used and improve your experience. It’s your call.'
+      : 'Usamos cookies de análise e marketing para entender como o site é usado e melhorar sua experiência. Você decide.'
+    var privHref = isEn ? '/en/privacy/' : '/privacidade/'
+    var privLabel = isEn ? 'Privacy Policy' : 'Política de Privacidade'
+    var accept = isEn ? 'Accept' : 'Aceitar'
+    var reject = isEn ? 'Decline' : 'Recusar'
+    var dialogLabel = isEn ? 'Cookie notice' : 'Aviso de cookies'
+
+    var b = document.createElement('div')
+    b.id = 'lab019-consent'
+    b.className = 'consent-banner'
+    b.setAttribute('role', 'dialog')
+    b.setAttribute('aria-live', 'polite')
+    b.setAttribute('aria-label', dialogLabel)
+    b.innerHTML =
+      '<div class="consent-inner">' +
+      '<p class="consent-text">' +
+      txt +
+      ' <a href="' +
+      privHref +
+      '">' +
+      privLabel +
+      '</a>.</p>' +
+      '<div class="consent-actions">' +
+      '<button type="button" class="btn btn-ghost consent-deny">' +
+      reject +
+      '</button>' +
+      '<button type="button" class="btn btn-primary consent-accept">' +
+      accept +
+      '</button>' +
+      '</div>' +
+      '</div>'
+
+    document.body.appendChild(b)
+
+    function dismiss() {
+      if (b.parentNode) b.parentNode.removeChild(b)
+    }
+    b.querySelector('.consent-accept').addEventListener('click', function () {
+      grant()
+      dismiss()
+    })
+    b.querySelector('.consent-deny').addEventListener('click', function () {
+      deny()
+      dismiss()
+    })
+  }
+})()
