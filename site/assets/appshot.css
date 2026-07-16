@@ -158,3 +158,95 @@
 }
 .appshot .as-statusbar .on { color: var(--support-ink); }
 .appshot .as-statusbar b { color: var(--ink-2); font-weight: 600; }
+
+/* ---------- Formulário (editor de especialista) ---------- */
+.appshot .as-textarea {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 9px;
+  padding: 10px 12px; color: var(--ink-2); font-size: 12.5px; line-height: 1.55; min-height: 66px;
+}
+.appshot .as-input {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 9px;
+  padding: 9px 12px; color: var(--ink); font-size: 13px;
+}
+.appshot .as-input .as-suffix { margin-left: auto; color: var(--ink-3); font-size: 12px; }
+.appshot .as-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.appshot .as-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; padding: 4px 9px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--bg-soft); color: var(--ink-2);
+}
+.appshot .as-chip.on { border-color: color-mix(in srgb, var(--brand) 45%, var(--border)); background: var(--brand-soft); color: var(--brand-ink); }
+
+/* ---------- QR (conectar WhatsApp) ---------- */
+.appshot .as-qr {
+  width: 152px; height: 152px; margin: 2px auto 0; position: relative;
+  background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 12px;
+}
+.appshot .as-qr-matrix {
+  position: absolute; inset: 12px; border-radius: 2px;
+  background: repeating-conic-gradient(#0f1720 0 25%, #ffffff 0 50%) 0 0 / 11px 11px;
+  opacity: .92;
+}
+.appshot .as-qr-eye {
+  position: absolute; width: 34px; height: 34px; background: #fff;
+  border: 6px solid #0f1720; border-radius: 6px; z-index: 1;
+}
+.appshot .as-qr-eye::after { content: ""; position: absolute; inset: 5px; background: #0f1720; border-radius: 2px; }
+.appshot .as-qr-eye.tl { top: 10px; left: 10px; }
+.appshot .as-qr-eye.tr { top: 10px; right: 10px; }
+.appshot .as-qr-eye.bl { bottom: 10px; left: 10px; }
+
+/* ---------- Badge "voz" ---------- */
+.appshot .as-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+  color: var(--brand-ink); background: var(--brand-soft); border-radius: 999px; padding: 1px 7px; margin-bottom: 5px;
+}
+.appshot .as-user .as-badge { color: #fff; background: rgba(255,255,255,.22); }
+
+/* ---------- Barra de chamada (voz) ---------- */
+.appshot .as-callbar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface);
+}
+.appshot .as-callbar .as-live { display: flex; align-items: center; gap: 7px; color: var(--support-ink); font-size: 12.5px; font-weight: 600; }
+.appshot .as-callbar .as-pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--support); }
+.appshot .as-callbar .as-ctrls { margin-left: auto; display: flex; gap: 8px; }
+.appshot .as-callbar .as-ctrl { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-sunken); font-size: 13px; }
+.appshot .as-callbar .as-ctrl.hang { background: #ff6b6b; }
+
+/* ---------- Tabela (billing) ---------- */
+.appshot .as-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.appshot .as-table th {
+  text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .04em;
+  color: var(--ink-3); font-weight: 700; padding: 8px 10px; border-bottom: 1px solid var(--border);
+}
+.appshot .as-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); color: var(--ink-2); }
+.appshot .as-table td.num { text-align: right; font-family: ui-monospace, Menlo, Consolas, monospace; color: var(--ink); }
+.appshot .as-table tr:last-child td { border-bottom: none; }
+
+/* ---------- Saldo / créditos ---------- */
+.appshot .as-balance { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+.appshot .as-balance .amt { font-size: 30px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); }
+.appshot .as-balance .cur { color: var(--ink-3); font-size: 13px; }
+.appshot .as-split { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+.appshot .as-pill {
+  font-size: 11.5px; padding: 4px 10px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--bg-soft); color: var(--ink-2);
+}
+.appshot .as-pill .dot2 { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+
+/* ---------- Linhas (mesa de atendimento) ---------- */
+.appshot .as-rows { display: flex; flex-direction: column; gap: 8px; }
+.appshot .as-row {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  border: 1px solid var(--border); border-radius: 10px; background: var(--surface);
+}
+.appshot .as-row .as-av { width: 30px; height: 30px; border-radius: 8px; background: var(--bg-sunken); display: flex; align-items: center; justify-content: center; font-size: 14px; flex: none; }
+.appshot .as-row .as-rtx { min-width: 0; }
+.appshot .as-row .as-rtitle { font-size: 13px; color: var(--ink); font-weight: 600; }
+.appshot .as-row .as-rsub { font-size: 11.5px; color: var(--ink-3); }
+.appshot .as-row .as-rbtn { margin-left: auto; font-size: 12px; font-weight: 600; color: #fff; background: var(--brand); padding: 6px 12px; border-radius: 999px; flex: none; }
+.appshot .as-row .as-rbtn.ghost { background: transparent; color: var(--brand-ink); border: 1px solid var(--border); }
+.appshot .as-tab-live { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--support-ink); font-weight: 700; }
