@@ -30,11 +30,12 @@ jobs:
 
       # Sem nenhuma tag v* no repo, o github-tag-action ancora num v0.0.0
       # sintético apontando para o HEAD e analisa 0 commits — nunca releasaria.
-      # A primeira execução cria a âncora v0.1.0 (alinhada à versão dos
-      # manifests); os fix/feat seguintes bumpam a partir dela.
+      # A primeira execução cria a âncora v0.1.0 (ponto de partida do
+      # versionamento; nos repos com manifest, alinhada a ele); os fix/feat
+      # seguintes bumpam a partir dela.
       - name: Bootstrap da tag âncora (só na primeira execução)
         run: |
-          if [ -z "$(git tag -l 'v*')" ]; then
+          if [ -z "$(git ls-remote --tags origin 'refs/tags/v*')" ]; then
             git tag v0.1.0
             git push origin v0.1.0
             echo "tag âncora v0.1.0 criada — releases passam a valer do próximo fix/feat"
