@@ -1,23 +1,35 @@
 # agent-website
 
-Landing page pública da **LAB019** — a plataforma de agentes de IA para o
-pequeno empreendedor. Site estático, hospedado no **GitHub Pages**.
+Landing page pública da **LAB019** — o Agente de IA para o pequeno negócio.
+Site estático, hospedado no **GitHub Pages**.
 
 - **Domínios:** [lab019.com](https://lab019.com) e [lab019.ai](https://lab019.ai)
 - **Público-alvo:** pequeno empreendedor (linguagem de negócio, pt-BR)
-- **Proposta:** chat + voz com vários modelos de IA (Sabiá, Claude, Gemini, GPT),
-  BYOK e acesso via web ou API. Plano de R$25/mês com R$25 em créditos inclusos.
+- **Proposta:** um Agente que atende por **chat, voz e WhatsApp**, com vários
+  modelos de IA (o brasileiro **Sabiá-4** da Maritaca — com opção de
+  infraestrutura 100% no Brasil —, Claude, Gemini, GPT e DeepSeek), escolha
+  automática do modelo, BYOK e acesso via web ou API. Plano de **R$25/mês que
+  viram créditos**, com 14 dias grátis sem cartão.
 
 ## Estrutura
 
 ```
 site/
-├── index.html          # página "Em breve" (ativa enquanto o serviço não lança)
-├── index-full.html     # landing page completa (backup, restaurar no lançamento)
+├── index.html          # home (landing completa)
 ├── 404.html            # página de erro
 ├── assets/
 │   ├── styles.css      # design system + estilos
+│   ├── legal.css       # estilos das páginas legais
 │   └── favicon.svg
+├── modelos/            # detalhe: modelos e escolha inteligente
+├── whatsapp/           # detalhe: canal WhatsApp (QR ou Cloud API)
+├── voz/                # detalhe: voz e telefone
+├── especialistas/      # detalhe: especialistas, sub-agentes e skills
+├── integracoes/        # detalhe: MCP e ferramentas
+├── handoff/            # detalhe: atendimento humano
+├── preco/              # detalhe: preço e créditos
+├── privacidade/  · termos/          # legais (PT)
+├── en/privacy/   · en/terms/        # legais (EN)
 ├── CNAME               # domínio custom do GitHub Pages (lab019.ai)
 ├── robots.txt
 └── sitemap.xml
@@ -25,24 +37,11 @@ site/
 └── deploy.yml          # publica site/ no GitHub Pages a cada push na main
 ```
 
-## Página "Em breve" (pré-lançamento)
+Cada página de detalhe é um `index.html` numa subpasta (URLs limpas: `/modelos/`,
+`/whatsapp/`, …). Todas reaproveitam o `assets/styles.css`.
 
-Enquanto o serviço não é lançado, o `site/index.html` mostra uma página
-**"Estamos construindo algo novo"** (aguarde o lançamento). A landing page
-completa fica guardada em `site/index-full.html` — nada foi perdido.
-
-**No lançamento**, para voltar o site completo no ar, restaure a landing e
-faça o deploy:
-
-```bash
-cp site/index-full.html site/index.html   # volta a landing completa
-rm site/index-full.html                    # (opcional) remove o backup
-```
-
-Depois faça commit e merge na `main` — o deploy publica automaticamente.
-
-O site é 100% estático (HTML + CSS + um pouco de JS), sem etapa de build.
-Fonte carregada via Google Fonts (Inter).
+O site é 100% estático (HTML + CSS + um pouco de JS), sem etapa de build. Fonte
+carregada via Google Fonts (Inter).
 
 ## Desenvolvimento local
 
@@ -53,6 +52,9 @@ cd site
 python3 -m http.server 8080
 # abra http://localhost:8080
 ```
+
+Como não há lint nem suíte de testes, o gate de qualidade é: HTML/CSS válidos,
+links e assets funcionando no preview, e o deploy do Pages verde.
 
 ## Publicação
 
@@ -71,7 +73,11 @@ O deploy é automático: ao dar merge na branch `main`, o workflow
 
 ## Conteúdo
 
-O copy é voltado a negócio (não técnico) e descreve recursos reais da
-plataforma: chat com streaming/raciocínio, voz por WebRTC em pt-BR,
-roteamento entre modelos, composição de agentes/sub-agentes e ferramentas via
-MCP, BYOK, teto de custo por conversa e acesso via web ou API.
+O copy é voltado a negócio (não técnico) e descreve recursos reais do Agente:
+atendimento por chat/voz/WhatsApp, roteamento automático entre modelos (com
+opção de rodar 100% no Brasil via Sabiá-4/Maritaca), especialistas e
+sub-agentes, skills, integrações e ferramentas via MCP, BYOK, handoff para
+atendente humano (MVP), teto de custo por conversa e acesso via web ou API.
+
+O levantamento completo das capacidades do Agente (base para a copy) está em
+[`docs/levantamento-capacidades-do-agente.md`](docs/levantamento-capacidades-do-agente.md).
