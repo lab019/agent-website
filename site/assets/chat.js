@@ -896,6 +896,14 @@
         // (espelha o retry do doSend).
         if (err && err.name === 'SessionExpiredError' && allowRetry && epoch === voiceEpoch) {
           resetSession()
+          // A sessão morta era compartilhada com o texto: um turno de texto em
+          // andamento nunca mais receberia eventos pela assinatura abortada —
+          // encerra-o com o mesmo erro amigável do caminho onExpired, em vez
+          // de deixá-lo pendurado até o watchdog.
+          if (currentTurn) {
+            renderError(currentTurn.msg, new SessionExpiredError())
+            finishTurn()
+          }
           return attemptVoice(lk, epoch, false)
         }
         throw err
@@ -910,6 +918,10 @@
     // oculto no DOM (elemento por track evita a corrida pause()/play() quando o
     // agente republica — mesmo racional do VoiceConnection de referência).
     room.on(lk.RoomEvent.TrackSubscribed, function (track, pub) {
+      // Guarda de época: uma track que chega DEPOIS do teardown (hangup no
+      // meio de um republish do agente) não pode anexar um <audio> órfão que
+      // ninguém mais consegue parar — nem vazar para uma chamada seguinte.
+      if (epoch !== voiceEpoch) return
       if (track.kind !== lk.Track.Kind.Audio) return
       if (voiceAudioEls[pub.trackSid]) return
       var el = track.attach()
@@ -932,6 +944,10 @@
     })
 
     room.on(lk.RoomEvent.TrackUnsubscribed, function (track, pub) {
+      // Mesma guarda do TrackSubscribed: pós-teardown o mapa já foi limpo pelo
+      // próprio teardownVoice; um unsubscribe atrasado não deve mexer no
+      // estado (possivelmente de uma chamada nova).
+      if (epoch !== voiceEpoch) return
       if (track.kind !== lk.Track.Kind.Audio) return
       var el = voiceAudioEls[pub.trackSid]
       if (!el) return
@@ -965,16 +981,28 @@
     return room
       .connect(vs.livekit_url, vs.livekit_token)
       .then(function () {
+        // Superada durante o connect (hangup/erro no meio do caminho): NÃO
+        // reabilita o microfone de uma chamada que o usuário já encerrou —
+        // só derruba a sala e sai.
+        if (epoch !== voiceEpoch) {
+          try {
+            room.disconnect()
+          } catch (e) {
+            /* já caiu */
+          }
+          return null
+        }
         voiceSelf = room.localParticipant.identity
-        return room.localParticipant.setMicrophoneEnabled(true)
-      })
-      .then(function () {
-        // Destrava o autoplay ainda com o gesto do clique; se falhar, o botão
-        // "Ativar som" cobre.
-        return room.startAudio().then(null, function () {})
-      })
-      .then(function () {
-        return room
+        return room.localParticipant
+          .setMicrophoneEnabled(true)
+          .then(function () {
+            // Destrava o autoplay ainda com o gesto do clique; se falhar, o
+            // botão "Ativar som" cobre.
+            return room.startAudio().then(null, function () {})
+          })
+          .then(function () {
+            return room
+          })
       })
   }
 
