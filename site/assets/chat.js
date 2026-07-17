@@ -63,6 +63,11 @@
   var RECONNECT_DELAY_MS = 1500
   // Watchdog absoluto por turno: se um `done` se perde, reabilita o composer.
   var TURN_WATCHDOG_MS = 180 * 1000
+  // Intervalo do "drain" progressivo: os deltas recebidos são revelados aos
+  // poucos (efeito de digitação) em vez de aparecerem em bloco. Isso mantém a
+  // sensação de streaming mesmo quando o SSE chega com deltas coalescidos (ou
+  // bufferizado por um proxy/CDN na frente da API).
+  var DRAIN_TICK_MS = 22
 
   function randomId(prefix) {
     var c = window.crypto
@@ -372,7 +377,18 @@
     else if (msg.role === 'error') cls += ' error'
     else cls += ' bot'
     el.className = cls
-    el.textContent = msg.pending ? '…' : msg.text
+    if (msg.pending) {
+      // Três pontinhos ANIMADOS (markup estático, sem dado do usuário). Só
+      // (re)monta quando entra em "typing" — reaplicar a cada render reiniciaria
+      // a animação CSS.
+      if (el.getAttribute('data-typing') !== '1') {
+        el.setAttribute('data-typing', '1')
+        el.innerHTML = '<span class="lab019-typing" aria-label="digitando"><span></span><span></span><span></span></span>'
+      }
+    } else {
+      if (el.getAttribute('data-typing') === '1') el.removeAttribute('data-typing')
+      el.textContent = msg.text
+    }
   }
 
   // Reconciliação incremental: as mensagens só CRESCEM (append) e apenas a última
@@ -416,16 +432,61 @@
     // Um `done` se perdeu (turno pendurado): reabilita o composer para o
     // visitante tentar de novo, em vez de travar.
     if (!currentTurn) return
-    if (currentTurn.msg.pending) {
-      currentTurn.msg.pending = false
-      currentTurn.msg.text = 'A resposta demorou demais. Tente de novo.'
+    var t = currentTurn
+    if (t.buffer) {
+      // esvazia o que ainda não foi revelado pelo drain
+      t.msg.pending = false
+      t.msg.text += t.buffer
+      t.buffer = ''
+    }
+    if (t.msg.pending) {
+      t.msg.pending = false
+      t.msg.text = 'A resposta demorou demais. Tente de novo.'
     }
     render()
     finishTurn()
   }
 
+  // Revela o texto recebido aos poucos (efeito de digitação). Cada tick move um
+  // naco proporcional do buffer para a bolha; quando o buffer esvazia E o turno
+  // recebeu `done`, finaliza. Um único timer por turno.
+  function scheduleDrain() {
+    if (!currentTurn || currentTurn.drainTimer) return
+    currentTurn.drainTimer = setTimeout(drainTick, DRAIN_TICK_MS)
+  }
+
+  function drainTick() {
+    var t = currentTurn
+    if (!t) return
+    t.drainTimer = null
+    if (t.buffer.length > 0) {
+      // Naco proporcional (ceil(len/25), mín. 2): digita rápido e com ease-out,
+      // sem estourar em bloco nem arrastar demais em respostas longas.
+      var n = Math.max(2, Math.ceil(t.buffer.length / 25))
+      t.msg.pending = false
+      t.msg.text += t.buffer.slice(0, n)
+      t.buffer = t.buffer.slice(n)
+      render()
+    }
+    if (t.buffer.length > 0) {
+      t.drainTimer = setTimeout(drainTick, DRAIN_TICK_MS)
+      return
+    }
+    if (t.done) {
+      if (t.msg.pending) {
+        t.msg.pending = false
+        t.msg.text = 'Não recebi uma resposta. Tente de novo.'
+        render()
+      }
+      finishTurn()
+    }
+    // senão: buffer vazio mas sem `done` ainda — espera o próximo delta, que
+    // reinicia o drain via scheduleDrain().
+  }
+
   function finishTurn() {
     sending = false
+    if (currentTurn && currentTurn.drainTimer) clearTimeout(currentTurn.drainTimer)
     currentTurn = null
     // Aborta o POST em voo deste turno, se ainda houver. Sem isso, um turno
     // encerrado cedo (por um frame de erro/expiração antes do próprio 202) deixa
@@ -529,19 +590,17 @@
       if (!t || !t.messageId) return
       if (payload.messageId && t.messageId !== payload.messageId) return
       if (typeof payload.delta !== 'string') return
-      t.msg.pending = false
-      t.msg.text += payload.delta
-      render()
+      // Acumula no buffer; o drain revela aos poucos (efeito de digitação).
+      t.buffer += payload.delta
+      scheduleDrain()
     } else if (event === 'done') {
       var d = currentTurn
       if (!d || !d.messageId) return
       if (payload.messageId && d.messageId !== payload.messageId) return
-      if (d.msg.pending) {
-        d.msg.pending = false
-        d.msg.text = 'Não recebi uma resposta. Tente de novo.'
-      }
-      render()
-      finishTurn()
+      // Marca o fim e deixa o drain terminar de revelar o buffer; ele finaliza o
+      // turno quando esvaziar (drainTick).
+      d.done = true
+      scheduleDrain()
     } else if (event === 'error') {
       var e = currentTurn
       if (e) {
@@ -571,7 +630,7 @@
     messages.push(agent)
     render()
 
-    var turn = { msg: agent, messageId: null }
+    var turn = { msg: agent, messageId: null, buffer: '', done: false, drainTimer: null }
     currentTurn = turn
     armWatchdog()
     postCtl = new AbortController()

@@ -630,7 +630,22 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
   scroll-behavior: smooth;
 }
 /* "digitando…" e erro — estados que só existem no chat ao vivo. */
-.msg.typing { color: var(--ink-3); font-style: italic; }
+.msg.typing { color: var(--ink-3); }
+/* "digitando…" — três pontinhos animados (montados por assets/chat.js). */
+.lab019-typing { display: inline-flex; align-items: center; gap: 4px; padding: 2px 0; }
+.lab019-typing span {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3);
+  animation: lab019-typing 1.2s infinite ease-in-out;
+}
+.lab019-typing span:nth-child(2) { animation-delay: .15s; }
+.lab019-typing span:nth-child(3) { animation-delay: .3s; }
+@keyframes lab019-typing {
+  0%, 60%, 100% { transform: translateY(0); opacity: .35; }
+  30% { transform: translateY(-4px); opacity: .9; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lab019-typing span { animation: none; opacity: .5; }
+}
 .msg.error {
   align-self: flex-start;
   background: color-mix(in srgb, #e03131 12%, var(--surface));
