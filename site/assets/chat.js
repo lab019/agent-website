@@ -737,6 +737,11 @@
   // do texto, LiveKit no browser, transcrições no mesmo feed. O SDK só é
   // carregado (CDN, versão pinada) no primeiro clique no microfone.
   var LIVEKIT_CDN = 'https://cdn.jsdelivr.net/npm/livekit-client@2.20.0/dist/livekit-client.umd.min.js'
+  // SRI do bundle pinado acima (sha384 do arquivo publicado): se o CDN servir
+  // qualquer byte diferente, o browser recusa executar — falha fechada com a
+  // mensagem amigável do onerror, nunca JS estranho na origem da página.
+  // Recalcular ao trocar a versão: curl -s <LIVEKIT_CDN> | openssl dgst -sha384 -binary | openssl base64 -A
+  var LIVEKIT_SRI = 'sha384-s/eoT8qpr81c6c9MG5V7GA5xi5IzfEUQLyk3liFfzu9seBzZ3beFVjsD3pXTRmUc'
 
   var voiceEnabled = false // GET /v1/widget/config → channels inclui "voice"
   var micButtons = [] // botões 🎙️ (um por superfície), exibidos pelo config
@@ -781,6 +786,8 @@
       var s = document.createElement('script')
       s.src = LIVEKIT_CDN
       s.async = true
+      s.integrity = LIVEKIT_SRI
+      s.crossOrigin = 'anonymous'
       s.onload = function () {
         if (window.LivekitClient) resolve(window.LivekitClient)
         else reject(new Error('O componente de voz carregou incompleto. Recarregue a página.'))
