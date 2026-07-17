@@ -533,16 +533,23 @@
       function (entries) {
         var e = entries[0]
         if (!e) return
-        // "Visível" = uma fração relevante do card ainda na tela.
-        var heroVisible = e.isIntersecting && e.intersectionRatio >= 0.35
-        if (heroVisible) {
+        // A bolinha só aparece quando o card já ROLOU PARA CIMA e saiu da tela —
+        // não quando ele ainda está abaixo da dobra (no mobile o card fica embaixo
+        // do texto do hero) nem quando um card mais alto que a viewport está sendo
+        // lido. Por isso o gatilho é a posição (borda inferior acima do topo da
+        // viewport), e não uma fração de área — que, num card alto, nunca chegaria
+        // ao limiar mesmo com o card quase todo visível.
+        var rootTop = e.rootBounds ? e.rootBounds.top : 0
+        var scrolledAbove = !e.isIntersecting && e.boundingClientRect.bottom <= rootTop
+        if (scrolledAbove) {
+          floating.fab.classList.add('is-visible')
+        } else {
           floating.fab.classList.remove('is-visible')
           floating.close()
-        } else {
-          floating.fab.classList.add('is-visible')
         }
       },
-      { threshold: [0, 0.35, 0.7] }
+      // Só o cruzamento em 0 (entrar/sair da tela) importa para essa decisão.
+      { threshold: [0] }
     )
     io.observe(heroCard)
   }
