@@ -646,6 +646,13 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   .lab019-typing span { animation: none; opacity: .5; }
 }
+/* Linha discreta de métricas sob a resposta do agente (TTFT · total · tokens · modelo). */
+.msg-meta {
+  display: block; margin-top: 7px; padding-top: 6px;
+  border-top: 1px solid var(--border);
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 11px; line-height: 1.4; color: var(--ink-3);
+}
 .msg.error {
   align-self: flex-start;
   background: color-mix(in srgb, #e03131 12%, var(--surface));
