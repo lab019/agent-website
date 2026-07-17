@@ -703,6 +703,10 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
   background: color-mix(in srgb, var(--brand) 8%, var(--bg-soft));
   font-size: 12.5px; color: var(--ink-2);
 }
+/* O display:flex acima venceria o display:none do atributo [hidden] do UA —
+   sem esta regra a barra "escondida" vira uma faixa vazia entre o feed e o
+   composer sempre que não há chamada. */
+.lab019-voicebar[hidden] { display: none; }
 .lab019-voicebar-label { display: inline-flex; align-items: center; gap: 7px; flex: 1 1 auto; min-width: 0; }
 .lab019-voicebar-btn {
   flex: 0 0 auto; border: 1px solid var(--border); border-radius: 999px;
