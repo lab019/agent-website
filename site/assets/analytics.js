@@ -88,8 +88,10 @@
   // Escolha explícita anterior vence qualquer heurística (inclusive DNT).
   if (stored === 'granted') return grant()
   if (stored === 'denied') return
-  // Sem escolha ainda: respeita Do Not Track como recusa silenciosa.
-  if (dnt) return deny()
+  // Sem escolha ainda: respeita Do Not Track como recusa silenciosa, mas NÃO
+  // persiste como decisão do usuário — nada carrega (default já é denied) e, se
+  // ele desligar o DNT depois, o banner volta a aparecer para ele poder optar.
+  if (dnt) return
 
   // Sem escolha e sem DNT → mostra o banner quando o corpo existir.
   if (document.readyState === 'loading') {
@@ -113,7 +115,7 @@
     var b = document.createElement('div')
     b.id = 'lab019-consent'
     b.className = 'consent-banner'
-    b.setAttribute('role', 'dialog')
+    b.setAttribute('role', 'region')
     b.setAttribute('aria-live', 'polite')
     b.setAttribute('aria-label', dialogLabel)
     b.innerHTML =
