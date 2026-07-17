@@ -47,29 +47,30 @@ jobs:
             echo "::warning::GTM_CONTAINER_ID inválido — esperado GTM-XXXXXXX. Publicando sem GTM."
           fi
 
-      # Injeta a configuração do chat ao vivo do hero (assets/chat.js): o id do
-      # agente público e a base da API. Não são segredos (vão em claro no browser
-      # de qualquer widget público), mas ficam em Variables para não hardcodar. Sem
-      # PUBLIC_AGENT_ID o token permanece e o site cai no fallback (ilustração
-      # estática, sem bolinha) — deploy seguro. PUBLIC_API_BASE é opcional: se
-      # ausente, o próprio chat.js usa https://api.lab019.ai.
+      # Injeta a configuração do chat ao vivo do hero (assets/chat.js): a WIDGET
+      # KEY pública (wgt_…) e a base da API. Não são segredos (a widget key vai em
+      # claro no snippet de qualquer embed público e é origin-gated no gateway),
+      # mas ficam em Variables para não hardcodar. Sem PUBLIC_WIDGET_KEY o token
+      # permanece e o site cai no fallback (ilustração estática, sem bolinha) —
+      # deploy seguro. PUBLIC_API_BASE é opcional: se ausente, o próprio chat.js
+      # usa https://api.lab019.ai.
       - name: Inject public chat config
         env:
-          PUBLIC_AGENT_ID: ${{ vars.PUBLIC_AGENT_ID }}
+          PUBLIC_WIDGET_KEY: ${{ vars.PUBLIC_WIDGET_KEY }}
           PUBLIC_API_BASE: ${{ vars.PUBLIC_API_BASE }}
         run: |
           # Trim e validação ANTES do sed: um valor com caractere inesperado não
           # pode chegar ao sed. Usamos "|" como delimitador (a base tem "://"), e
           # os charsets validados abaixo já excluem "|". Sem/ inválido → mantém o
           # token e o chat fica inerte (ou, para a base, cai no default do JS).
-          id="$(printf '%s' "$PUBLIC_AGENT_ID" | tr -d '[:space:]')"
-          if [ -z "$id" ]; then
-            echo "vars.PUBLIC_AGENT_ID não definido — hero publicado como ilustração estática (sem chat ao vivo)."
-          elif printf '%s' "$id" | grep -qE '^[A-Za-z0-9._:-]+$'; then
-            sed -i "s|__PUBLIC_AGENT_ID__|${id}|g" site/assets/chat.js
-            echo "PUBLIC_AGENT_ID injetado (${id})."
+          key="$(printf '%s' "$PUBLIC_WIDGET_KEY" | tr -d '[:space:]')"
+          if [ -z "$key" ]; then
+            echo "vars.PUBLIC_WIDGET_KEY não definido — hero publicado como ilustração estática (sem chat ao vivo)."
+          elif printf '%s' "$key" | grep -qE '^wgt_[A-Za-z0-9._-]+$'; then
+            sed -i "s|__PUBLIC_WIDGET_KEY__|${key}|g" site/assets/chat.js
+            echo "PUBLIC_WIDGET_KEY injetada (${key})."
           else
-            echo "::warning::PUBLIC_AGENT_ID inválido (esperado [A-Za-z0-9._:-]). Publicando sem chat ao vivo."
+            echo "::warning::PUBLIC_WIDGET_KEY inválido (esperado wgt_…). Publicando sem chat ao vivo."
           fi
 
           base="$(printf '%s' "$PUBLIC_API_BASE" | tr -d '[:space:]' | sed 's:/*$::')"
