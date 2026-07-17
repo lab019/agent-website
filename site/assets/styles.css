@@ -758,6 +758,9 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
    largo; na largura de widget ele rouba área útil de texto das bolhas. */
 .lab019-chat-pbody { padding: 12px 10px; gap: 10px; }
 .lab019-chat-pbody .msg { max-width: 95%; padding: 9px 12px; font-size: 14px; border-radius: 12px; }
+/* O shorthand acima apagaria o "rabinho" (canto de 5px) que indica quem fala. */
+.lab019-chat-pbody .msg.user { border-bottom-right-radius: 5px; }
+.lab019-chat-pbody .msg.bot { border-bottom-left-radius: 5px; }
 .lab019-chat-pbody .msg-meta { margin-top: 5px; padding-top: 4px; font-size: 10.5px; }
 .lab019-chat-phead {
   display: flex; align-items: center; gap: 10px;
