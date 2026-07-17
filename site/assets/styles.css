@@ -688,6 +688,38 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 .chat-live-send:disabled { opacity: .5; cursor: default; transform: none; }
 .chat-live-send:focus-visible { outline: 3px solid color-mix(in srgb, var(--brand) 40%, transparent); outline-offset: 2px; }
 
+/* Botão de voz do composer (exibido só quando a widget key habilita "voice"). */
+.chat-live-mic {
+  flex: 0 0 auto; border: none; background: transparent; cursor: pointer;
+  font-size: 18px; line-height: 1; padding: 7px 4px; border-radius: 8px;
+}
+.chat-live-mic:hover { background: color-mix(in srgb, var(--brand) 12%, transparent); }
+.chat-live-mic:focus-visible { outline: 3px solid color-mix(in srgb, var(--brand) 40%, transparent); outline-offset: 2px; }
+
+/* Barra de chamada de voz (entre o feed e o composer, nas duas superfícies). */
+.lab019-voicebar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px; border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--brand) 8%, var(--bg-soft));
+  font-size: 12.5px; color: var(--ink-2);
+}
+.lab019-voicebar-label { display: inline-flex; align-items: center; gap: 7px; flex: 1 1 auto; min-width: 0; }
+.lab019-voicebar-btn {
+  flex: 0 0 auto; border: 1px solid var(--border); border-radius: 999px;
+  background: var(--surface); color: var(--ink); font-family: var(--font);
+  font-size: 12px; padding: 4px 11px; cursor: pointer;
+}
+.lab019-voicebar-btn:hover { background: var(--bg-soft); }
+
+/* Badge "voz" nas mensagens transcritas (STT do visitante + fala do agente). */
+.msg-voice {
+  display: inline-block; margin-left: 8px; padding: 1px 7px; vertical-align: middle;
+  border-radius: 999px; font-size: 10px; letter-spacing: .04em; text-transform: uppercase;
+  background: color-mix(in srgb, var(--brand) 14%, transparent); color: var(--brand);
+}
+/* Na bolha azul do visitante o badge precisa inverter para manter contraste. */
+.msg.user .msg-voice { background: rgba(255, 255, 255, .24); color: #fff; }
+
 /* ---------- Bolinha flutuante (canto superior direito) ---------- */
 .lab019-chat-fab {
   position: fixed; top: 78px; right: 20px; z-index: 45;
