@@ -73,29 +73,43 @@ O deploy é automático: ao dar merge na branch `main`, o workflow
 
 ### Chat ao vivo no hero (Variables)
 
-O card de chat do hero é um **chat de verdade** contra a API pública da LAB019
-(o canal de texto do agent-gateway): token anônimo em `/gateway` + streaming SSE
-de `/runtime`, exatamente como o widget embutível. Quando o hero sai da tela,
-uma bolinha aparece no canto superior direito (abaixo do "Testar grátis") e abre
-um painel que **continua a mesma conversa**; ao voltar ao topo, a conversa
-retoma no card do hero. Toda a lógica vive em [`site/assets/chat.js`](site/assets/chat.js).
+O card de chat do hero é um **chat de verdade** contra o **canal público de
+widget** do agent-gateway — o mesmo protocolo de sessão do widget embutível
+(`src/widget/client.ts` do agent-web):
 
-O agente e a base da API **não são hardcodados** — são injetados no deploy a
+```
+POST {gateway}/v1/widget/sessions            { key }          → session_token (wst_) + conversation_id
+POST {gateway}/v1/widget/conversations/{sid}/messages         → 202 { messageId }  (resposta vem pelo SSE)
+GET  {gateway}/v1/widget/conversations/{sid}/events?st=wst_   → SSE (message_delta, done, error, …)
+```
+
+O **tenant (org) e o agente são resolvidos server-side pela WIDGET KEY** (`wgt_…`),
+origin-gated no gateway — o browser nunca carrega credencial de admin. Quando o
+hero sai da tela, uma bolinha aparece no canto superior direito (abaixo do
+"Testar grátis") e abre um painel que **continua a mesma conversa**; ao voltar ao
+topo, a conversa retoma no card do hero. A sessão é reaproveitada entre reloads
+(localStorage). Toda a lógica vive em [`site/assets/chat.js`](site/assets/chat.js).
+
+A widget key e a base da API **não são hardcodadas** — são injetadas no deploy a
 partir de **repository/environment Variables** (padrão idêntico ao `GTM_CONTAINER_ID`):
 
-| Variable           | Obrigatória | Default (se ausente)     | O que é                                                        |
-| ------------------ | ----------- | ------------------------ | ------------------------------------------------------------- |
-| `PUBLIC_AGENT_ID`  | sim¹        | —                        | id do agente **público** que a landing conversa               |
-| `PUBLIC_API_BASE`  | não         | `https://api.lab019.ai`  | origem da API (`{base}/gateway` e `{base}/runtime`)           |
+| Variable            | Obrigatória | Default (se ausente)     | O que é                                                       |
+| ------------------- | ----------- | ------------------------ | ------------------------------------------------------------ |
+| `PUBLIC_WIDGET_KEY` | sim¹        | —                        | a widget key pública `wgt_…` (criada no gerenciador de keys) |
+| `PUBLIC_API_BASE`   | não         | `https://api.lab019.ai`  | origem da API (o gateway fica em `{base}/gateway`)           |
 
-¹ Sem `PUBLIC_AGENT_ID`, o token não é substituído e o hero permanece como
+¹ Sem `PUBLIC_WIDGET_KEY`, o token não é substituído e o hero permanece como
 **ilustração estática** (sem chat ao vivo, sem bolinha) — deploy seguro, e é
 exatamente o comportamento no preview local.
 
-Dependência de backend (fora deste repo): como a landing é servida de
-`https://lab019.ai` e chama `https://api.lab019.ai`, esse **origin precisa estar
-liberado no CORS** do gateway (`GATEWAY_CORS_ORIGINS`) e do runtime
-(`RUNTIME_CORS_ORIGINS`) — ver `agent-operation`.
+Dependências de backend (fora deste repo):
+
+- A **widget key** precisa ter `https://lab019.ai` na sua lista de origins
+  permitidas (o gateway faz origin-gating no mint da sessão).
+- Como a landing é servida de `https://lab019.ai` e chama `https://api.lab019.ai`,
+  esse **origin precisa estar liberado no CORS** do gateway
+  (`GATEWAY_CORS_ORIGINS`) — ver `agent-operation`. (O runtime não é mais chamado
+  direto pelo browser neste fluxo — o gateway virou data-plane.)
 
 ## Conteúdo
 
