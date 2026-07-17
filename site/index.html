@@ -72,24 +72,28 @@
       </div>
 
       <div class="reveal">
-        <div class="chat-card" role="img" aria-label="Exemplo de conversa com o Agente da LAB019">
+        <!-- Card de chat do hero. Com JS + agente público configurado (ver
+             assets/chat.js) este card vira um CHAT DE VERDADE contra a API
+             pública; sem JS ou sem configuração, permanece como a ilustração
+             abaixo. O mesmo card e a bolinha flutuante compartilham uma única
+             conversa. -->
+        <div class="chat-card" id="hero-chat" role="img" aria-label="Exemplo de conversa com o Agente da LAB019">
           <div class="chat-head">
             <span class="dot" style="width:22px;height:22px;font-size:11px;">L</span>
-            <strong>Agente · Loja da Ana</strong>
+            <strong>Agente LAB019</strong>
             <span class="status"><span class="pulse"></span> online</span>
           </div>
           <div class="chat-body">
-            <div class="msg user">Bom dia! Vocês entregam em Barão Geraldo hoje?</div>
+            <div class="msg bot">Oi! 👋 Sou o agente virtual da LAB019. Pergunte o que quiser — preços, canais, como configurar.</div>
+            <div class="msg user">Vocês atendem por WhatsApp e voz?</div>
             <div class="msg bot">
               <span class="badge">🎙️ voz</span>
-              Bom dia! Sim, entregamos em Barão Geraldo hoje até as 18h. 🛵
-              Quer que eu já registre seu pedido?
+              Sim! Chat no site, WhatsApp, Telegram e até telefone com voz — sempre com a mesma
+              inteligência, escolhendo o modelo mais barato que resolve. Quer ver na prática? É só me escrever aqui. 😊
             </div>
-            <div class="msg user">Quero. 2 marmitas fitness.</div>
-            <div class="msg bot">Anotado: 2 marmitas fitness, entrega em Barão Geraldo. Total R$47,80. Confirmo?</div>
           </div>
           <div class="chat-foot">
-            Digite ou fale com o Agente…
+            Escreva uma mensagem…
             <span class="mic" aria-hidden="true">🎙️</span>
           </div>
         </div>
@@ -550,5 +554,6 @@ conversations/<span class="p">minha-conversa</span>/messages \
     els.forEach(function (el) { io.observe(el); });
   })();
 </script>
+<script src="/assets/chat.js" defer></script>
 </body>
 </html>
