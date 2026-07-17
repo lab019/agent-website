@@ -219,6 +219,10 @@
         function (response) {
           if (!response.ok) {
             if (response.status === 401 || response.status === 404) {
+              // Se este signal já foi abortado (ex.: um retry já re-mintou a
+              // sessão e trocou o subCtl), esta é a assinatura ANTIGA — não
+              // dispara onExpired, senão derrubaria a assinatura nova e boa.
+              if (signal.aborted) return
               handlers.onExpired()
               return
             }
@@ -423,7 +427,15 @@
   function finishTurn() {
     sending = false
     currentTurn = null
-    postCtl = null
+    // Aborta o POST em voo deste turno, se ainda houver. Sem isso, um turno
+    // encerrado cedo (por um frame de erro/expiração antes do próprio 202) deixa
+    // o POST vivo — e seu 202 tardio fixaria o messageId no turno SEGUINTE,
+    // derrubando os deltas dele até o watchdog. (Espelha o gwPostController.abort()
+    // do widget de referência.)
+    if (postCtl) {
+      postCtl.abort()
+      postCtl = null
+    }
     clearWatchdog()
     setFormsEnabled(true)
   }
@@ -559,32 +571,39 @@
     messages.push(agent)
     render()
 
-    currentTurn = { msg: agent, messageId: null }
+    var turn = { msg: agent, messageId: null }
+    currentTurn = turn
     armWatchdog()
     postCtl = new AbortController()
-    doSend(text, agent, true)
+    doSend(text, turn, true)
   }
 
-  function doSend(text, agent, allowRetry) {
-    ensureSession(postCtl ? postCtl.signal : undefined)
+  function doSend(text, turn, allowRetry) {
+    // Captura o controller deste envio: finishTurn zera postCtl, então ler
+    // postCtl tarde (dentro das continuations) poderia pegar null/outro turno.
+    var ctl = postCtl
+    ensureSession(ctl ? ctl.signal : undefined)
       .then(function (s) {
-        return postMessage(s, text, postCtl ? postCtl.signal : undefined)
+        return postMessage(s, text, ctl ? ctl.signal : undefined)
       })
       .then(
         function (messageId) {
-          // Fixa o messageId agora (fonte autoritativa do 202) — o guard nos
-          // frames só aceita deltas/done deste messageId.
-          if (currentTurn) currentTurn.messageId = messageId
+          // Só fixa se este turno ainda é o atual. Um turno já encerrado (por um
+          // frame de erro/expiração) não pode fixar/roubar o messageId do turno
+          // seguinte — senão os deltas do novo turno seriam todos descartados.
+          if (currentTurn === turn) turn.messageId = messageId
         },
         function (err) {
           if (err && err.name === 'AbortError') return
+          // Turno já substituído/encerrado: não renderiza erro nem repõe a mensagem.
+          if (currentTurn !== turn) return
           if (err && err.name === 'SessionExpiredError' && allowRetry) {
             // Sessão persistida ficou velha: descarta e tenta uma vez com uma nova.
             resetSession()
-            doSend(text, agent, false)
+            doSend(text, turn, false)
             return
           }
-          renderError(agent, err instanceof Error ? err : new Error(String(err)))
+          renderError(turn.msg, err instanceof Error ? err : new Error(String(err)))
           finishTurn()
         }
       )
