@@ -385,10 +385,41 @@
         el.setAttribute('data-typing', '1')
         el.innerHTML = '<span class="lab019-typing" aria-label="digitando"><span></span><span></span><span></span></span>'
       }
+    } else if (msg.meta) {
+      // Texto + linha de métricas. Montado via DOM (o texto do agente SEMPRE em
+      // text node — nunca innerHTML — para não abrir XSS).
+      if (el.getAttribute('data-typing') === '1') el.removeAttribute('data-typing')
+      el.textContent = ''
+      el.appendChild(document.createTextNode(msg.text))
+      var meta = document.createElement('span')
+      meta.className = 'msg-meta'
+      meta.textContent = msg.meta
+      el.appendChild(meta)
     } else {
       if (el.getAttribute('data-typing') === '1') el.removeAttribute('data-typing')
       el.textContent = msg.text
     }
+  }
+
+  // Formata as métricas da resposta numa linha curta: TTFT · total · tokens · modelo.
+  function fmtSec(ms) {
+    if (typeof ms !== 'number' || !isFinite(ms)) return null
+    var s = ms / 1000
+    return (s < 10 ? s.toFixed(1) : String(Math.round(s))).replace('.', ',') + 's'
+  }
+
+  function formatMetrics(m) {
+    if (!m || typeof m !== 'object') return ''
+    var parts = []
+    var ttft = fmtSec(m.ttftMs)
+    if (ttft) parts.push('⚡ ' + ttft)
+    var total = fmtSec(m.totalDurationMs)
+    if (total) parts.push('total ' + total)
+    var tin = typeof m.tokensIn === 'number' ? m.tokensIn : 0
+    var tout = typeof m.tokensOut === 'number' ? m.tokensOut : 0
+    if (tin + tout > 0) parts.push(tin + tout + ' tok')
+    if (m.model) parts.push(String(m.model))
+    return parts.join(' · ')
   }
 
   // Reconciliação incremental: as mensagens só CRESCEM (append) e apenas a última
@@ -476,8 +507,11 @@
       if (t.msg.pending) {
         t.msg.pending = false
         t.msg.text = 'Não recebi uma resposta. Tente de novo.'
-        render()
+      } else if (t.metrics) {
+        // Linha discreta com as métricas da resposta (encanta o técnico).
+        t.msg.meta = formatMetrics(t.metrics)
       }
+      render()
       finishTurn()
     }
     // senão: buffer vazio mas sem `done` ainda — espera o próximo delta, que
@@ -601,6 +635,14 @@
       // turno quando esvaziar (drainTick).
       d.done = true
       scheduleDrain()
+    } else if (event === 'metadata') {
+      // Métricas da resposta (subset público repassado pelo gateway): tempo até
+      // a 1ª resposta, tempo total, tokens e modelo. Guardadas no turno e
+      // mostradas numa linha discreta ao finalizar (drainTick).
+      var mt = currentTurn
+      if (!mt || !mt.messageId) return
+      if (payload.messageId && mt.messageId !== payload.messageId) return
+      mt.metrics = payload
     } else if (event === 'error') {
       var e = currentTurn
       if (e) {
@@ -630,7 +672,7 @@
     messages.push(agent)
     render()
 
-    var turn = { msg: agent, messageId: null, buffer: '', done: false, drainTimer: null }
+    var turn = { msg: agent, messageId: null, buffer: '', done: false, drainTimer: null, metrics: null }
     currentTurn = turn
     armWatchdog()
     postCtl = new AbortController()
