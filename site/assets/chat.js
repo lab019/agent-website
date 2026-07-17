@@ -25,6 +25,16 @@
  *        { text }  → 202 { messageId }            (a resposta vem pelo SSE, não aqui)
  *   GET  {GATEWAY}/v1/widget/conversations/{sid}/events?st=wst_   (SSE persistente)
  *        eventos: state, message_delta, done, error, handoff.*, replay_gap
+ *   GET  {GATEWAY}/v1/widget/config?key=wgt_…       (aparência + canais públicos)
+ *   POST {GATEWAY}/v1/voice/sessions                (voz-by-key: X-Widget-Session
+ *        + Bearer wst_, { consent: true } → { livekit_url, livekit_token })
+ *
+ * Voz (porta do widget do agent-web, LIC-371): quando a widget key habilita o
+ * canal "voice" (GET /config), o composer ganha um botão de microfone. A
+ * chamada usa a MESMA sessão/conversa do texto — o browser nunca conhece o
+ * agent_id — e as transcrições (STT do visitante + fala do agente) entram no
+ * mesmo feed, com o badge "voz". O SDK do LiveKit NÃO entra no peso da página:
+ * é carregado via CDN só no primeiro clique no microfone.
  *
  * Configuração: a widget key e a base da API NÃO são hardcodadas. Os tokens
  * __PUBLIC_WIDGET_KEY__ / __PUBLIC_API_BASE__ são substituídos no deploy (o
@@ -395,6 +405,16 @@
       meta.className = 'msg-meta'
       meta.textContent = msg.meta
       el.appendChild(meta)
+    } else if (msg.voice) {
+      // Fala transcrita (STT/TTS) — mesmo feed, com o badge "voz". Texto sempre
+      // em text node (transcrição é conteúdo do usuário/modelo — nunca innerHTML).
+      if (el.getAttribute('data-typing') === '1') el.removeAttribute('data-typing')
+      el.textContent = ''
+      el.appendChild(document.createTextNode(msg.text))
+      var badge = document.createElement('span')
+      badge.className = 'msg-voice'
+      badge.textContent = 'voz'
+      el.appendChild(badge)
     } else {
       if (el.getAttribute('data-typing') === '1') el.removeAttribute('data-typing')
       el.textContent = msg.text
@@ -710,6 +730,403 @@
       )
   }
 
+  // ------------------------------------------------------------------------ voz
+
+  // Porta do fluxo voice-by-key do widget do agent-web (src/widget/voice.ts +
+  // src/lib/voiceClient.ts): sessão de voz mintada com a MESMA sessão de widget
+  // do texto, LiveKit no browser, transcrições no mesmo feed. O SDK só é
+  // carregado (CDN, versão pinada) no primeiro clique no microfone.
+  var LIVEKIT_CDN = 'https://cdn.jsdelivr.net/npm/livekit-client@2.20.0/dist/livekit-client.umd.min.js'
+
+  var voiceEnabled = false // GET /v1/widget/config → channels inclui "voice"
+  var micButtons = [] // botões 🎙️ (um por superfície), exibidos pelo config
+  var voiceBars = [] // barras de status da chamada (uma por superfície)
+  var voiceStatus = 'idle' // 'idle' | 'connecting' | 'live'
+  // Guarda anti-corrida (espelha o voiceEpoch do widget de referência): um
+  // stop/erro/novo start incrementa a época, e qualquer continuation de uma
+  // conexão em voo superada se descarta em vez de deixar um mic vivo.
+  var voiceEpoch = 0
+  var voiceRoom = null
+  var voiceSelf = '' // identity local no LiveKit (definida pós-connect)
+  var voiceMuted = false
+  var voiceAudioEls = {} // trackSid → <audio> oculto do áudio do agente
+  var voiceBlocked = {} // trackSid → true quando o autoplay foi bloqueado
+  var livekitPromise = null
+
+  // Busca a config pública da key (aparência + canais). Só liga a UI de voz —
+  // qualquer falha degrada para "só texto", sem erro visível.
+  function fetchPublicConfig() {
+    fetch(GATEWAY_BASE + '/v1/widget/config?key=' + encodeURIComponent(WIDGET_KEY), {
+      headers: { Accept: 'application/json' },
+    })
+      .then(function (res) {
+        return res.ok ? res.json() : null
+      })
+      .then(function (cfg) {
+        var channels = cfg && cfg.channels
+        if (channels && channels.length && channels.indexOf('voice') !== -1) {
+          voiceEnabled = true
+          for (var i = 0; i < micButtons.length; i++) micButtons[i].hidden = false
+        }
+      })
+      .catch(function () {
+        /* sem config → segue só texto */
+      })
+  }
+
+  function loadLiveKit() {
+    if (window.LivekitClient) return Promise.resolve(window.LivekitClient)
+    if (livekitPromise) return livekitPromise
+    livekitPromise = new Promise(function (resolve, reject) {
+      var s = document.createElement('script')
+      s.src = LIVEKIT_CDN
+      s.async = true
+      s.onload = function () {
+        if (window.LivekitClient) resolve(window.LivekitClient)
+        else reject(new Error('O componente de voz carregou incompleto. Recarregue a página.'))
+      }
+      s.onerror = function () {
+        livekitPromise = null // permite tentar de novo no próximo clique
+        reject(new Error('Não consegui carregar o componente de voz. Verifique sua conexão.'))
+      }
+      document.head.appendChild(s)
+    })
+    return livekitPromise
+  }
+
+  // Pede o microfone AINDA no gesto do clique (o prompt do browser sai na hora,
+  // não só depois do POST + connect). A permissão persiste; o LiveKit reabre o
+  // mic ao publicar. Porta do ensureMicrophoneAccess do agent-web.
+  function ensureMic() {
+    var md = navigator.mediaDevices
+    if (!md || typeof md.getUserMedia !== 'function') {
+      return Promise.reject(new Error('Microfone indisponível neste navegador.'))
+    }
+    return md.getUserMedia({ audio: true }).then(
+      function (stream) {
+        stream.getTracks().forEach(function (t) {
+          t.stop()
+        })
+      },
+      function (err) {
+        var name = err && err.name
+        if (name === 'NotAllowedError' || name === 'SecurityError') {
+          throw new Error('Permissão de microfone negada — autorize o microfone e tente de novo.')
+        }
+        if (name === 'NotFoundError' || name === 'DevicesNotFoundError') {
+          throw new Error('Nenhum microfone encontrado.')
+        }
+        throw err instanceof Error ? err : new Error(String(err))
+      }
+    )
+  }
+
+  // POST {gateway}/v1/voice/sessions (voz-by-key): sem agent_id no corpo — o
+  // gateway resolve org/agente e REUSA a conversa da própria sessão do widget.
+  function createVoiceSession(sess) {
+    return fetch(GATEWAY_BASE + '/v1/voice/sessions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'X-Widget-Session': sess.sessionId,
+        Authorization: 'Bearer ' + sess.sessionToken,
+      },
+      body: JSON.stringify({ consent: true }),
+    }).then(function (res) {
+      if (!res.ok) {
+        return res.text().then(fail, fail)
+        function fail() {
+          if (res.status === 401) throw new SessionExpiredError()
+          if (res.status === 403) throw new Error('O atendimento por voz não está disponível no momento.')
+          if (res.status === 429) throw new Error('Muitas chamadas agora. Tente novamente em instantes.')
+          throw new Error('Não consegui iniciar a chamada de voz. Tente novamente.')
+        }
+      }
+      return res.json()
+    })
+  }
+
+  function startVoice() {
+    if (voiceStatus !== 'idle') return
+    var epoch = ++voiceEpoch
+    voiceStatus = 'connecting'
+    renderVoiceBars()
+    var lk
+    loadLiveKit()
+      .then(function (mod) {
+        lk = mod
+        return ensureMic()
+      })
+      .then(function () {
+        return attemptVoice(lk, epoch, true)
+      })
+      .catch(function (err) {
+        if (epoch !== voiceEpoch) return
+        teardownVoice(
+          err && err.message ? err.message : 'Não consegui iniciar a chamada de voz. Tente novamente.'
+        )
+      })
+  }
+
+  function attemptVoice(lk, epoch, allowRetry) {
+    return ensureSession()
+      .then(function (s) {
+        return createVoiceSession(s)
+      })
+      .then(function (vs) {
+        if (epoch !== voiceEpoch) return null
+        return connectRoom(lk, vs, epoch)
+      })
+      .then(function (room) {
+        if (!room) return
+        if (epoch !== voiceEpoch) {
+          try {
+            room.disconnect()
+          } catch (e) {
+            /* já caiu */
+          }
+          return
+        }
+        voiceStatus = 'live'
+        renderVoiceBars()
+      })
+      .catch(function (err) {
+        // Sessão persistida velha: descarta e tenta UMA vez com uma nova
+        // (espelha o retry do doSend).
+        if (err && err.name === 'SessionExpiredError' && allowRetry && epoch === voiceEpoch) {
+          resetSession()
+          return attemptVoice(lk, epoch, false)
+        }
+        throw err
+      })
+  }
+
+  function connectRoom(lk, vs, epoch) {
+    var room = new lk.Room({ adaptiveStream: true, dynacast: true })
+    voiceRoom = room
+
+    // Áudio do agente: cada track de áudio remota ganha o seu próprio <audio>
+    // oculto no DOM (elemento por track evita a corrida pause()/play() quando o
+    // agente republica — mesmo racional do VoiceConnection de referência).
+    room.on(lk.RoomEvent.TrackSubscribed, function (track, pub) {
+      if (track.kind !== lk.Track.Kind.Audio) return
+      if (voiceAudioEls[pub.trackSid]) return
+      var el = track.attach()
+      el.autoplay = true
+      el.style.display = 'none'
+      document.body.appendChild(el)
+      voiceAudioEls[pub.trackSid] = el
+      // play() explícito expõe a rejeição de autoplay bloqueado (o autoplay
+      // sozinho falha em silêncio) → botão "Ativar som" na barra.
+      el.play().then(
+        function () {
+          delete voiceBlocked[pub.trackSid]
+          renderVoiceBars()
+        },
+        function () {
+          voiceBlocked[pub.trackSid] = true
+          renderVoiceBars()
+        }
+      )
+    })
+
+    room.on(lk.RoomEvent.TrackUnsubscribed, function (track, pub) {
+      if (track.kind !== lk.Track.Kind.Audio) return
+      var el = voiceAudioEls[pub.trackSid]
+      if (!el) return
+      track.detach(el)
+      el.remove()
+      delete voiceAudioEls[pub.trackSid]
+      delete voiceBlocked[pub.trackSid]
+      renderVoiceBars()
+    })
+
+    // Legendas ao vivo: STT do visitante + texto falado do agente entram no
+    // feed. Quem fala é decidido pela identity local (definida pós-connect).
+    room.on(lk.RoomEvent.TranscriptionReceived, function (segments, participant) {
+      if (epoch !== voiceEpoch) return
+      var isLocal = participant && participant.identity === voiceSelf
+      var list = segments || []
+      for (var i = 0; i < list.length; i++) {
+        var seg = list[i]
+        if (!seg || !seg.text || !String(seg.text).trim()) continue
+        onVoiceSegment(seg.id || '', isLocal ? 'user' : 'agent', String(seg.text), Boolean(seg.final))
+      }
+    })
+
+    room.on(lk.RoomEvent.Disconnected, function () {
+      // Só reporta queda se ESTA chamada ainda é a atual (o hangup do usuário
+      // incrementa a época antes de desconectar, então não cai aqui).
+      if (epoch !== voiceEpoch) return
+      teardownVoice('A chamada de voz caiu. Clique no microfone para ligar de novo.')
+    })
+
+    return room
+      .connect(vs.livekit_url, vs.livekit_token)
+      .then(function () {
+        voiceSelf = room.localParticipant.identity
+        return room.localParticipant.setMicrophoneEnabled(true)
+      })
+      .then(function () {
+        // Destrava o autoplay ainda com o gesto do clique; se falhar, o botão
+        // "Ativar som" cobre.
+        return room.startAudio().then(null, function () {})
+      })
+      .then(function () {
+        return room
+      })
+  }
+
+  // Porta do planTranscription do agent-web: segmento com id → upsert na própria
+  // linha (a legenda interina cresce no lugar, sem empilhar bolha por delta);
+  // final sem id → append; interina sem id → descarta.
+  function onVoiceSegment(id, role, text, isFinal) {
+    var msgRole = role === 'user' ? 'user' : 'agent'
+    if (id) {
+      var key = 'voice-' + role + '-' + id
+      for (var i = messages.length - 1; i >= 0; i--) {
+        if (messages[i].voiceKey === key) {
+          messages[i].text = text
+          render()
+          return
+        }
+      }
+      messages.push({ role: msgRole, text: text, voice: true, voiceKey: key })
+      render()
+      return
+    }
+    if (isFinal) {
+      messages.push({ role: msgRole, text: text, voice: true })
+      render()
+    }
+  }
+
+  function toggleMute() {
+    if (!voiceRoom || voiceStatus !== 'live') return
+    var next = !voiceMuted
+    voiceRoom.localParticipant.setMicrophoneEnabled(!next).then(
+      function () {
+        voiceMuted = next
+        renderVoiceBars()
+      },
+      function () {
+        /* falhou: mantém o estado atual */
+      }
+    )
+  }
+
+  // Retry do autoplay — precisa vir de um gesto (o clique no botão da barra).
+  function enableAudioRetry() {
+    if (!voiceRoom) return
+    var room = voiceRoom
+    var unlock = room.startAudio ? room.startAudio().then(null, function () {}) : Promise.resolve()
+    unlock.then(function () {
+      for (var sid in voiceAudioEls) {
+        ;(function (sid_) {
+          voiceAudioEls[sid_].play().then(
+            function () {
+              delete voiceBlocked[sid_]
+              renderVoiceBars()
+            },
+            function () {
+              voiceBlocked[sid_] = true
+              renderVoiceBars()
+            }
+          )
+        })(sid)
+      }
+    })
+  }
+
+  // Encerra a chamada (hangup, erro ou queda). `errorText` opcional vira uma
+  // mensagem de erro no feed. Incrementa a época ANTES de desconectar para o
+  // handler de Disconnected não reportar a própria desconexão como queda.
+  function teardownVoice(errorText) {
+    voiceEpoch++
+    var room = voiceRoom
+    voiceRoom = null
+    voiceSelf = ''
+    voiceMuted = false
+    for (var sid in voiceAudioEls) {
+      var el = voiceAudioEls[sid]
+      el.pause()
+      el.srcObject = null
+      el.remove()
+    }
+    voiceAudioEls = {}
+    voiceBlocked = {}
+    if (room) {
+      try {
+        room.disconnect()
+      } catch (e) {
+        /* já desconectado */
+      }
+    }
+    voiceStatus = 'idle'
+    renderVoiceBars()
+    if (errorText) {
+      messages.push({ role: 'error', text: errorText })
+      render()
+    }
+  }
+
+  // Barra de status da chamada — uma por superfície, reconstruída a cada estado
+  // (mesmo modelo do syncSurface: a lista é curta, reconstruir é o simples).
+  function makeVoiceBar() {
+    var bar = document.createElement('div')
+    bar.className = 'lab019-voicebar'
+    bar.hidden = true
+    voiceBars.push(bar)
+    return bar
+  }
+
+  function makeBarBtn(text, onClick) {
+    var b = document.createElement('button')
+    b.type = 'button'
+    b.className = 'lab019-voicebar-btn'
+    b.textContent = text
+    b.addEventListener('click', onClick)
+    return b
+  }
+
+  function renderVoiceBars() {
+    var blocked = false
+    for (var sid in voiceBlocked) {
+      if (voiceBlocked[sid]) {
+        blocked = true
+        break
+      }
+    }
+    for (var i = 0; i < voiceBars.length; i++) {
+      var bar = voiceBars[i]
+      bar.textContent = ''
+      if (voiceStatus === 'idle') {
+        bar.hidden = true
+        continue
+      }
+      bar.hidden = false
+      var label = document.createElement('span')
+      label.className = 'lab019-voicebar-label'
+      if (voiceStatus === 'connecting') {
+        label.textContent = 'Conectando a chamada…'
+      } else {
+        // Markup estático (sem dado do usuário) — o pulse é o mesmo do header.
+        label.innerHTML = '<span class="pulse"></span> Em chamada — pode falar'
+      }
+      bar.appendChild(label)
+      if (voiceStatus === 'live') {
+        if (blocked) bar.appendChild(makeBarBtn('🔊 Ativar som', enableAudioRetry))
+        bar.appendChild(makeBarBtn(voiceMuted ? 'Reativar mic' : 'Silenciar', toggleMute))
+      }
+      bar.appendChild(
+        makeBarBtn('Encerrar', function () {
+          teardownVoice(null)
+        })
+      )
+    }
+  }
+
   // -------------------------------------------------------------- superfícies
 
   // Constrói o formulário (textarea + enviar) e o liga ao controlador. Enter
@@ -731,7 +1148,19 @@
     sendBtn.setAttribute('aria-label', 'Enviar mensagem')
     sendBtn.innerHTML = '<span aria-hidden="true">➤</span>'
 
+    // Botão de voz — nasce oculto; a config pública (canal "voice") o exibe.
+    var micBtn = document.createElement('button')
+    micBtn.className = 'chat-live-mic'
+    micBtn.type = 'button'
+    micBtn.hidden = !voiceEnabled
+    micBtn.setAttribute('aria-label', 'Falar por voz')
+    micBtn.title = 'Falar por voz'
+    micBtn.innerHTML = '<span aria-hidden="true">🎙️</span>'
+    micBtn.addEventListener('click', startVoice)
+    micButtons.push(micBtn)
+
     form.appendChild(input)
+    form.appendChild(micBtn)
     form.appendChild(sendBtn)
 
     function submit() {
@@ -776,6 +1205,7 @@
 
     var form = buildForm('Escreva uma mensagem…')
     foot.parentNode.replaceChild(form, foot)
+    card.insertBefore(makeVoiceBar(), form)
     return card
   }
 
@@ -809,6 +1239,7 @@
 
     panel.appendChild(head)
     panel.appendChild(body)
+    panel.appendChild(makeVoiceBar())
     panel.appendChild(buildForm('Escreva uma mensagem…'))
 
     document.body.appendChild(panel)
@@ -897,6 +1328,18 @@
     var floating = mountFloating()
     render()
     wireVisibility(heroCard, floating)
+    fetchPublicConfig()
+    // Fechamento educado da chamada ao sair da página (o LiveKit derrubaria
+    // sozinho pelo timeout, mas assim o gateway encerra na hora).
+    window.addEventListener('pagehide', function () {
+      if (voiceRoom) {
+        try {
+          voiceRoom.disconnect()
+        } catch (e) {
+          /* noop */
+        }
+      }
+    })
   }
 
   if (document.readyState === 'loading') {
