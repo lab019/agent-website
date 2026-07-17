@@ -717,10 +717,21 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 .lab019-chat-pclose:hover { background: var(--bg-sunken); color: var(--ink); }
 .lab019-chat-pbody { flex: 1 1 auto; overflow-y: auto; max-height: none; }
 
-/* Em telas estreitas o painel ocupa quase toda a largura, ancorado à direita. */
+/* No mobile o painel vira uma tela cheia (takeover), com header próprio e botão
+   de fechar. z-index acima do banner de consentimento (100) para ser um overlay
+   limpo; ao fechar, o banner reaparece. */
 @media (max-width: 520px) {
   .lab019-chat-fab { top: 72px; right: 14px; }
-  .lab019-chat-panel { top: 128px; right: 14px; left: 14px; width: auto; max-width: none; }
+  .lab019-chat-panel {
+    inset: 0; width: auto; max-width: none; height: 100dvh;
+    border: none; border-radius: 0; z-index: 101;
+  }
+}
+/* Navegadores sem dvh (dynamic viewport height) usam vh como fallback. */
+@supports not (height: 100dvh) {
+  @media (max-width: 520px) {
+    .lab019-chat-panel { height: 100vh; }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
