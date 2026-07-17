@@ -8,22 +8,27 @@
  * Um único arquivo compartilhado por todas as páginas do site, para o ID do
  * contêiner e a lógica de consentimento viverem em um só lugar.
  *
- * Configuração: substitua GTM_ID pelo ID real do contêiner (formato GTM-XXXXXXX).
- * O GA4 é adicionado como tag DENTRO do GTM (interface web), não aqui no código.
- * Enquanto GTM_ID estiver com o placeholder, este script é inerte: não carrega
- * nada e não mostra o banner — deploy seguro até o ID real ser definido.
+ * Configuração: o ID do contêiner NÃO é hardcodado. O token __GTM_CONTAINER_ID__
+ * abaixo é substituído no deploy (o workflow do GitHub Pages troca-o pelo valor
+ * da Variable GTM_CONTAINER_ID; ver .github/workflows/deploy.yml). Se a landing
+ * um dia for servida por container, o mesmo token pode ser preenchido via
+ * envsubst no entrypoint a partir do .env — o token é o ponto único de injeção.
+ * O GA4 entra como tag DENTRO do GTM (interface web), não aqui no código.
+ * Enquanto o token não for substituído (preview local, ou Variable ausente), o
+ * script fica inerte: não carrega nada e não mostra o banner — deploy seguro.
  */
 ;(function () {
   'use strict'
 
   // === Configuração ===
-  var PLACEHOLDER = 'GTM-XXXXXXX'
-  var GTM_ID = PLACEHOLDER // TODO: trocar pelo ID real do contêiner do GTM
+  // Substituído no deploy. Fica com o token literal em preview local.
+  var GTM_ID = '__GTM_CONTAINER_ID__'
   var STORAGE_KEY = 'lab019-consent' // valor: 'granted' | 'denied'
 
-  // Sem ID configurado → recurso inerte (nada carrega, banner não aparece).
-  // (O placeholder casa com o formato geral, então é barrado explicitamente.)
-  if (GTM_ID === PLACEHOLDER || !/^GTM-[A-Z0-9]+$/.test(GTM_ID)) return
+  // Sem ID válido (token não substituído ou formato inesperado) → recurso inerte:
+  // nada carrega e o banner não aparece. O token começa com "__", então não casa
+  // com o formato de contêiner e é barrado naturalmente.
+  if (!/^GTM-[A-Z0-9]+$/.test(GTM_ID)) return
 
   var isEn = (document.documentElement.lang || '').toLowerCase().indexOf('en') === 0
   var dnt =

@@ -25,6 +25,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Injeta o ID do contêiner do GTM (config, não segredo) a partir de uma
+      # Variable do repositório/environment. Sem a Variable, o token permanece e
+      # o site fica sem GTM — deploy seguro. Escopo por Environment permite
+      # valores distintos (ex.: um Pages de staging no futuro).
+      - name: Inject GTM container ID
+        env:
+          GTM_CONTAINER_ID: ${{ vars.GTM_CONTAINER_ID }}
+        run: |
+          if [ -n "$GTM_CONTAINER_ID" ]; then
+            sed -i "s/__GTM_CONTAINER_ID__/${GTM_CONTAINER_ID}/g" site/assets/analytics.js
+            echo "GTM container ID injetado (${GTM_CONTAINER_ID})."
+          else
+            echo "vars.GTM_CONTAINER_ID não definido — site publicado sem GTM."
+          fi
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
