@@ -71,6 +71,32 @@ O deploy é automático: ao dar merge na branch `main`, o workflow
    ou registrador) apontando para `lab019.ai` — o GitHub Pages aceita um
    único domínio custom por repositório via `CNAME`.
 
+### Chat ao vivo no hero (Variables)
+
+O card de chat do hero é um **chat de verdade** contra a API pública da LAB019
+(o canal de texto do agent-gateway): token anônimo em `/gateway` + streaming SSE
+de `/runtime`, exatamente como o widget embutível. Quando o hero sai da tela,
+uma bolinha aparece no canto superior direito (abaixo do "Testar grátis") e abre
+um painel que **continua a mesma conversa**; ao voltar ao topo, a conversa
+retoma no card do hero. Toda a lógica vive em [`site/assets/chat.js`](site/assets/chat.js).
+
+O agente e a base da API **não são hardcodados** — são injetados no deploy a
+partir de **repository/environment Variables** (padrão idêntico ao `GTM_CONTAINER_ID`):
+
+| Variable           | Obrigatória | Default (se ausente)     | O que é                                                        |
+| ------------------ | ----------- | ------------------------ | ------------------------------------------------------------- |
+| `PUBLIC_AGENT_ID`  | sim¹        | —                        | id do agente **público** que a landing conversa               |
+| `PUBLIC_API_BASE`  | não         | `https://api.lab019.ai`  | origem da API (`{base}/gateway` e `{base}/runtime`)           |
+
+¹ Sem `PUBLIC_AGENT_ID`, o token não é substituído e o hero permanece como
+**ilustração estática** (sem chat ao vivo, sem bolinha) — deploy seguro, e é
+exatamente o comportamento no preview local.
+
+Dependência de backend (fora deste repo): como a landing é servida de
+`https://lab019.ai` e chama `https://api.lab019.ai`, esse **origin precisa estar
+liberado no CORS** do gateway (`GATEWAY_CORS_ORIGINS`) e do runtime
+(`RUNTIME_CORS_ORIGINS`) — ver `agent-operation`.
+
 ## Conteúdo
 
 O copy é voltado a negócio (não técnico) e descreve recursos reais do Agente:

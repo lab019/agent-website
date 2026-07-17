@@ -613,3 +613,128 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
   .consent-actions { width: 100%; }
   .consent-actions .btn { flex: 1; }
 }
+
+/* ============================================================
+   Chat ao vivo (hero) + widget flutuante — ver assets/chat.js.
+   O card do hero vira um chat de verdade; quando o hero sai da tela,
+   a bolinha aparece no canto superior direito (abaixo do "Testar grátis")
+   e abre um painel que continua A MESMA conversa.
+   ============================================================ */
+
+/* ---------- Chat ao vivo (compartilhado: hero + painel) ---------- */
+/* No modo ao vivo o corpo do chat rola dentro de uma altura fixa, em vez de
+   esticar o card indefinidamente conforme a conversa cresce. */
+.chat-card.is-live .chat-body {
+  max-height: 320px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+/* "digitando…" e erro — estados que só existem no chat ao vivo. */
+.msg.typing { color: var(--ink-3); font-style: italic; }
+.msg.error {
+  align-self: flex-start;
+  background: color-mix(in srgb, #e03131 12%, var(--surface));
+  color: #c92a2a;
+  border: 1px solid color-mix(in srgb, #e03131 32%, var(--border));
+  border-bottom-left-radius: 5px;
+}
+@media (prefers-color-scheme: dark) {
+  .msg.error { color: #ffa8a8; }
+}
+.msg { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* Composer real (substitui o .chat-foot ilustrativo no modo ao vivo). */
+.chat-live-foot {
+  display: flex; align-items: flex-end; gap: 10px;
+  padding: 12px 16px; border-top: 1px solid var(--border); background: var(--bg-soft);
+}
+.chat-live-input {
+  flex: 1 1 auto; resize: none; min-height: 24px; max-height: 96px;
+  border: none; background: transparent; color: var(--ink);
+  font-family: var(--font); font-size: 14.5px; line-height: 1.5;
+  padding: 6px 2px; outline: none;
+}
+.chat-live-input::placeholder { color: var(--ink-3); }
+.chat-live-input:disabled { opacity: .6; }
+.chat-live-send {
+  flex: 0 0 auto; width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer;
+  background: var(--brand); color: #fff; font-size: 14px;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background .15s ease, transform .15s ease;
+}
+.chat-live-send:hover { background: var(--brand-strong); transform: translateY(-1px); }
+.chat-live-send:disabled { opacity: .5; cursor: default; transform: none; }
+.chat-live-send:focus-visible { outline: 3px solid color-mix(in srgb, var(--brand) 40%, transparent); outline-offset: 2px; }
+
+/* ---------- Bolinha flutuante (canto superior direito) ---------- */
+.lab019-chat-fab {
+  position: fixed; top: 78px; right: 20px; z-index: 45;
+  width: 52px; height: 52px; border-radius: 50%; border: none; cursor: pointer;
+  background: var(--brand); color: #fff; font-size: 22px; line-height: 1;
+  display: inline-flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-md);
+  opacity: 0; visibility: hidden; transform: scale(.6) translateY(-6px); pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease, visibility .2s ease, background .15s ease;
+}
+.lab019-chat-fab.is-visible {
+  opacity: 1; visibility: visible; transform: none; pointer-events: auto;
+}
+.lab019-chat-fab:hover { background: var(--brand-strong); transform: scale(1.06); }
+.lab019-chat-fab:focus-visible { outline: 3px solid color-mix(in srgb, var(--brand) 45%, transparent); outline-offset: 3px; }
+
+/* ---------- Painel flutuante ---------- */
+.lab019-chat-panel {
+  position: fixed; top: 140px; right: 20px; z-index: 60;
+  width: 360px; max-width: calc(100vw - 40px);
+  height: min(520px, calc(100vh - 168px));
+  display: flex; flex-direction: column; overflow: hidden;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; box-shadow: var(--shadow-lg);
+  opacity: 0; transform: translateY(-8px);
+  transition: opacity .18s ease, transform .18s ease;
+}
+.lab019-chat-panel[hidden] { display: none; }
+.lab019-chat-panel.open { opacity: 1; transform: none; }
+.lab019-chat-phead {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; border-bottom: 1px solid var(--border); background: var(--bg-soft);
+  font-size: 14.5px;
+}
+.lab019-chat-pdot {
+  width: 24px; height: 24px; border-radius: 7px; flex: 0 0 auto;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: #fff; font-size: 12px; font-weight: 800;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.lab019-chat-pstatus {
+  margin-left: auto; font-size: 12px; color: var(--support-ink); font-weight: 600;
+  display: flex; align-items: center; gap: 6px;
+}
+.lab019-chat-pclose {
+  margin-left: 4px; background: transparent; border: none; cursor: pointer;
+  color: var(--ink-3); font-size: 20px; line-height: 1; padding: 2px 6px; border-radius: 7px;
+}
+.lab019-chat-pclose:hover { background: var(--bg-sunken); color: var(--ink); }
+.lab019-chat-pbody { flex: 1 1 auto; overflow-y: auto; max-height: none; }
+
+/* No mobile o painel vira uma tela cheia (takeover), com header próprio e botão
+   de fechar. z-index acima do banner de consentimento (100) para ser um overlay
+   limpo; ao fechar, o banner reaparece. */
+@media (max-width: 520px) {
+  .lab019-chat-fab { top: 72px; right: 14px; }
+  .lab019-chat-panel {
+    inset: 0; width: auto; max-width: none; height: 100dvh;
+    border: none; border-radius: 0; z-index: 101;
+  }
+}
+/* Navegadores sem dvh (dynamic viewport height) usam vh como fallback. */
+@supports not (height: 100dvh) {
+  @media (max-width: 520px) {
+    .lab019-chat-panel { height: 100vh; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab019-chat-fab, .lab019-chat-panel, .chat-live-send { transition: none; }
+  .chat-card.is-live .chat-body { scroll-behavior: auto; }
+}
