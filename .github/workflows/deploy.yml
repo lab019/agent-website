@@ -25,6 +25,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Injeta o ID do contêiner do GTM (config, não segredo) a partir de uma
+      # Variable do repositório/environment. Sem a Variable, o token permanece e
+      # o site fica sem GTM — deploy seguro. Escopo por Environment permite
+      # valores distintos (ex.: um Pages de staging no futuro).
+      - name: Inject GTM container ID
+        env:
+          GTM_CONTAINER_ID: ${{ vars.GTM_CONTAINER_ID }}
+        run: |
+          # Trim de espaços/quebras (coladas por engano na UI do GitHub) e validação
+          # do formato ANTES do sed: um valor com "/" ou aspas não pode chegar ao
+          # sed (quebraria o deploy), e um valor malformado falha em voz alta em vez
+          # de ligar o analytics com um ID inválido. Sem Variable → publica sem GTM.
+          id="$(printf '%s' "$GTM_CONTAINER_ID" | tr -d '[:space:]')"
+          if [ -z "$id" ]; then
+            echo "vars.GTM_CONTAINER_ID não definido — site publicado sem GTM."
+          elif printf '%s' "$id" | grep -qE '^GTM-[A-Z0-9]+$'; then
+            sed -i "s/__GTM_CONTAINER_ID__/${id}/g" site/assets/analytics.js
+            echo "GTM container ID injetado (${id})."
+          else
+            echo "::warning::GTM_CONTAINER_ID inválido — esperado GTM-XXXXXXX. Publicando sem GTM."
+          fi
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
