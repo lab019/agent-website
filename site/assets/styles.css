@@ -703,6 +703,10 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
   background: color-mix(in srgb, var(--brand) 8%, var(--bg-soft));
   font-size: 12.5px; color: var(--ink-2);
 }
+/* O display:flex acima venceria o display:none do atributo [hidden] do UA —
+   sem esta regra a barra "escondida" vira uma faixa vazia entre o feed e o
+   composer sempre que não há chamada. */
+.lab019-voicebar[hidden] { display: none; }
 .lab019-voicebar-label { display: inline-flex; align-items: center; gap: 7px; flex: 1 1 auto; min-width: 0; }
 .lab019-voicebar-btn {
   flex: 0 0 auto; border: 1px solid var(--border); border-radius: 999px;
@@ -739,7 +743,7 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 /* ---------- Painel flutuante ---------- */
 .lab019-chat-panel {
   position: fixed; top: 140px; right: 20px; z-index: 60;
-  width: 360px; max-width: calc(100vw - 40px);
+  width: 384px; max-width: calc(100vw - 40px);
   height: min(520px, calc(100vh - 168px));
   display: flex; flex-direction: column; overflow: hidden;
   background: var(--surface); border: 1px solid var(--border);
@@ -749,6 +753,15 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 }
 .lab019-chat-panel[hidden] { display: none; }
 .lab019-chat-panel.open { opacity: 1; transform: none; }
+/* Corpo do painel: mais denso que o card do hero — o .chat-body herda dali um
+   respiro (padding 20/18, bolha max 82% + padding 12/15) pensado para um card
+   largo; na largura de widget ele rouba área útil de texto das bolhas. */
+.lab019-chat-pbody { padding: 12px 10px; gap: 10px; }
+.lab019-chat-pbody .msg { max-width: 95%; padding: 9px 12px; font-size: 14px; border-radius: 12px; }
+/* O shorthand acima apagaria o "rabinho" (canto de 5px) que indica quem fala. */
+.lab019-chat-pbody .msg.user { border-bottom-right-radius: 5px; }
+.lab019-chat-pbody .msg.bot { border-bottom-left-radius: 5px; }
+.lab019-chat-pbody .msg-meta { margin-top: 5px; padding-top: 4px; font-size: 10.5px; }
 .lab019-chat-phead {
   display: flex; align-items: center; gap: 10px;
   padding: 12px 14px; border-bottom: 1px solid var(--border); background: var(--bg-soft);
