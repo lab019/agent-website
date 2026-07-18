@@ -380,6 +380,280 @@
     return el
   }
 
+  // ---- markdown → DOM (porta ES5 de agent-web src/widget/markdown.ts) ----
+  //
+  // As respostas do agente vêm em markdown; renderizamos um subconjunto seguro
+  // (parágrafos, quebras, **negrito**, *itálico*, ~~tachado~~, `código`, blocos
+  // cercados, listas, títulos, citações, régua, links) SEMPRE via
+  // createElement/createTextNode — nunca innerHTML com conteúdo do modelo — de
+  // modo que HTML embutido na resposta vira texto literal. Só o texto do agente
+  // passa por aqui; mensagens do visitante, erros e transcrições de voz seguem
+  // em text node. Espelha o renderer do widget embutível do agent-web; mudanças
+  // devem ser feitas nos dois.
+  var MD_SAFE_LINK = /^(?:https?:|mailto:)/i
+  var MD_FENCE = /^\s*```/
+  var MD_FENCE_CLOSE = /^\s*```\s*$/
+  var MD_HEADING = /^(#{1,6})\s+(.*)$/
+  var MD_HR = /^\s*(?:-{3,}|\*{3,}|_{3,})\s*$/
+  var MD_QUOTE = /^\s*>\s?(.*)$/
+  var MD_BULLET = /^(\s*)[-*+]\s+(.*)$/
+  var MD_ORDERED = /^(\s*)(\d{1,9})[.)]\s+(.*)$/
+  var MD_BLANK = /^\s*$/
+  var MD_ESCAPE = /\\([\\`*_[\]()#+\-.!~>])/
+  var MD_CODE = /`([^`\n]+)`/
+  var MD_BOLD = /\*\*((?:[^*]|\*(?!\*))+)\*\*/
+  var MD_STRIKE = /~~([^~\n]+)~~/
+  var MD_ITALIC = /\*([^*\n]+)\*/
+  var MD_LINK = /\[([^\]\n]*)\]\(([^()\s]+)\)/
+  var MD_AUTOLINK = /https?:\/\/[^\s<>]+/
+  var MD_TRAILING_PUNCT = /[.,;:!?'"]+$/
+
+  function mdSafeAnchor(href) {
+    var a = document.createElement('a')
+    a.href = href
+    a.target = '_blank'
+    a.rel = 'noopener noreferrer'
+    return a
+  }
+
+  function countChar(str, ch) {
+    var n = 0
+    for (var i = 0; i < str.length; i++) if (str.charAt(i) === ch) n++
+    return n
+  }
+
+  function mdAppendInline(parent, text) {
+    var rest = text
+    while (rest.length > 0) {
+      var best = null // { index, length, append }
+      function consider(m, length, append) {
+        if (!m) return
+        // Um match de comprimento 0 em index 0 nunca encurtaria `rest` — o while
+        // giraria pra sempre. Todo token real consome ≥1 char, então isto só
+        // rejeita um candidato degenerado (ex.: uma regex futura que case vazio);
+        // mantém a garantia de progresso do laço explícita, não implícita.
+        if (length <= 0) return
+        if (best && m.index >= best.index) return
+        best = { index: m.index, length: length, append: append }
+      }
+
+      var esc = MD_ESCAPE.exec(rest)
+      consider(esc, esc ? esc[0].length : 0, function () {
+        parent.appendChild(document.createTextNode(esc[1]))
+      })
+      var code = MD_CODE.exec(rest)
+      consider(code, code ? code[0].length : 0, function () {
+        var el = document.createElement('code')
+        el.textContent = code[1]
+        parent.appendChild(el)
+      })
+      var bold = MD_BOLD.exec(rest)
+      consider(bold, bold ? bold[0].length : 0, function () {
+        var el = document.createElement('strong')
+        mdAppendInline(el, bold[1])
+        parent.appendChild(el)
+      })
+      var strike = MD_STRIKE.exec(rest)
+      consider(strike, strike ? strike[0].length : 0, function () {
+        var el = document.createElement('del')
+        mdAppendInline(el, strike[1])
+        parent.appendChild(el)
+      })
+      var italic = MD_ITALIC.exec(rest)
+      consider(italic, italic ? italic[0].length : 0, function () {
+        var el = document.createElement('em')
+        mdAppendInline(el, italic[1])
+        parent.appendChild(el)
+      })
+      var link = MD_LINK.exec(rest)
+      consider(link, link ? link[0].length : 0, function () {
+        if (MD_SAFE_LINK.test(link[2])) {
+          var a = mdSafeAnchor(link[2])
+          mdAppendInline(a, link[1])
+          parent.appendChild(a)
+        } else {
+          parent.appendChild(document.createTextNode(link[0]))
+        }
+      })
+      var auto = MD_AUTOLINK.exec(rest)
+      var autoUrl = auto ? auto[0] : ''
+      if (auto) {
+        autoUrl = autoUrl.replace(MD_TRAILING_PUNCT, '')
+        while (autoUrl.charAt(autoUrl.length - 1) === ')' && countChar(autoUrl, '(') < countChar(autoUrl, ')')) {
+          autoUrl = autoUrl.slice(0, -1).replace(MD_TRAILING_PUNCT, '')
+        }
+      }
+      consider(auto, autoUrl.length, function () {
+        var a = mdSafeAnchor(autoUrl)
+        a.textContent = autoUrl
+        parent.appendChild(a)
+      })
+
+      if (!best) {
+        parent.appendChild(document.createTextNode(rest))
+        return
+      }
+      if (best.index > 0) parent.appendChild(document.createTextNode(rest.slice(0, best.index)))
+      best.append()
+      rest = rest.slice(best.index + best.length)
+    }
+  }
+
+  function mdRender(markdown) {
+    var frag = document.createDocumentFragment()
+    var lines = markdown.replace(/\r\n?/g, '\n').split('\n')
+    var i = 0
+    var para = []
+
+    function flushPara() {
+      if (para.length === 0) return
+      var p = document.createElement('p')
+      for (var j = 0; j < para.length; j++) {
+        if (j > 0) p.appendChild(document.createElement('br'))
+        mdAppendInline(p, para[j])
+      }
+      frag.appendChild(p)
+      para = []
+    }
+
+    while (i < lines.length) {
+      var line = lines[i]
+
+      if (MD_FENCE.test(line)) {
+        flushPara()
+        i++
+        var codeLines = []
+        while (i < lines.length && !MD_FENCE_CLOSE.test(lines[i])) {
+          codeLines.push(lines[i])
+          i++
+        }
+        i++
+        var pre = document.createElement('pre')
+        var codeEl = document.createElement('code')
+        codeEl.textContent = codeLines.join('\n')
+        pre.appendChild(codeEl)
+        frag.appendChild(pre)
+        continue
+      }
+
+      var heading = MD_HEADING.exec(line)
+      if (heading) {
+        flushPara()
+        var h = document.createElement('h' + heading[1].length)
+        mdAppendInline(h, heading[2])
+        frag.appendChild(h)
+        i++
+        continue
+      }
+
+      if (MD_HR.test(line)) {
+        flushPara()
+        frag.appendChild(document.createElement('hr'))
+        i++
+        continue
+      }
+
+      if (MD_QUOTE.test(line)) {
+        flushPara()
+        var inner = []
+        while (i < lines.length) {
+          var q = MD_QUOTE.exec(lines[i])
+          if (!q) break
+          inner.push(q[1])
+          i++
+        }
+        var quote = document.createElement('blockquote')
+        quote.appendChild(mdRender(inner.join('\n')))
+        frag.appendChild(quote)
+        continue
+      }
+
+      if (MD_BULLET.test(line) || MD_ORDERED.test(line)) {
+        flushPara()
+        i = mdAppendList(frag, lines, i)
+        continue
+      }
+
+      if (MD_BLANK.test(line)) {
+        flushPara()
+        i++
+        continue
+      }
+
+      para.push(line)
+      i++
+    }
+    flushPara()
+    return frag
+  }
+
+  function mdAppendList(parent, lines, start) {
+    var first = MD_BULLET.exec(lines[start]) || MD_ORDERED.exec(lines[start])
+    var ordered = MD_ORDERED.test(lines[start])
+    var baseIndent = first[1].length
+    var list = document.createElement(ordered ? 'ol' : 'ul')
+    if (ordered) {
+      var startNum = parseInt(MD_ORDERED.exec(lines[start])[2], 10)
+      if (startNum !== 1) list.setAttribute('start', String(startNum))
+    }
+    parent.appendChild(list)
+
+    var i = start
+    var currentLi = null
+    var nested = []
+
+    function flushNested() {
+      if (nested.length === 0 || !currentLi) {
+        nested = []
+        return
+      }
+      currentLi.appendChild(mdRender(nested.join('\n')))
+      nested = []
+    }
+
+    while (i < lines.length) {
+      var line = lines[i]
+      if (MD_BLANK.test(line)) break
+      var item = MD_BULLET.exec(line) || MD_ORDERED.exec(line)
+      if (item) {
+        var indent = item[1].length
+        if (indent > baseIndent) {
+          nested.push(line)
+          i++
+          continue
+        }
+        var itemOrdered = MD_ORDERED.test(line)
+        if (itemOrdered !== ordered) break
+        flushNested()
+        currentLi = document.createElement('li')
+        mdAppendInline(currentLi, item[item.length - 1])
+        list.appendChild(currentLi)
+        i++
+        continue
+      }
+      if (currentLi) {
+        if (nested.length > 0) {
+          nested.push(line)
+        } else {
+          currentLi.appendChild(document.createElement('br'))
+          mdAppendInline(currentLi, line.replace(/^\s+/, ''))
+        }
+        i++
+        continue
+      }
+      break
+    }
+    flushNested()
+    return i
+  }
+
+  // Renderiza `text` (markdown) dentro de `el`, substituindo o conteúdo. O
+  // chamador acrescenta metadados/badges DEPOIS, como filhos irmãos.
+  function mdRenderInto(el, text) {
+    el.textContent = ''
+    el.appendChild(mdRender(text))
+  }
+
   function applyBubble(el, msg) {
     var cls = 'msg'
     if (msg.pending) cls += ' bot typing'
@@ -396,11 +670,11 @@
         el.innerHTML = '<span class="lab019-typing" aria-label="digitando"><span></span><span></span><span></span></span>'
       }
     } else if (msg.meta) {
-      // Texto + linha de métricas. Montado via DOM (o texto do agente SEMPRE em
-      // text node — nunca innerHTML — para não abrir XSS).
+      // Texto + linha de métricas. O texto do agente é renderizado como markdown
+      // (via DOM, nunca innerHTML — HTML embutido vira texto literal); a linha de
+      // métricas entra como span irmão depois.
       if (el.getAttribute('data-typing') === '1') el.removeAttribute('data-typing')
-      el.textContent = ''
-      el.appendChild(document.createTextNode(msg.text))
+      mdRenderInto(el, msg.text)
       var meta = document.createElement('span')
       meta.className = 'msg-meta'
       meta.textContent = msg.meta
@@ -415,7 +689,14 @@
       badge.className = 'msg-voice'
       badge.textContent = 'voz'
       el.appendChild(badge)
+    } else if (msg.role === 'agent') {
+      // Resposta do agente (inclui a saudação e o streaming em andamento):
+      // markdown renderizado via DOM. msg.text guarda o markdown cru acumulado,
+      // então cada tick do drain re-renderiza a resposta inteira.
+      if (el.getAttribute('data-typing') === '1') el.removeAttribute('data-typing')
+      mdRenderInto(el, msg.text)
     } else {
+      // Mensagem do visitante ou erro — texto puro, nunca interpretado.
       if (el.getAttribute('data-typing') === '1') el.removeAttribute('data-typing')
       el.textContent = msg.text
     }
