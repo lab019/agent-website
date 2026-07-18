@@ -428,6 +428,11 @@
       var best = null // { index, length, append }
       function consider(m, length, append) {
         if (!m) return
+        // Um match de comprimento 0 em index 0 nunca encurtaria `rest` — o while
+        // giraria pra sempre. Todo token real consome ≥1 char, então isto só
+        // rejeita um candidato degenerado (ex.: uma regex futura que case vazio);
+        // mantém a garantia de progresso do laço explícita, não implícita.
+        if (length <= 0) return
         if (best && m.index >= best.index) return
         best = { index: m.index, length: length, append: append }
       }
