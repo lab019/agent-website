@@ -171,9 +171,9 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
   letter-spacing: -0.01em;
 }
 /* Marca em quadradinho — usada no nav, no footer e no mock de chat.
-   Traz o 019 (o DDD de Campinas) em laranja, igual ao favicon. */
+   Traz o 019 (o DDD de Campinas) nos mesmos tokens de accent do favicon. */
 .dot {
-  width: 26px; height: 26px; border-radius: 8px;
+  width: 26px; height: 26px; border-radius: 8px; flex: 0 0 auto;
   background: linear-gradient(135deg, var(--accent), var(--accent-strong));
   display: inline-flex; align-items: center; justify-content: center;
   color: #fff; font-size: 11px; font-weight: 700; letter-spacing: -0.04em;
@@ -796,7 +796,7 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 .lab019-chat-pdot {
   width: 24px; height: 24px; border-radius: 7px; flex: 0 0 auto;
   background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-  color: #fff; font-size: 12px; font-weight: 800;
+  color: #fff; font-size: 10px; font-weight: 700; letter-spacing: -0.04em;
   display: inline-flex; align-items: center; justify-content: center;
 }
 .lab019-chat-pstatus {

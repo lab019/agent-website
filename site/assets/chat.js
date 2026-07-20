@@ -1543,7 +1543,7 @@
     var head = document.createElement('div')
     head.className = 'lab019-chat-phead'
     head.innerHTML =
-      '<span class="lab019-chat-pdot" aria-hidden="true">L</span>' +
+      '<span class="lab019-chat-pdot" aria-hidden="true">019</span>' +
       '<strong>' +
       TITLE +
       '</strong>' +

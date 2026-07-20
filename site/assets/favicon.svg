@@ -1,12 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Lab019">
   <defs>
     <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ff751f"/>
-      <stop offset="1" stop-color="#e8590c"/>
+      <stop offset="0" stop-color="#e8590c"/>
+      <stop offset="1" stop-color="#d9480f"/>
     </linearGradient>
   </defs>
   <rect width="64" height="64" rx="16" fill="url(#g)"/>
-  <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle"
-        font-family="Poppins, Inter, Arial, sans-serif" font-size="26" font-weight="700"
-        letter-spacing="-1" fill="#ffffff">019</text>
+  <g fill="#ffffff" transform="translate(11.641 41.165)">
+    <path transform="translate(0.000 0) scale(0.026000 -0.026000)" d="M326 745Q474 745 540.5 646.0Q607 547 607 375Q607 201 540.5 102.0Q474 3 326 3Q178 3 111.5 102.0Q45 201 45 375Q45 547 111.5 646.0Q178 745 326 745ZM326 585Q257 585 235.0 530.5Q213 476 213 375Q213 307 221.0 262.5Q229 218 253.5 190.5Q278 163 326 163Q374 163 398.5 190.5Q423 218 431.0 262.5Q439 307 439 375Q439 476 417.0 530.5Q395 585 326 585Z"/>
+    <path transform="translate(15.952 0) scale(0.026000 -0.026000)" d="M27 571V730H304V0H126V571Z"/>
+    <path transform="translate(24.728 0) scale(0.026000 -0.026000)" d="M321 135Q374 135 396.0 182.0Q418 229 418 335Q396 304 358.0 287.0Q320 270 273 270Q209 270 159.0 296.5Q109 323 80.5 375.5Q52 428 52 503Q52 577 82.5 632.0Q113 687 169.5 717.0Q226 747 303 747Q451 747 510.0 655.0Q569 563 569 384Q569 254 545.5 169.5Q522 85 466.5 41.0Q411 -3 315 -3Q239 -3 185.5 27.0Q132 57 103.5 106.0Q75 155 71 214H229Q244 135 321 135ZM404 500Q404 548 378.0 574.0Q352 600 308 600Q264 600 238.5 573.5Q213 547 213 501Q213 458 238.5 431.5Q264 405 312 405Q354 405 379.0 430.5Q404 456 404 500Z"/>
+  </g>
 </svg>
