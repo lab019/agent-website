@@ -50,11 +50,11 @@
   var WIDGET_KEY = '__PUBLIC_WIDGET_KEY__'
   var API_BASE = '__PUBLIC_API_BASE__'
 
-  // Aparência/cópia do agente-demo da LAB019 (a saudação é client-side; o resto
+  // Aparência/cópia do agente-demo da Lab019 (a saudação é client-side; o resto
   // da conversa vem do agente de verdade).
-  var TITLE = 'Agente LAB019'
+  var TITLE = 'Agente Lab019'
   var GREETING =
-    'Oi! 👋 Sou o agente virtual da LAB019. Pergunte o que quiser — preços, ' +
+    'Oi! 👋 Sou o agente virtual da Lab019. Pergunte o que quiser — preços, ' +
     'canais (chat, voz, WhatsApp), como configurar. Estou aqui pra mostrar na ' +
     'prática como funciona.'
 

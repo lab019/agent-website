@@ -1,5 +1,5 @@
 /* ============================================================
-   LAB019 — landing page
+   Lab019 — landing page
    Paleta 60/30/10:
      • Neutros (~60%) dominam o layout — fundos, bordas e texto.
      • Azul (~30%) carrega a identidade — navegação, links e marca.
@@ -170,13 +170,13 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
   font-size: 18px;
   letter-spacing: -0.01em;
 }
-/* Avatar/logo em quadradinho — usado na marca (nav/footer) e no mock de chat.
-   Laranja (accent) para destacar a marca. */
+/* Marca em quadradinho — usada no nav, no footer e no mock de chat.
+   Traz o 019 (o DDD de Campinas) em laranja, igual ao favicon. */
 .dot {
   width: 26px; height: 26px; border-radius: 8px;
   background: linear-gradient(135deg, var(--accent), var(--accent-strong));
   display: inline-flex; align-items: center; justify-content: center;
-  color: #fff; font-size: 13px; font-weight: 800;
+  color: #fff; font-size: 11px; font-weight: 700; letter-spacing: -0.04em;
 }
 .nav-links { display: flex; align-items: center; gap: 28px; }
 .nav-links a { color: var(--ink-2); font-weight: 500; font-size: 15px; }

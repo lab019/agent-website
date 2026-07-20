@@ -4,7 +4,7 @@ Orientações para o Claude Code neste repositório.
 
 ## Projeto
 
-`agent-website` — landing page pública da LAB019 (lab019.ai), voltada ao
+`agent-website` — landing page pública da Lab019 (lab019.ai), voltada ao
 pequeno empreendedor (linguagem de negócio, pt-BR). Site estático — HTML +
 CSS + um pouco de JS em `site/` — publicado no GitHub Pages via GitHub
 Actions a cada push na `main` (sem build, sem framework).
@@ -27,9 +27,9 @@ HTML/CSS válidos, links e assets funcionando no preview local e o deploy do
 Pages verde — mudanças se provam no preview, sem inventar harness de teste
 para o site estático.
 
-## Padrões da plataforma LAB019
+## Padrões da plataforma Lab019
 
-Este repositório faz parte da plataforma de agentes da LAB019:
+Este repositório faz parte da plataforma de agentes da Lab019:
 
 - `agent-runtime` — motor do agente (FastAPI SSE + LangGraph + MCP)
 - `agent-gateway` — camada de canais (voz/LiveKit, Telegram, WhatsApp, widget)

@@ -1,6 +1,6 @@
-# LAB019 — Plano de Marketing de Lançamento do MVP
+# Lab019 — Plano de Marketing de Lançamento do MVP
 
-> Plano passo a passo para tirar o LAB019 do modo "Em breve" e colocá-lo no mercado.
+> Plano passo a passo para tirar o Lab019 do modo "Em breve" e colocá-lo no mercado.
 > Premissas: orçamento enxuto, equipe mínima (fundador + IA), venda 100% self-service,
 > público = pequeno empreendedor brasileiro. Companion deste plano:
 > [`brief-produto-lab019.md`](./brief-produto-lab019.md).
@@ -43,7 +43,7 @@ Pré-requisitos técnicos e de mensagem antes de qualquer divulgação.
 5. **Preparar o "kit de lançamento":** 1 vídeo-demo de 60–90s (chat + voz com sotaque
    brasileiro é o momento "uau"), 5–10 capturas de tela, 1 one-pager PDF, textos de
    anúncio nos 3 tamanhos (título, parágrafo, post longo).
-6. **Perfis e presença mínima:** Instagram e LinkedIn da LAB019, Google Business Profile
+6. **Perfis e presença mínima:** Instagram e LinkedIn da Lab019, Google Business Profile
    (Campinas), página de contato/WhatsApp comercial para dúvidas de venda.
 7. **Definir política de suporte do lançamento:** quem responde, em que prazo, por qual
    canal (e-mail + WhatsApp comercial).
