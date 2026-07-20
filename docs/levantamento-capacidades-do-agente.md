@@ -1,8 +1,8 @@
-# Levantamento de capacidades — o Agente do LAB019
+# Levantamento de capacidades — o Agente do Lab019
 
 > Documento de trabalho para reposicionar o `agent-website`: sair da narrativa de
 > **"plataforma de agentes"** e passar a apresentar **um Agente** — o Agente do
-> LAB019, feito para o **pequeno negócio**. Aqui está o levantamento **exaustivo**
+> Lab019, feito para o **pequeno negócio**. Aqui está o levantamento **exaustivo**
 > do que esse Agente realmente faz, extraído da leitura do código dos 8 repositórios
 > do produto. Depois decidimos o que vai para a home e o que vira página de detalhe.
 >
@@ -211,7 +211,7 @@ organização (`org_id`), com modos `standalone` (single-tenant) e `oidc`
 ### 3.10 BYOK — traga sua própria chave — `PRONTO`
 
 - **O que é:** o cliente usa a **própria conta** de LLM (OpenAI, Anthropic, Google) e
-  o custo cai na conta dele, não da LAB019.
+  o custo cai na conta dele, não da Lab019.
 - **Como funciona:** `agent-runtime` `byok_resolver.py` resolve a chave por `org_id`
   em tempo de request via o cofre **agent-secrets** (broker HTTP). Multi-provider
   (`anthropic/*`, `gemini/*`, `openai/*`). A chave é passada ao proxy como credencial

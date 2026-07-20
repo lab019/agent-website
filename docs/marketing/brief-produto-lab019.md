@@ -1,4 +1,4 @@
-# LAB019 — Brief de Produto
+# Lab019 — Brief de Produto
 
 > **Finalidade deste documento:** servir de contexto completo e autossuficiente sobre o
 > produto para trabalhos de marketing, conteúdo, vendas e lançamento — inclusive para uso
@@ -9,7 +9,7 @@
 
 ## 1. Identidade
 
-- **Marca:** LAB019
+- **Marca:** Lab019
 - **Razão social:** INDRA CONSULTORIA EMPRESARIAL LTDA — CNPJ 04.022.591/0001-59
 - **Sede:** Campinas, SP — Brasil 🇧🇷
 - **Domínios:** `lab019.ai` e `lab019.com` (site institucional em GitHub Pages; app em

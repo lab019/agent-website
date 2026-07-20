@@ -1,6 +1,6 @@
 name: release
 
-# Versionamento SEMVER automatizado da plataforma LAB019: a cada push na main,
+# Versionamento SEMVER automatizado da plataforma Lab019: a cada push na main,
 # calcula a próxima versão a partir dos Conventional Commits (fix → patch,
 # feat → minor, BREAKING CHANGE/"!" → major), cria a tag vX.Y.Z e publica um
 # GitHub Release com notas geradas. Commits docs/chore/refactor/test/ci não

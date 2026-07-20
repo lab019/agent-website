@@ -1,6 +1,6 @@
 # agent-website
 
-Landing page pública da **LAB019** — o Agente de IA para o pequeno negócio.
+Landing page pública da **Lab019** — o Agente de IA para o pequeno negócio.
 Site estático, hospedado no **GitHub Pages**.
 
 - **Domínios:** [lab019.com](https://lab019.com) e [lab019.ai](https://lab019.ai)
