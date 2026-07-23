@@ -260,3 +260,60 @@
 .appshot .as-abtn.approve { background: var(--brand); color: #fff; border-color: transparent; }
 .appshot .as-abtn.edit { background: var(--surface); color: var(--ink-2); }
 .appshot .as-abtn.reject { background: var(--surface); color: #e03131; border-color: color-mix(in srgb, #e03131 30%, var(--border)); }
+
+/* ============================================================
+   .demo — vídeos de demonstração (recriações na identidade da
+   marca, com narração e legendas queimadas). Moldura no mesmo
+   espírito dos mockups .appshot; segue o tema da página.
+   ============================================================ */
+.demo { max-width: 900px; margin: 0 auto; }
+.demo-frame {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--bg-sunken);
+  box-shadow: var(--shadow-lg);
+  aspect-ratio: 16 / 9;
+}
+.demo-frame > video {
+  width: 100%; height: 100%; display: block;
+  object-fit: cover; background: var(--bg-sunken);
+}
+
+/* Botão de play sobreposto — só aparece com JS (html.js); sem JS,
+   os controles nativos do <video> dão conta sozinhos. */
+.demo-play {
+  position: absolute; inset: 0; margin: 0;
+  display: flex; align-items: center; justify-content: center;
+  border: 0; padding: 0; cursor: pointer; font-family: inherit;
+  background: linear-gradient(180deg, rgba(15, 23, 32, .04), rgba(15, 23, 32, .30));
+  transition: background .2s ease;
+}
+.demo-play:hover { background: linear-gradient(180deg, rgba(15, 23, 32, .10), rgba(15, 23, 32, .42)); }
+.demo-play .pico {
+  width: 74px; height: 74px; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; padding-left: 5px; line-height: 1;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .30);
+  transition: transform .2s ease;
+}
+.demo-play:hover .pico { transform: scale(1.06); }
+.demo-play .plabel {
+  position: absolute; left: 18px; right: 18px; bottom: 16px;
+  text-align: left; font-size: 13.5px; font-weight: 600; color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, .55);
+}
+html:not(.js) .demo-play { display: none; }
+.demo.is-playing .demo-play { display: none; }
+
+.demo-cap {
+  margin: 12px auto 0; text-align: center;
+  font-size: 12.5px; color: var(--ink-3);
+}
+
+@media (max-width: 640px) {
+  .demo-play .pico { width: 60px; height: 60px; font-size: 22px; }
+  .demo-play .plabel { font-size: 12.5px; bottom: 12px; }
+}
