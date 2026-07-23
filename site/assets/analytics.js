@@ -50,6 +50,36 @@
     wait_for_update: 500,
   })
 
+  // Rastreamento de conversão: quando o lead clica num CTA, empurra um evento
+  // semântico no dataLayer para o GTM repassar ao GA4 e ao Meta (Lead). Fica
+  // ativo independentemente da escolha de consentimento — o push é só um array
+  // em memória; nada sai do navegador enquanto o GTM não carregar, e o GTM só
+  // carrega após o "Aceitar". Delegação num único listener (captura) para pegar
+  // cliques em qualquer CTA, inclusive os injetados depois.
+  document.addEventListener(
+    'click',
+    function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a[href]') : null
+      if (!a) return
+      var href = a.getAttribute('href') || ''
+      var evt = null
+      if (href.indexOf('app.lab019.ai') !== -1) {
+        // CTA principal: começar no app (teste grátis) — a conversão da landing.
+        evt = {
+          event: 'cta_click',
+          cta_destination: 'app',
+          link_url: href,
+          link_text: (a.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 80),
+        }
+      } else if (/^mailto:contato@/i.test(href)) {
+        // Contato por e-mail → lead leve (o e-mail jurídico privacidade@ não conta).
+        evt = { event: 'email_click', link_url: href }
+      }
+      if (evt) window.dataLayer.push(evt)
+    },
+    true
+  )
+
   function loadGtm() {
     if (window.__lab019GtmLoaded) return
     window.__lab019GtmLoaded = true
