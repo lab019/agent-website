@@ -3,7 +3,11 @@
    controles nativos e o poster (o markup já traz `controls`), então
    o vídeo continua reproduzível. Com JS, escondemos os controles
    nativos até o primeiro play e mostramos um botão de play próprio;
-   ao tocar, devolvemos os controles nativos (scrubber, volume). */
+   ao tocar, devolvemos os controles nativos (scrubber, volume).
+
+   O botão de play só é revelado (via classe .demo-enhanced, no CSS)
+   depois que este script wireou tudo — se ele não rodar, o overlay
+   nunca aparece e os controles nativos permanecem acessíveis. */
 (function () {
   var demos = document.querySelectorAll(".demo");
   if (!demos.length) return;
@@ -12,9 +16,6 @@
     var video = demo.querySelector("video");
     var play = demo.querySelector(".demo-play");
     if (!video || !play) return;
-
-    // JS presente: começa limpo, só com a capa + botão próprio.
-    video.removeAttribute("controls");
 
     function start() {
       demo.classList.add("is-playing");
@@ -31,5 +32,11 @@
       demo.classList.add("is-playing");
       video.setAttribute("controls", "");
     });
+
+    // Só agora, com o botão já funcional: esconde os controles nativos
+    // e revela a capa. Se este trecho não rodar, o <video controls>
+    // segue tocável e o overlay fica oculto.
+    video.removeAttribute("controls");
+    demo.classList.add("demo-enhanced");
   });
 })();
