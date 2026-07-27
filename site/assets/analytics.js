@@ -63,7 +63,9 @@
       if (!a) return
       var href = a.getAttribute('href') || ''
       var evt = null
-      if (href.indexOf('app.lab019.ai') !== -1) {
+      // Casa o host exato (não substring do href) para não confundir um futuro
+      // notapp.lab019.ai, app.lab019.ai.algo, nem ?ref=app.lab019.ai com o CTA.
+      if (a.hostname === 'app.lab019.ai') {
         // CTA principal: começar no app (teste grátis) — a conversão da landing.
         evt = {
           event: 'cta_click',
