@@ -182,7 +182,11 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 .nav-links a { color: var(--ink-2); font-weight: 500; font-size: 15px; }
 .nav-links a:hover { color: var(--ink); }
 .nav-cta { display: flex; align-items: center; gap: 12px; }
-@media (max-width: 860px) {
+/* Com o link de Docs no menu, a linha de links precisa de ~990px para caber
+   ao lado da marca e dos dois CTAs; abaixo disso ela estourava a largura da
+   página (o corte antigo, em 860px, já deixava passar um estouro entre
+   861px e 922px). Some antes de espremer — marca e CTAs seguem visíveis. */
+@media (max-width: 1000px) {
   .nav-links { display: none; }
 }
 @media (max-width: 520px) {
