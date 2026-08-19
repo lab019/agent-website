@@ -185,6 +185,16 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 @media (max-width: 860px) {
   .nav-links { display: none; }
 }
+/* A home tem um item a mais no menu ("Funcionamento"), e com o link de Docs
+   sua linha precisa de ~990px para caber ao lado da marca e dos dois CTAs —
+   abaixo disso estourava a largura da página. O corte de 860px já deixava
+   passar esse estouro na home antes deste menu (a versão anterior, com os
+   rótulos longos, exigia ~948px). O limite de 1024px dá folga para quem usa
+   fonte mínima maior no navegador, caso em que a linha exige mais.
+   As demais páginas têm um item a menos (~850px) e seguem no corte geral. */
+@media (max-width: 1024px) {
+  .nav-links--wide { display: none; }
+}
 @media (max-width: 520px) {
   /* em telas estreitas mantém só o CTA principal para não estourar a largura */
   .nav-cta .btn-ghost { display: none; }
