@@ -101,7 +101,9 @@
         <li><strong>Sign-up:</strong> email and password (stored only as a hash, never in
           plain text). When you create the account, we also record your acceptance of the Terms
           of Use and this Policy (date, time, document versions, IP address and browser
-          identifier) to prove consent/contract, as the LGPD requires.</li>
+          identifier) to prove consent/contract, as the LGPD requires. <strong>When the account
+          is closed, the IP address and browser identifier are erased from that record</strong>
+          &mdash; only the accepted version and date remain.</li>
         <li><strong>Interaction content:</strong> the text messages and voice-call audio you
           exchange with the agent, plus the transcripts generated.</li>
         <li><strong>Configuration:</strong> agent preferences, connected tools and, if you use
@@ -215,8 +217,10 @@
         <li><strong>Account and conversation content:</strong> while your account is active.
           After closure, we delete or anonymize within a reasonable period, unless a legal
           retention duty applies.</li>
-        <li><strong>Terms/Policy acceptance record:</strong> kept for the duration of the
-          relationship and applicable limitation periods, as proof of consent/contract.</li>
+        <li><strong>Terms/Policy acceptance record:</strong> the accepted version and date are
+          kept for the duration of the relationship and applicable limitation periods, as proof
+          of consent/contract. The IP address and browser identifier are erased when the account
+          is closed.</li>
         <li><strong>Tax and payment data:</strong> for the periods required by law (generally up
           to 5 years or more, depending on the applicable rule).</li>
         <li><strong>Access logs:</strong> for the period set by Brazil's Internet Civil
@@ -241,17 +245,23 @@
       <p>
         <strong>Access and portability without leaving the product.</strong> If you are
         the account owner, you can request the copy inside the app, under
-        <em>Manage account &rarr; Organization data</em> — no need to close anything and
+        <em>Gerenciar conta &rarr; Dados da organização</em> (&ldquo;Manage account &rarr;
+        Organization data&rdquo; &mdash; the interface is in Portuguese) &mdash; no need to close anything and
         no need to write to anyone. The package is assembled in the background and the
         link arrives at the already-verified email on your account: an archive with a
         manifest, one folder per service in JSON (so another vendor can import it), the
         conversations in Markdown, and the original files. The link is valid for
         <strong>72 hours</strong> and the package stays available for <strong>7 days</strong>.
+        The <strong>billing slice</strong> &mdash; sign-up email, wallet statement and
+        acceptance record &mdash; comes from a second button on the same screen, and is the
+        one part that is neither in that package nor in its manifest.
       </p>
       <p>
         That package belongs to the <strong>organization</strong>, which is why only the
-        account owner can request it: it also contains data about the people it served.
-        The manifest states what was deliberately left out and why — in particular
+        account owner can request it: it also contains data about <strong>other
+        people</strong> &mdash; those the organization served, and its own staff, including
+        internal notes with authorship. Whoever hands this package to another vendor hands
+        that over too. The manifest states what was deliberately left out and why — in particular
         credentials (channel tokens, integration secrets), which are erased on account
         closure and <strong>never</strong> exported.
       </p>
