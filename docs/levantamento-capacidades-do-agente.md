@@ -107,6 +107,11 @@ organização (`org_id`), com modos `standalone` (single-tenant) e `oidc`
 
 ### 3.4 WhatsApp (QR Code **e** Cloud API) — `PRONTO`
 
+> **25/set/2026 — não anunciar o QR Code.** A conexão por QR usa o protocolo do
+> WhatsApp Web: não é oficial, e a Meta bloqueia número que dispara em volume por
+> ela. Continua no produto só como conexão de teste (com aviso nas telas, sem
+> disparo); o site e o material externo falam só da API oficial da Meta.
+
 - **O que é:** presença no canal nº 1 do pequeno negócio brasileiro, com **dois
   jeitos de conectar**.
 - **Como funciona (agent-gateway, via Evolution API):**
@@ -488,8 +493,8 @@ O Agente **inicia** conversas, não só responde:
 
 **Blocos de capacidade na home (os 6 mais fortes e verdadeiros):**
 
-1. **Atende em todo canal** — chat, voz (número de telefone real) e WhatsApp (QR ou
-   Cloud API), sempre a mesma conversa.
+1. **Atende em todo canal** — chat, voz (número de telefone real) e WhatsApp (API
+   oficial da Meta), sempre a mesma conversa.
 2. **Escolhe o modelo certo, gasta pouco** — roteamento automático custo × inteligência
    + BYOK.
 3. **Uma equipe de especialistas** — agente principal + sub-agentes + skills do seu
@@ -504,7 +509,7 @@ O Agente **inicia** conversas, não só responde:
 **Páginas de detalhe (uma por tema, para SEO e profundidade):**
 
 - `/voz` — voz + telefonia + outbound de cobrança.
-- `/whatsapp` — QR vs Cloud API + disparos/broadcast.
+- `/whatsapp` — conexão pela API oficial da Meta + disparos/broadcast.
 - `/handoff` — mesa de atendimento, "assumir agora", monitoramento.
 - `/modelos` — roteamento custo × inteligência, BYOK, reasoning.
 - `/integracoes` — MCP, OAuth, ferramentas nativas, `http_request`.
