@@ -543,7 +543,7 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 .callout p { margin: 0; color: var(--ink-2); font-size: 15.5px; }
 @media (max-width: 620px) { .callout { grid-template-columns: 1fr; gap: 14px; padding: 24px 22px; } }
 
-/* Duas colunas (ex.: QR vs Cloud API) */
+/* Duas colunas (ex.: como conectar × o que é a API oficial) */
 .split { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: stretch; }
 @media (max-width: 880px) { .split { grid-template-columns: 1fr; } }
 .split .card {
