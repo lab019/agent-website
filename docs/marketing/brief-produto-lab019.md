@@ -73,7 +73,7 @@ modelos de IA do mundo — **incluindo o brasileiro Sabiá** — e **cobra só p
 | Voz no navegador (WebRTC/LiveKit) | Pronto — ativação opcional por cliente |
 | Telefone (número/PSTN via SIP) | Pronto na infraestrutura — ativação gerenciada |
 | Telegram (múltiplos bots por conta) | Pronto |
-| WhatsApp (via Evolution API, pareamento por QR) | Disponível **opt-in** — ⚠️ não prometer como recurso universal na comunicação de lançamento |
+| WhatsApp (via Evolution API, pareamento por QR) | ⚠️ **Não anunciar** (25/set/2026): conexão não oficial, só para teste; a Meta bloqueia número que dispara em volume por ela. Comunicar só a API oficial da Meta |
 | API para desenvolvedores | Pronta (texto SSE + voz WebRTC) |
 
 ## 6. Preço e modelo de cobrança

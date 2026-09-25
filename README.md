@@ -22,7 +22,7 @@ site/
 │   ├── legal.css       # estilos das páginas legais
 │   └── favicon.svg
 ├── modelos/            # detalhe: modelos e escolha inteligente
-├── whatsapp/           # detalhe: canal WhatsApp (QR ou Cloud API)
+├── whatsapp/           # detalhe: canal WhatsApp (API oficial da Meta)
 ├── voz/                # detalhe: voz e telefone
 ├── especialistas/      # detalhe: especialistas, sub-agentes e skills
 ├── integracoes/        # detalhe: MCP e ferramentas
