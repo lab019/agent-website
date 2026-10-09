@@ -950,6 +950,29 @@
         renderError(e.msg, new Error(typeof payload.message === 'string' ? payload.message : 'erro'))
         finishTurn()
       }
+    } else if (event === 'turn.silent_end') {
+      // Turno encerrado sem `done`: transferência para uma pessoa sem texto do
+      // agente, ou mensagem descartada. Sem isso o composer só voltava pelo
+      // watchdog. Espelha o handleGatewayTurnSilentEnd do embed do agent-web.
+      var s = currentTurn
+      if (!s || !s.messageId) return
+      if (payload.messageId && s.messageId !== payload.messageId) return
+      if (!s.msg.pending || s.buffer.length > 0) {
+        // Já chegou texto: termina de revelar e fecha como um `done`.
+        s.done = true
+        scheduleDrain()
+        return
+      }
+      if (payload.reason === 'dropped') {
+        s.msg.pending = false
+        s.msg.role = 'error'
+        s.msg.text = 'Não consegui receber essa mensagem. Tente enviar de novo.'
+      } else {
+        var i = messages.indexOf(s.msg)
+        if (i >= 0) messages.splice(i, 1)
+      }
+      render()
+      finishTurn()
     } else if (event === 'handoff.attendant_message') {
       // Mensagem de um atendente humano (se o handoff estiver ativo): entra no
       // feed como uma bolha do agente.
