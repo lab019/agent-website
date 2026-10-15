@@ -5,7 +5,8 @@ Site estático, hospedado no **GitHub Pages**.
 
 - **Domínios:** [lab019.com](https://lab019.com) e [lab019.ai](https://lab019.ai)
 - **Público-alvo:** pequeno empreendedor (linguagem de negócio, pt-BR)
-- **Proposta:** um Agente que atende por **chat, voz e WhatsApp**, com vários
+- **Proposta:** um Agente que atende por **chat, voz e WhatsApp** e automatiza
+  rotinas da operação, como cobranças, relatórios e contatos agendados. Usa vários
   modelos de IA (o brasileiro **Sabiá-4** da Maritaca — com opção de
   infraestrutura 100% no Brasil —, Claude, Gemini, GPT e DeepSeek), escolha
   automática do modelo, BYOK e acesso via web ou API. Plano de **R$25/mês que
@@ -22,6 +23,7 @@ site/
 │   ├── legal.css       # estilos das páginas legais
 │   └── favicon.svg
 ├── modelos/            # detalhe: modelos e escolha inteligente
+├── automacoes/         # detalhe: cobrança e rotinas da operação
 ├── whatsapp/           # detalhe: canal WhatsApp (API oficial da Meta)
 ├── voz/                # detalhe: voz e telefone
 ├── especialistas/      # detalhe: especialistas, sub-agentes e skills
@@ -38,7 +40,7 @@ site/
 ```
 
 Cada página de detalhe é um `index.html` numa subpasta (URLs limpas: `/modelos/`,
-`/whatsapp/`, …). Todas reaproveitam o `assets/styles.css`.
+`/automacoes/`, `/whatsapp/`, …). Todas reaproveitam o `assets/styles.css`.
 
 O site é 100% estático (HTML + CSS + um pouco de JS), sem etapa de build. Fonte
 carregada via Google Fonts (Inter).
