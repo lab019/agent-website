@@ -338,10 +338,38 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 .automations-process li > span { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: var(--brand-soft); color: var(--brand-ink); font-size: 13px; font-weight: 700; margin-bottom: 22px; }
 .automations-process strong { display: block; font-size: 17px; margin-bottom: 8px; }
 .automations-process p { color: var(--ink-2); font-size: 14px; margin: 0; }
+.automations-assurance { margin: 26px 0 0; padding: 20px 24px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--radius); color: var(--ink-2); font-size: 15px; }
+.automations-assurance a { color: var(--brand-ink); font-weight: 700; }
+.automations-assurance a:hover { text-decoration: underline; }
 .automations-other { background: var(--bg-soft); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.governance-section { background: #102a43; color: #fff; }
+.governance-section .section-head h2 { color: #fff; }
+.governance-section .section-head p { color: #d5e4ef; }
+.governance-section .eyebrow { color: #a8d8ff; }
+.governance-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.governance-card { padding: 28px; border: 1px solid rgba(255,255,255,.2); border-radius: var(--radius); background: rgba(255,255,255,.06); }
+.governance-card > span { font-size: 12px; font-weight: 700; letter-spacing: .08em; color: #9ed3ff; }
+.governance-card h3 { margin: 16px 0 10px; font-size: 21px; color: #fff; }
+.governance-card p { margin: 0; color: #d5e4ef; font-size: 15px; }
+.governance-note { display: flex; align-items: center; justify-content: space-between; gap: 30px; margin-top: 24px; padding: 26px 28px; border-radius: var(--radius); background: rgba(255,255,255,.1); }
+.governance-note p { margin: 0; max-width: 720px; color: #e0edf5; font-size: 14px; }
+.governance-note strong { color: #fff; }
+.governance-note .more { flex: 0 0 230px; color: #bde2ff; font-size: 14px; font-weight: 700; }
+.governance-note .more:hover { text-decoration: underline; }
+.assurance-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.assurance-card { padding: 27px; border: 1px solid var(--border); background: var(--surface); border-radius: var(--radius); }
+.assurance-card h3 { margin: 0 0 10px; font-size: 20px; }
+.assurance-card p { margin: 0; color: var(--ink-2); font-size: 15px; }
+.assurance-status { max-width: 810px; margin: 0 auto; padding: 30px; background: var(--brand-soft); border-radius: var(--radius); border: 1px solid var(--border); }
+.assurance-status h2 { margin: 0 0 14px; font-size: clamp(24px,3vw,32px); }
+.assurance-status p { color: var(--ink-2); margin: 0 0 12px; }
+.assurance-status p:last-child { margin-bottom: 0; }
 @media (max-width: 880px) {
   .operations-feature { grid-template-columns: 1fr; }
   .automations-process ol { grid-template-columns: repeat(2, 1fr); }
+  .governance-grid { grid-template-columns: 1fr; }
+  .governance-note { align-items: flex-start; flex-direction: column; }
+  .governance-note .more { flex: none; }
 }
 @media (max-width: 620px) {
   .operations-pillars { grid-template-columns: 1fr; gap: 14px; margin-bottom: 64px; }
@@ -351,6 +379,8 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
   .automations-billing { padding-top: 56px; }
   .automations-channel-grid, .automations-process ol { grid-template-columns: 1fr; }
   .automations-channel { padding: 26px 22px; }
+  .assurance-grid { grid-template-columns: 1fr; }
+  .assurance-status { padding: 24px; }
 }
 
 /* ---------- Feature grid ---------- */

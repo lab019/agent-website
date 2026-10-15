@@ -1,16 +1,20 @@
 # agent-website
 
-Landing page pública da **Lab019** — o Agente de IA para o pequeno negócio.
+Landing page pública da **Lab019** — agentes de IA para operações que exigem controle.
 Site estático, hospedado no **GitHub Pages**.
 
 - **Domínios:** [lab019.com](https://lab019.com) e [lab019.ai](https://lab019.ai)
-- **Público-alvo:** pequeno empreendedor (linguagem de negócio, pt-BR)
-- **Proposta:** um Agente que atende por **chat, voz e WhatsApp** e automatiza
-  rotinas da operação, como cobranças, relatórios e contatos agendados. Usa vários
-  modelos de IA (o brasileiro **Sabiá-4** da Maritaca — com opção de
-  infraestrutura 100% no Brasil —, Claude, Gemini, GPT e DeepSeek), escolha
-  automática do modelo, BYOK e acesso via web ou API. Plano de **R$25/mês que
-  viram créditos**, com 14 dias grátis sem cartão.
+- **Público prioritário:** empresas que precisam operar agentes de IA com
+  limites, aprovação humana e histórico. A entrada self-service continua aberta
+  para validação técnica, inclusive por equipes menores.
+- **Proposta:** agentes que atendem por **chat, voz e WhatsApp** e automatizam
+  cobranças, relatórios e tarefas em sistemas conectados. A plataforma oferece
+  seleção de modelos, BYOK, web e API. O plano de entrada custa **R$25/mês em
+  créditos**, com 14 dias grátis sem cartão; requisitos específicos de
+  implantação são discutidos com a Lab019.
+- **Segurança:** comunicar controles disponíveis e limites com precisão. A
+  Lab019 ainda não apresenta certificações independentes de segurança; escolha
+  de modelo processado no Brasil não garante residência de todo o fluxo.
 
 ## Estrutura
 
@@ -24,6 +28,7 @@ site/
 │   └── favicon.svg
 ├── modelos/            # detalhe: modelos e escolha inteligente
 ├── automacoes/         # detalhe: cobrança e rotinas da operação
+├── seguranca/          # controles atuais e estágio de certificações
 ├── whatsapp/           # detalhe: canal WhatsApp (API oficial da Meta)
 ├── voz/                # detalhe: voz e telefone
 ├── especialistas/      # detalhe: especialistas, sub-agentes e skills
@@ -40,7 +45,7 @@ site/
 ```
 
 Cada página de detalhe é um `index.html` numa subpasta (URLs limpas: `/modelos/`,
-`/automacoes/`, `/whatsapp/`, …). Todas reaproveitam o `assets/styles.css`.
+`/automacoes/`, `/seguranca/`, …). Todas reaproveitam o `assets/styles.css`.
 
 O site é 100% estático (HTML + CSS + um pouco de JS), sem etapa de build. Fonte
 carregada via Google Fonts (Inter).
