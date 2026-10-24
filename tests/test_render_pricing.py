@@ -4,6 +4,7 @@ Contract under test: format_brl(Decimal), load_config(env), render(html, config)
 Stdlib only. Run: python3 -m unittest discover -s tests
 """
 import contextlib
+import html
 import io
 import os
 import re
@@ -54,7 +55,7 @@ class RenderPricing(unittest.TestCase):
             self.assertRegex(out, num("137"), rel + ": plan price from config missing")
             self.assertRegex(out, num("100"), rel + ": franchise (25 USD x 4) missing")
             self.assertRegex(out, num("20"), rel + ": trial credit (5 USD x 4) missing")
-            self.assertNotRegex(out, r"R\$(\s|&nbsp;|\u00a0)*1?25(?!\d)", rel + ": old literal survived")
+            self.assertNotRegex(html.unescape(out), r"R\$(\s|&nbsp;|\u00a0)*1?25(?!\d)", rel + ": old literal survived")
 
     # p3
     def test_p3_without_config_publishes_no_price_number(self):
@@ -150,6 +151,81 @@ class RenderPricing(unittest.TestCase):
         upload = y.find("actions/upload-pages-artifact")
         self.assertGreaterEqual(step, 0, "deploy.yml does not run render_pricing.py site")
         self.assertLess(step, upload, "render must run before the pages upload step")
+
+
+def build_with_err(env):
+    err = io.StringIO()
+    with contextlib.redirect_stderr(err):
+        out = render_pricing.render(TEMPLATE, render_pricing.load_config(env))
+    return out, err.getvalue()
+
+
+class RenderPricingInputHardening(unittest.TestCase):
+    # F1
+    def test_f1_valid_amount_formats_are_accepted(self):
+        for raw, shown in (("125", "R$ 125"), ("125.5", "R$ 125,50"), ("137,50", "R$ 137,50"),
+                           ("  125  ", "R$ 125"), ("1234567", "R$ 1.234.567"), ("12.25", "R$ 12,25")):
+            out, _ = build_with_err(dict(FIXTURE_ENV, PUBLIC_PLAN_PRICE_BRL=raw))
+            self.assertTrue(out.startswith("<p>%s |" % shown), "%r -> %r" % (raw, out))
+
+    def test_f1_invalid_amount_formats_are_absent_with_warning(self):
+        invalid = ("1.250", "1,250", "0.001", "١٢٥", "1" * 30, "12\n5",
+                   "12345678", "1.2345", "1.", ".5")
+        for var, fb in (("PUBLIC_PLAN_PRICE_BRL", "<p>PRICE_FB | R$ 100 | R$ 20</p>"),
+                        ("PUBLIC_PLAN_FRANCHISE_USD", "<p>R$ 137 | FRANCHISE_FB | R$ 20</p>"),
+                        ("PUBLIC_TRIAL_CREDIT_USD", "<p>R$ 137 | R$ 100 | TRIAL_FB</p>")):
+            for raw in invalid:
+                out, err = build_with_err(dict(FIXTURE_ENV, **{var: raw}))
+                self.assertEqual(out, fb, "%s=%r" % (var, raw))
+                self.assertIn(var, err, "no warning naming %s for %r" % (var, raw))
+
+    def test_f1_invalid_fx_makes_derived_tokens_fall_back(self):
+        for raw in ("1.250", "٤", "1" * 30, "4\n4"):
+            out, err = build_with_err(dict(FIXTURE_ENV, PUBLIC_FX_BRL_PER_USD=raw))
+            self.assertEqual(out, "<p>R$ 137 | FRANCHISE_FB | TRIAL_FB</p>", repr(raw))
+            self.assertIn("PUBLIC_FX_BRL_PER_USD", err)
+
+    # F2
+    def test_f2_result_rounding_to_zero_is_absent(self):
+        out, _ = build_with_err(dict(FIXTURE_ENV, PUBLIC_PLAN_FRANCHISE_USD="0.1", PUBLIC_FX_BRL_PER_USD="0.1"))
+        self.assertIn("| FRANCHISE_FB |", out)
+        self.assertNotIn("R$ 0", out)
+        out, _ = build_with_err(dict(FIXTURE_ENV, PUBLIC_TRIAL_CREDIT_USD="1", PUBLIC_FX_BRL_PER_USD="0.2"))
+        self.assertTrue(out.endswith("| TRIAL_FB</p>"), out)
+        self.assertNotIn("R$ 0", out)
+
+    def test_f2_zero_plan_price_stays_absent(self):
+        for raw in ("0", "0.00", "0,0"):
+            out, _ = build_with_err(dict(FIXTURE_ENV, PUBLIC_PLAN_PRICE_BRL=raw))
+            self.assertTrue(out.startswith("<p>PRICE_FB |"), repr(raw))
+            self.assertNotIn("R$ 0", out)
+
+    # F3
+    def test_f3_never_raises_for_any_env_value(self):
+        weird = ("1" * 30, "١٢٥", "12\n5", "\x00", "1e400", "nan", "inf", "-0", "R$ 5", "9" * 5000)
+        for var in ("PUBLIC_PLAN_PRICE_BRL", "PUBLIC_PLAN_FRANCHISE_USD",
+                    "PUBLIC_TRIAL_CREDIT_USD", "PUBLIC_FX_BRL_PER_USD"):
+            for raw in weird:
+                try:
+                    out, _ = build_with_err(dict(FIXTURE_ENV, **{var: raw}))
+                except Exception as exc:  # noqa: BLE001
+                    self.fail("%s=%r raised %r" % (var, raw[:40], exc))
+                self.assertNotIn("{{", out)
+        out, _ = build_with_err(dict(FIXTURE_ENV, PUBLIC_PLAN_PRICE_BRL="1" * 30))
+        self.assertTrue(out.startswith("<p>PRICE_FB |"), out)
+
+    # F4
+    def test_f4_cli_warns_about_leftover_braces_and_exits_zero(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site = Path(tmp)
+            (site / "typo.html").write_text("<p>{{plan_price}} {{ plan_price|x}}</p>", encoding="utf-8")
+            (site / "ok.html").write_text(TEMPLATE, encoding="utf-8")
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err), contextlib.redirect_stdout(io.StringIO()):
+                code = render_pricing.main(["render_pricing.py", str(site)])
+            self.assertEqual(code, 0)
+            self.assertIn("typo.html", err.getvalue())
+            self.assertNotIn("ok.html", err.getvalue())
 
 
 if __name__ == "__main__":

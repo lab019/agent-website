@@ -2,6 +2,7 @@
 
 Somente stdlib. Rodar: python3 -m unittest discover -s tests
 """
+import html
 import re
 import sys
 import unittest
@@ -18,6 +19,13 @@ FIXTURE_ENV = {  # plan 137, franchise 25 USD x 4 = R$ 100, trial 5 USD x 4 = R$
     "PUBLIC_FX_BRL_PER_USD": "4",
 }
 PRICE_LITERAL = re.compile(r"R\$(?:\s|&nbsp;|&#160;|\u00a0)*1?25(?!\d)")
+
+
+def find_price_literals(raw):
+    """Price literals (old R$ 125 / R$ 25) found after decoding HTML entities."""
+    return [m.group(0) for m in PRICE_LITERAL.finditer(html.unescape(raw))]
+
+
 VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link",
         "meta", "param", "source", "track", "wbr"}
 
@@ -137,9 +145,25 @@ class PrecoV31(unittest.TestCase):
                 raw = f.read_text(encoding="utf-8")
             except UnicodeDecodeError:
                 continue
-            for m in PRICE_LITERAL.finditer(raw):
-                found.append("%s: %r" % (f.relative_to(SITE), m.group(0)))
+            for lit in find_price_literals(raw):
+                found.append("%s: %r" % (f.relative_to(SITE), lit))
         self.assertEqual(found, [], "price/franchise literal in site/:\n" + "\n".join(found[:20]))
+
+    def test_p1_literal_helper_detects_entity_encoded_forms(self):
+        for sample in ("R$&#xa0;125", "R$&#xA0;25", "R$ &#49;25"):
+            self.assertTrue(find_price_literals(sample), "not detected: %r" % sample)
+        self.assertEqual(find_price_literals("R$ 137 and R$ 1250"), [])
+
+    def test_every_site_page_renders_without_leftover_tokens(self):
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import render_pricing
+        pages = sorted(SITE.rglob("*.html"))
+        self.assertTrue(pages, "no html pages found under site/")
+        for env in (FIXTURE_ENV, {}):
+            config = render_pricing.load_config(env)
+            for f in pages:
+                out = render_pricing.render(f.read_text(encoding="utf-8"), config)
+                self.assertNotIn("{{", out, "%s: leftover token (env=%s)" % (f.relative_to(SITE), bool(env)))
 
     def has(self, t, pattern, msg):
         self.assertTrue(re.search(pattern, t, re.I), msg)
