@@ -155,8 +155,9 @@ class PrecoV31(unittest.TestCase):
         self.has(t, r"margem", "/preco: falta 'margem'")
         self.has(t, r"em reais[^.]{0,60}antes (do uso|de usar)|antes (do uso|de usar)[^.]{0,60}em reais",
                  "/preco: falta 'em reais, antes do uso'")
-        self.hasnt(t, r"margem[^.]{0,60}100\s?%|100\s?%[^.]{0,60}margem|[×x]\s?2\b|\bdobro\b|\(1\s?\+\s?m\)",
-                   "/preco publica o percentual de margem")
+        for nome, tx in (("/preco", self.t_preco), ("home", self.t_home), ("whatsapp/", self.t_wa)):
+            self.hasnt(tx, r"margem[^.]{0,60}\d+\s?%|\d+\s?%[^.]{0,60}margem|[×x]\s?2\b|\bdobro\b|\(1\s?\+\s?m\)",
+                       nome + " publica o percentual de margem")
 
     # 6
     def test_c06_numero_pelo_catalogo_da_carteira_sem_addon(self):
@@ -170,10 +171,10 @@ class PrecoV31(unittest.TestCase):
         t = self.t_preco
         for termo in (r"PSTN", r"transcri", r"voz sint[eé]tica", r"modelo"):
             self.has(t, termo, "/preco: voz decomposta sem '%s'" % termo)
-        for termo in (r"marketing", r"utilidade", r"autentica[cç][aã]o", r"servi[cç]o", r"Meta"):
-            self.has(t, termo, "/preco: WhatsApp por categoria sem '%s'" % termo)
-        for termo in (r"BYOK", r"BYO Twilio", r"BYO Meta", r"10\s?%"):
-            self.has(t, termo, "/preco: BYO sem '%s'" % termo)
+        self.has(t, r"categorias? da Meta[^.]{0,120}marketing[^.]{0,60}utilidade[^.]{0,60}autentica[cç][aã]o[^.]{0,60}servi[cç]o",
+                 "/preco: WhatsApp por categoria da Meta (marketing, utilidade, autenticacao, servico) nao dito numa frase")
+        self.has(t, r"BYOK[^.]{0,120}BYO Twilio[^.]{0,60}BYO Meta.{0,200}cobra\s+10\s?%",
+                 "/preco: BYOK/BYO Twilio/BYO Meta com 'cobra 10%' nao dito numa frase")
         self.has(t, r"p[oó]s-pago", "/preco: Enterprise sem 'pós-pago'")
         self.has(t, r"contas-filhas", "/preco: Enterprise sem 'contas-filhas'")
 
@@ -182,8 +183,8 @@ class PrecoV31(unittest.TestCase):
         t = self.t_home
         for rot, pat in (("R$ 125", r"R\$\s?125"), ("teste 14 dias", r"14 dias"),
                          ("consumo custo do provedor", r"custo do provedor"),
-                         ("voz decomposta PSTN", r"PSTN"), ("WhatsApp utilidade", r"utilidade"),
-                         ("WhatsApp marketing", r"marketing"), ("BYO 10%", r"10\s?%"),
+                         ("voz decomposta PSTN", r"PSTN"), ("WhatsApp por categoria", r"categorias? da Meta[^.]{0,120}marketing[^.]{0,60}utilidade"),
+                         ("BYO 10%", r"BYO.{0,260}cobra\s+10\s?%"),
                          ("Enterprise contas-filhas", r"contas-filhas")):
             self.has(t, pat, "home: falta %s" % rot)
         for nome, pg, tx in (("home", self.home, self.t_home), ("/preco", self.preco, self.t_preco)):
@@ -193,9 +194,9 @@ class PrecoV31(unittest.TestCase):
 
     # 9
     def test_c09_valores_de_cambio_aproximados_no_texto_visivel(self):
-        valores = [r"R\$\s?25(?![\d.,]\d)", r"R\$\s?0,91", r"R\$\s?0,12", r"R\$\s?0,68", r"R\$\s?0,05"]
-        self.has(self.t_preco, valores[1], "/preco: falta minuto celular BR R$ 0,91")
-        self.has(self.t_preco, valores[2], "/preco: falta utilidade R$ 0,12")
+        valores = [r"R\$\s?25(?![\d.,]\d)", r"R\$\s?0,91", r"R\$\s?0,12", r"R\$\s?0,68", r"R\$\s?0,05", r"R\$\s?1,83"]
+        for v in valores[1:]:
+            self.has(self.t_preco, v, "/preco: falta exemplo %s" % v)
         marca = re.compile(r"(≈|cerca de|a partir de)\s*$", re.I)
         for nome, t in (("/preco", self.t_preco), ("home", self.t_home)):
             for v in valores:
