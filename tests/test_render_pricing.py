@@ -114,6 +114,14 @@ class RenderPricing(unittest.TestCase):
         self.assertEqual(build(dict(FIXTURE_ENV, PUBLIC_PLAN_PRICE_BRL="137,50")),
                          "<p>R$ 137,50 | R$ 100 | R$ 20</p>")
 
+    def test_f1_default_franchise_equals_unrounded_price(self):
+        for raw in ("99,90", "99.90"):
+            self.assertEqual(build({"PUBLIC_PLAN_PRICE_BRL": raw}),
+                             "<p>R$ 99,90 | R$ 99,90 | TRIAL_FB</p>")
+        for raw in ("125", "125,00"):
+            self.assertEqual(build({"PUBLIC_PLAN_PRICE_BRL": raw}),
+                             "<p>R$ 125 | R$ 125 | TRIAL_FB</p>")
+
     # p6
     def test_p6_format_brl_pt_br(self):
         self.assertEqual(render_pricing.format_brl(Decimal("125")), "R$ 125")

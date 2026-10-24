@@ -79,7 +79,7 @@ def load_config(env):
         if (env.get(ENV_FRANCHISE_USD) or "").strip():
             franchise = _derived(franchise_usd, fx)
         else:
-            franchise = _whole(price) if price is not None else None
+            franchise = price
         if franchise is not None:
             config["plan_franchise"] = format_brl(franchise)
         trial = _derived(trial_usd, fx)
