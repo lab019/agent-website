@@ -3,6 +3,7 @@
 Somente stdlib. Rodar: python3 -m unittest discover -s tests
 """
 import re
+import sys
 import unittest
 from html.parser import HTMLParser
 from pathlib import Path
@@ -10,6 +11,13 @@ from urllib.parse import urlparse, unquote
 
 ROOT = Path(__file__).resolve().parent.parent
 SITE = ROOT / "site"
+FIXTURE_ENV = {  # plan 137, franchise 25 USD x 4 = R$ 100, trial 5 USD x 4 = R$ 20
+    "PUBLIC_PLAN_PRICE_BRL": "137",
+    "PUBLIC_PLAN_FRANCHISE_USD": "25",
+    "PUBLIC_TRIAL_CREDIT_USD": "5",
+    "PUBLIC_FX_BRL_PER_USD": "4",
+}
+PRICE_LITERAL = re.compile(r"R\$(?:\s|&nbsp;|&#160;|\u00a0)*1?25(?!\d)")
 VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link",
         "meta", "param", "source", "track", "wbr"}
 
@@ -89,6 +97,17 @@ def parse(rel):
     return p
 
 
+def parse_rendered(rel):
+    """Parse the page rendered in memory with the fixture config (never writes to site/)."""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import render_pricing
+    html = (SITE / rel).read_text(encoding="utf-8")
+    p = Page()
+    p.feed(render_pricing.render(html, render_pricing.load_config(FIXTURE_ENV)))
+    p.close()
+    return p
+
+
 def text(page, hidden=False):
     return re.sub(r"\s+", " ", " ".join(page.hidden_text if hidden else page.visible))
 
@@ -102,6 +121,25 @@ class PrecoV31(unittest.TestCase):
         cls.t_preco = text(cls.preco)
         cls.t_home = text(cls.home)
         cls.t_wa = text(cls.wa)
+
+    def rendered_texts(self):
+        return {"/preco": text(parse_rendered("preco/index.html")),
+                "home": text(parse_rendered("index.html")),
+                "whatsapp/": text(parse_rendered("whatsapp/index.html"))}
+
+    # p1
+    def test_p1_no_price_or_franchise_literal_in_site(self):
+        found = []
+        for f in sorted(SITE.rglob("*")):
+            if not f.is_file():
+                continue
+            try:
+                raw = f.read_text(encoding="utf-8")
+            except UnicodeDecodeError:
+                continue
+            for m in PRICE_LITERAL.finditer(raw):
+                found.append("%s: %r" % (f.relative_to(SITE), m.group(0)))
+        self.assertEqual(found, [], "price/franchise literal in site/:\n" + "\n".join(found[:20]))
 
     def has(self, t, pattern, msg):
         self.assertTrue(re.search(pattern, t, re.I), msg)
@@ -121,9 +159,10 @@ class PrecoV31(unittest.TestCase):
 
     # 2
     def test_c02_teste_14_dias_creditos_sem_cartao_whatsapp_fora(self):
-        for nome, t in (("/preco", self.t_preco), ("home", self.t_home)):
+        rt = self.rendered_texts()
+        for nome, t in (("/preco", rt["/preco"]), ("home", rt["home"])):
             self.has(t, r"14 dias", nome + ": falta '14 dias'")
-            self.has(t, r"R\$\s?25 em cr[eé]ditos", nome + ": falta 'R$ 25 em créditos'")
+            self.has(t, r"R\$\s?20 em cr[eé]ditos", nome + ": falta 'R$ 20 em créditos' (trial da config)")
             self.has(t, r"sem cart[aã]o", nome + ": falta 'sem cartão'")
             self.has(t, r"whatsapp[^.]{0,80}(fora|n[aã]o (entra|entram|inclui|incluem|vale|valem))"
                         r"|(fora|n[aã]o inclui|n[aã]o incluem)[^.]{0,80}whatsapp",
@@ -140,12 +179,14 @@ class PrecoV31(unittest.TestCase):
                                 "'taxa de canal' em %s" % f.relative_to(SITE))
 
     # 4
-    def test_c04_padrao_125_franquia_inteira_sem_95_nem_30(self):
-        for nome, t in (("/preco", self.t_preco), ("home", self.t_home), ("whatsapp/", self.t_wa)):
-            self.has(t, r"R\$\s?125", nome + ": falta R$ 125")
+    def test_c04_preco_do_plano_da_config_franquia_inteira_sem_95_nem_30(self):
+        rt = self.rendered_texts()
+        for nome, t in rt.items():
+            self.has(t, r"R\$\s?137(?![\d.,]\d)", nome + ": falta o preco do plano vindo da config (R$ 137)")
             self.hasnt(t, r"R\$\s?95(?![\d.,]\d)", nome + ": sobrou 'R$ 95'")
             self.hasnt(t, r"R\$\s?30(?![\d.,]\d)", nome + ": sobrou 'R$ 30' de numero fixo")
-        self.has(self.t_preco, r"(mensalidade|R\$\s?125)[^.]{0,60}inteir[ao]|inteir[ao][^.]{0,60}(cr[eé]dito|franquia)",
+            self.hasnt(t, r"R\$\s?125(?![\d.,]\d)", nome + ": sobrou literal antigo R$ 125")
+        self.has(rt["/preco"], r"(mensalidade|R\$\s?137)[^.]{0,60}inteir[ao]|inteir[ao][^.]{0,60}(cr[eé]dito|franquia)",
                  "/preco: mensalidade inteira como franquia nao dita")
 
     # 5
@@ -180,8 +221,8 @@ class PrecoV31(unittest.TestCase):
 
     # 8
     def test_c08_home_alinhada_sem_revenda(self):
-        t = self.t_home
-        for rot, pat in (("R$ 125", r"R\$\s?125"), ("teste 14 dias", r"14 dias"),
+        t = self.rendered_texts()["home"]
+        for rot, pat in (("R$ 137 (plano da config)", r"R\$\s?137(?![\d.,]\d)"), ("teste 14 dias", r"14 dias"),
                          ("consumo custo do provedor", r"custo do provedor"),
                          ("voz decomposta PSTN", r"PSTN"), ("WhatsApp por categoria", r"categorias? da Meta[^.]{0,120}marketing[^.]{0,60}utilidade"),
                          ("BYO 10%", r"BYO.{0,260}cobra\s+10\s?%"),
@@ -194,12 +235,18 @@ class PrecoV31(unittest.TestCase):
 
     # 9
     def test_c09_valores_de_cambio_aproximados_no_texto_visivel(self):
-        valores = [r"R\$\s?25(?![\d.,]\d)", r"R\$\s?0,91", r"R\$\s?0,12", r"R\$\s?0,68", r"R\$\s?0,05", r"R\$\s?1,83"]
-        for v in valores[1:]:
-            self.has(self.t_preco, v, "/preco: falta exemplo %s" % v)
+        rt = self.rendered_texts()
+        franquia = r"R\$\s?100(?![\d.,]\d)"   # 25 USD x 4
+        trial = r"R\$\s?20(?![\d.,]\d)"       # 5 USD x 4
+        exemplos = [r"R\$\s?0,91", r"R\$\s?0,12", r"R\$\s?0,68", r"R\$\s?0,05", r"R\$\s?1,83"]
+        for v in exemplos[1:]:
+            self.has(rt["/preco"], v, "/preco: falta exemplo %s" % v)
         marca = re.compile(r"(≈|cerca de|a partir de)\s*$", re.I)
-        for nome, t in (("/preco", self.t_preco), ("home", self.t_home)):
-            for v in valores:
+        for nome in ("/preco", "home"):
+            t = rt[nome]
+            self.has(t, franquia, nome + ": falta franquia renderizada (R$ 100)")
+            self.has(t, trial, nome + ": falta credito de teste renderizado (R$ 20)")
+            for v in [franquia, trial] + exemplos:
                 for m in re.finditer(v, t):
                     antes = t[max(0, m.start() - 12):m.start()]
                     self.assertRegex(antes, marca,
