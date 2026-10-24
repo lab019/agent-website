@@ -95,11 +95,15 @@ def main(argv):
         return 0
     config = load_config(os.environ)
     for path in sorted(Path(argv[1]).rglob("*.html")):
-        original = path.read_text(encoding="utf-8")
-        rendered = render(original, config)
-        if rendered != original:
-            path.write_text(rendered, encoding="utf-8")
-        if "{{" in rendered:
+        try:
+            original = path.read_text(encoding="utf-8")
+            rendered = render(original, config)
+            if rendered != original:
+                path.write_text(rendered, encoding="utf-8")
+        except (OSError, UnicodeError) as exc:
+            print("warning: %s skipped (%s)" % (path, type(exc).__name__), file=sys.stderr)
+            continue
+        if re.search(r"\{\{(plan_price|plan_franchise|trial_credit)", rendered):
             print("warning: %s still contains '{{' after rendering" % path, file=sys.stderr)
     print("pricing rendered: %s" % (", ".join(sorted(config)) or "no values (fallbacks only)"))
     return 0
