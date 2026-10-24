@@ -240,6 +240,9 @@ class PrecoV31(unittest.TestCase):
                  "/preco: WhatsApp por categoria da Meta (marketing, utilidade, autenticacao, servico) nao dito numa frase")
         self.has(t, r"BYOK[^.]{0,120}BYO Twilio[^.]{0,60}BYO Meta.{0,200}cobra\s+10\s?%",
                  "/preco: BYOK/BYO Twilio/BYO Meta com 'cobra 10%' nao dito numa frase")
+        self.has(t, r"cobra\s+10\s?%[^.]{0,80}\.\s*A exce[cç][aã]o[^.]{0,60}WhatsApp[^.]{0,40}Twilio[^.]{0,40}taxa fixa por mensagem",
+                 "/preco: 10% sem a excecao do WhatsApp via BYO Twilio (taxa fixa por mensagem)")
+        self.hasnt(t, r"taxa fixa por mensagem[^.]{0,80}\d", "/preco: valor numerico na taxa fixa por mensagem")
         self.has(t, r"p[oó]s-pago", "/preco: Enterprise sem 'pós-pago'")
         self.has(t, r"contas-filhas", "/preco: Enterprise sem 'contas-filhas'")
 
