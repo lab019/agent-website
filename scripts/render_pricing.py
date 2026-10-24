@@ -5,7 +5,9 @@ Replaces tokens in HTML files with values taken from environment variables
 (repo Variables in the deploy workflow), so no price is ever written in the repo:
 
     {{plan_price|fallback}}      -> "R$ <PUBLIC_PLAN_PRICE_BRL>"
-    {{plan_franchise|fallback}}  -> "R$ <PUBLIC_PLAN_FRANCHISE_USD x PUBLIC_FX_BRL_PER_USD>"
+    {{plan_franchise|fallback}}  -> "R$ <PUBLIC_PLAN_FRANCHISE_USD x PUBLIC_FX_BRL_PER_USD>",
+                                    or the plan price when PUBLIC_PLAN_FRANCHISE_USD is unset
+                                    (the whole monthly fee becomes the franchise)
     {{trial_credit|fallback}}    -> "R$ <PUBLIC_TRIAL_CREDIT_USD x PUBLIC_FX_BRL_PER_USD>"
 
 A missing or invalid input renders the token's fallback text (never a number).
@@ -13,6 +15,7 @@ Invalid values only warn on stderr; the script never fails the deploy.
 
 Usage: python3 scripts/render_pricing.py site
 """
+import html
 import os
 import re
 import sys
@@ -73,7 +76,10 @@ def load_config(env):
     try:
         if price is not None:
             config["plan_price"] = format_brl(price)
-        franchise = _derived(franchise_usd, fx)
+        if (env.get(ENV_FRANCHISE_USD) or "").strip():
+            franchise = _derived(franchise_usd, fx)
+        else:
+            franchise = _whole(price) if price is not None else None
         if franchise is not None:
             config["plan_franchise"] = format_brl(franchise)
         trial = _derived(trial_usd, fx)
@@ -84,9 +90,9 @@ def load_config(env):
     return config
 
 
-def render(html, config):
+def render(text, config):
     """Replace every known token with its value, or with its fallback text."""
-    return TOKEN_PATTERN.sub(lambda m: config.get(m.group(1), m.group(2)), html)
+    return TOKEN_PATTERN.sub(lambda m: config.get(m.group(1), html.escape(m.group(2))), text)
 
 
 def main(argv):
@@ -103,7 +109,7 @@ def main(argv):
         except (OSError, UnicodeError) as exc:
             print("warning: %s skipped (%s)" % (path, type(exc).__name__), file=sys.stderr)
             continue
-        if re.search(r"\{\{(plan_price|plan_franchise|trial_credit)", rendered):
+        if "{{" in rendered:
             print("warning: %s still contains '{{' after rendering" % path, file=sys.stderr)
     print("pricing rendered: %s" % (", ".join(sorted(config)) or "no values (fallbacks only)"))
     return 0

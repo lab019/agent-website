@@ -80,8 +80,11 @@ class RenderPricing(unittest.TestCase):
 
     # p4
     def test_p4_partial_and_invalid_config_falls_back_per_token(self):
+        # sem PUBLIC_PLAN_FRANCHISE_USD a franquia é o próprio preço (a mensalidade inteira vira franquia)
         out = build({"PUBLIC_PLAN_PRICE_BRL": "137"})
-        self.assertEqual(out, "<p>R$ 137 | FRANCHISE_FB | TRIAL_FB</p>")
+        self.assertEqual(out, "<p>R$ 137 | R$ 137 | TRIAL_FB</p>")
+        # sem preço e sem franquia, nenhum número
+        self.assertEqual(build({}), "<p>PRICE_FB | FRANCHISE_FB | TRIAL_FB</p>")
 
         for bad_fx in (None, "abc", "0", "-5", ""):
             env = dict(FIXTURE_ENV)
