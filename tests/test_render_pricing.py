@@ -12,6 +12,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from decimal import Decimal
 from pathlib import Path
 
@@ -226,6 +227,39 @@ class RenderPricingInputHardening(unittest.TestCase):
             self.assertEqual(code, 0)
             self.assertIn("typo.html", err.getvalue())
             self.assertNotIn("ok.html", err.getvalue())
+
+    # F5
+    def _run_main_with_bad_file(self, make_bad):
+        with tempfile.TemporaryDirectory() as tmp:
+            site = Path(tmp)
+            good = site / "good.html"
+            bad = site / "bad.html"
+            good.write_text("<p>{{plan_price|x}}</p>", encoding="utf-8")
+            original = make_bad(bad)
+            err = io.StringIO()
+            with mock.patch.dict(os.environ, {"PUBLIC_PLAN_PRICE_BRL": "137"}), \
+                    contextlib.redirect_stderr(err), contextlib.redirect_stdout(io.StringIO()):
+                code = render_pricing.main(["render_pricing.py", str(site)])
+            self.assertEqual(code, 0)
+            self.assertIn("137", good.read_text(encoding="utf-8"))
+            self.assertNotIn("{{", good.read_text(encoding="utf-8"))
+            bad.chmod(0o644)
+            self.assertEqual(bad.read_bytes(), original)
+            self.assertIn("bad.html", err.getvalue())
+
+    def test_f5_cli_skips_non_utf8_file_warns_and_exits_zero(self):
+        def make_bad(path):
+            path.write_bytes(b"\xff\xfe<p>x</p>")
+            return b"\xff\xfe<p>x</p>"
+        self._run_main_with_bad_file(make_bad)
+
+    @unittest.skipIf(hasattr(os, "geteuid") and os.geteuid() == 0, "root ignores file permissions")
+    def test_f5_cli_skips_unreadable_file_warns_and_exits_zero(self):
+        def make_bad(path):
+            path.write_bytes(b"<p>x</p>")
+            path.chmod(0o000)
+            return b"<p>x</p>"
+        self._run_main_with_bad_file(make_bad)
 
 
 if __name__ == "__main__":
