@@ -83,6 +83,19 @@ jobs:
             echo "::warning::PUBLIC_API_BASE inválido (esperado https://host). Usando o default do chat.js."
           fi
 
+      # Renderiza preço, franquia e crédito de teste nas páginas (tokens
+      # {{plan_price|…}}, {{plan_franchise|…}}, {{trial_credit|…}}) a partir de
+      # Variables do repositório — nenhum valor fica escrito no código. Sem a
+      # Variable (ou com valor inválido) o token vira texto neutro, sem número,
+      # e o deploy segue — publica o site sem preços.
+      - name: Render pricing from repo Variables
+        env:
+          PUBLIC_PLAN_PRICE_BRL: ${{ vars.PUBLIC_PLAN_PRICE_BRL }}
+          PUBLIC_PLAN_FRANCHISE_USD: ${{ vars.PUBLIC_PLAN_FRANCHISE_USD }}
+          PUBLIC_TRIAL_CREDIT_USD: ${{ vars.PUBLIC_TRIAL_CREDIT_USD }}
+          PUBLIC_FX_BRL_PER_USD: ${{ vars.PUBLIC_FX_BRL_PER_USD }}
+        run: python3 scripts/render_pricing.py site
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 

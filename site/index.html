@@ -341,59 +341,90 @@
   <section id="preco" class="section" style="background:var(--bg-soft);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
     <div class="wrap">
       <div class="section-head reveal">
-        <span class="eyebrow">Comece e avalie</span>
-        <h2>Teste um fluxo antes de ampliar</h2>
-        <p>O plano padrão permite testar a plataforma com um fluxo real. Se a sua organização tem requisitos de implantação ou contratação, converse com a Lab019 sobre o projeto.</p>
+        <span class="eyebrow">Planos e contratação</span>
+        <h2>Comece com um fluxo. Contrate para a operação inteira.</h2>
+        <p>Teste a plataforma no Padrão ou contrate sua operação no Enterprise, com contas-filhas para unidades ou clientes.</p>
         <p style="margin-top:14px;"><a href="/preco/" style="color:var(--brand-ink);font-weight:600;font-size:15px;">Ver detalhes de créditos e cobrança →</a></p>
       </div>
 
       <div class="pricing-wrap">
-        <div class="plan reveal">
+        <article class="plan plan--standard reveal">
           <span class="tag">Plano padrão</span>
           <h3>Plano Lab019</h3>
+          <p class="billing-mode">Pré-pago · assinatura mensal</p>
           <div class="price">
-            <span class="amount">R$125</span>
+            <span class="amount">{{plan_price|Assinatura}}</span>
             <span class="per">/ mês</span>
           </div>
-          <div class="credit-line">✓ R$95 em créditos mensais + 1 número incluído (R$30 do plano) · teste de 14 dias com R$25* em créditos, sem cartão</div>
-          <p style="font-size:13px;color:var(--ink-3);margin:10px 0 16px;">*O teste concede US$5 em créditos. A plataforma precifica em dólares; o equivalente em reais varia com a cotação.</p>
+          <div class="credit-line">✓ Cerca de {{plan_franchise|uma quantia}} em créditos todo mês, para seus números e seu consumo · teste de 14 dias com cerca de {{trial_credit|uma quantia}} em créditos, sem cartão</div>
+          <p class="plan-rule">Você vê e paga em reais. O preço de cada número e de cada item aparece antes do uso.</p>
           <ul>
+            <li><span class="ck">✓</span> Todos os recursos da plataforma, sem pacote de funcionalidades</li>
             <li><span class="ck">✓</span> Atende por chat, voz e WhatsApp (API oficial da Meta)</li>
-            <li><span class="ck">✓</span> 1 número incluído para telefone (PSTN) e WhatsApp, após habilitação</li>
+            <li><span class="ck">✓</span> Seu número para telefone e WhatsApp, pago com os créditos (WhatsApp após habilitação)</li>
             <li><span class="ck">✓</span> Telegram e widget no site</li>
             <li><span class="ck">✓</span> Escolha automática de modelo (Claude, Gemini, GPT, DeepSeek)</li>
             <li><span class="ck">✓</span> Equipe de especialistas, sub-agentes e skills do seu negócio</li>
             <li><span class="ck">✓</span> Tarefas agendadas, jornadas de WhatsApp e integrações</li>
             <li><span class="ck">✓</span> Passa para um humano (handoff) em voz e texto</li>
-            <li><span class="ck">✓</span> Traga sua própria chave (BYOK), se quiser</li>
+            <li><span class="ck">✓</span> Use sua própria chave de IA, conta Twilio ou conta da Meta, se quiser</li>
             <li><span class="ck">✓</span> Teto de gasto por conversa e acesso via API</li>
             <li><span class="ck">✓</span> Sem fidelidade — cancele quando quiser</li>
           </ul>
           <a class="btn btn-primary btn-lg" href="https://app.lab019.ai">Testar grátis</a>
-        </div>
+        </article>
 
-        <div class="credits-card reveal">
-          <h3>Como funcionam os créditos?</h3>
-          <p>Os créditos pagam o consumo da plataforma, inclusive IA e canais cobrados por uso. Você vê o custo de cada conversa em reais.</p>
+        <article class="plan plan--enterprise reveal">
+          <span class="tag">Enterprise</span>
+          <h3>Para a sua operação</h3>
+          <p class="billing-mode">Pós-pago · contrato por organização</p>
+          <div class="price"><span class="amount amount--consult">Sob consulta</span></div>
+          <div class="credit-line">Compromisso mínimo mensal negociado. O consumo elegível do mês conta para cumpri-lo.</div>
+          <p class="plan-rule">Ao fechar o período, se o consumo ficar abaixo do mínimo, cobra-se o mínimo. Se superar, cobra-se o consumo efetivo.</p>
+          <ul>
+            <li><span class="ck">✓</span> Contas-filhas para unidades ou clientes, com uma fatura</li>
+            <li><span class="ck">✓</span> Preços, capacidade e condições definidos em contrato</li>
+            <li><span class="ck">✓</span> Números para telefone e WhatsApp conforme a operação</li>
+            <li><span class="ck">✓</span> Implantação e suporte avaliados com sua equipe</li>
+            <li><span class="ck">✓</span> Controles e requisitos de segurança definidos para o projeto</li>
+            <li><span class="ck">✓</span> Conta criada por convite da equipe Lab019</li>
+            <li><span class="ck">✓</span> Pagamento por cartão na Stripe ou PIX/transferência</li>
+          </ul>
+          <a class="btn btn-primary btn-lg" href="mailto:contato@lab019.ai?subject=Lab019%20-%20plano%20Enterprise">Conversar sobre Enterprise</a>
+        </article>
+      </div>
+
+      <div class="reseller-teaser reveal">
+        <div>
+          <span class="eyebrow">Enterprise com contas-filhas</span>
+          <h3>Várias contas, uma fatura da Lab019</h3>
+          <p>Para redes, franquias e empresas que atendem os próprios clientes. A conta-mãe convida uma conta para cada unidade ou cliente; cada filha vê o próprio consumo, a mãe vê o total e recebe a única fatura.</p>
+        </div>
+        <a class="btn btn-ghost" href="/preco/#contas-filhas">Conhecer as contas-filhas →</a>
+      </div>
+
+      <div class="credits-card credits-card--wide reveal">
+          <h3>Como funcionam os créditos no Padrão?</h3>
+          <p>Os créditos pagam tudo o que sua operação usa: números, IA, voz e mensagens. Você vê o custo de cada conversa em reais.</p>
+          <p>O preço de cada item é o custo do provedor com margem, em reais, e aparece no painel antes do uso. A voz soma PSTN, transcrição, voz sintética e modelo. O WhatsApp segue as categorias da Meta (marketing, utilidade, autenticação e serviço). Se você traz sua própria chave, conta Twilio ou conta da Meta, a Lab019 cobra 10% do preço de tabela do fornecedor. A exceção é o WhatsApp pela sua conta Twilio, que tem uma taxa fixa por mensagem, mostrada no painel antes do uso.</p>
           <div class="how">
             <div class="credits-row">
               <span class="b">1</span>
-              <div><strong>14 dias com R$25* em créditos</strong><span>Sem cartão. São US$5 em créditos, cujo valor em reais varia com a cotação. Valem até o fim do teste.</span></div>
+              <div><strong>14 dias com cerca de {{trial_credit|uma quantia}} em créditos</strong><span>Sem cartão e sem CNPJ: você confirma seu celular. Teste a voz pelo navegador ou pelo nosso número de demonstração. WhatsApp e SMS ficam fora do teste.</span></div>
             </div>
             <div class="credits-row">
               <span class="b c2">2</span>
-              <div><strong>R$95 em créditos mensais</strong><span>Dos R$125 do plano, R$30 cobrem o número incluído. A franquia vale até o fim do ciclo.</span></div>
+              <div><strong>Cerca de {{plan_franchise|uma quantia}} em créditos todo mês</strong><span>A mensalidade inteira vira créditos. Eles pagam primeiro o número e o consumo do mês e valem até o fim do ciclo.</span></div>
             </div>
             <div class="credits-row">
               <span class="b c3">3</span>
-              <div><strong>Recarregue quando quiser</strong><span>Os créditos comprados além da franquia não expiram.</span></div>
+              <div><strong>Recarregue quando quiser</strong><span>Os créditos comprados além dos mensais não expiram.</span></div>
             </div>
             <div class="credits-row">
               <span class="b">4</span>
               <div><strong>Economize com o modelo certo</strong><span>A escolha automática usa o modelo mais barato que dá conta — seus créditos rendem mais.</span></div>
             </div>
           </div>
-        </div>
       </div>
     </div>
   </section>
@@ -497,11 +528,11 @@ conversations/<span class="p">minha-conversa</span>/messages \
       <div class="faq reveal">
         <details>
           <summary>Como funciona o teste grátis?</summary>
-          <p>Você cria a conta e recebe <strong>R$25* em créditos para usar por 14 dias, sem cartão</strong>. *A concessão é de US$5; a plataforma precifica em dólares e o equivalente em reais varia com a cotação. O saldo não utilizado vence ao fim do teste. Depois, o plano padrão custa R$125/mês, com um número incluído e R$95 em créditos mensais.</p>
+          <p>Você confirma seu celular e recebe <strong>cerca de {{trial_credit|uma quantia}} em créditos (pela PTAX do cadastro) para usar por 14 dias, sem cartão e sem CNPJ</strong>. Dá para testar a voz pelo navegador e pelo nosso número de demonstração. WhatsApp e SMS ficam fora do teste; o WhatsApp entra depois da assinatura. O saldo não usado vence ao fim do teste. Depois, o plano padrão custa {{plan_price|um valor fixo}} por mês, com a mensalidade inteira em créditos.</p>
         </details>
         <details>
-          <summary>O que está incluso nos R$125 por mês?</summary>
-          <p>Acesso à plataforma, <strong>um número incluído para telefone e WhatsApp</strong> e <strong>R$95 em créditos mensais</strong> para consumo. Os outros R$30 do plano correspondem ao número. A conexão ao WhatsApp depende da habilitação no canal oficial. Sua organização pode contratar outros valores, franquias e quantidades de números. <a href="/preco/" style="color:var(--brand-ink);font-weight:600;">Ver os detalhes de preço e créditos →</a></p>
+          <summary>O que está incluso na mensalidade?</summary>
+          <p>Todos os recursos da plataforma e <strong>cerca de {{plan_franchise|uma quantia}} em créditos mensais</strong>. Os créditos pagam seus números de telefone e WhatsApp e o consumo de IA, voz e mensagens; o preço de cada número aparece em reais antes da compra. A conexão ao WhatsApp depende da habilitação no canal oficial. Para outros volumes ou condições, montamos um contrato por organização. <a href="/preco/" style="color:var(--brand-ink);font-weight:600;">Ver os detalhes de preço e créditos →</a></p>
         </details>
         <details>
           <summary>É preciso integrar a API para começar?</summary>
