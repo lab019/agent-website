@@ -18,7 +18,7 @@ Não há build nem suíte de testes — o GitHub Pages publica o diretório `sit
 como está:
 
 - Preview local: `python3 -m http.server -d site 8000`
-- Testes: `python3 -m unittest discover -s tests`. O preço vem de tokens `{{plan_price|…}}` renderizados por `scripts/render_pricing.py` no `deploy.yml`; o preview local mostra só os fallbacks (rode o script numa cópia de `site/` para ver os valores).
+- Testes: `python3 -m unittest discover -s tests`. O preço vem de tokens `{{plan_price|…}}` renderizados por `scripts/render_pricing.py` no `deploy.yml`; o preview local mostra só os fallbacks (rode o script numa cópia de `site/` para ver os valores). Variables do repo: `PUBLIC_PLAN_PRICE_BRL`, `PUBLIC_FX_BRL_PER_USD`, `PUBLIC_PLAN_FRANCHISE_USD` (= preço ÷ câmbio, como o billing calcula a franquia), `PUBLIC_TRIAL_CREDIT_USD`.
 - Deploy: automático no push para `main` (`.github/workflows/deploy.yml`);
   também acionável via workflow_dispatch.
 
