@@ -13,3 +13,7 @@ Thumbs.db
 
 # Build output (site é estático, sem build)
 dist/
+
+# Python
+__pycache__/
+*.pyc
