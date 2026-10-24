@@ -18,6 +18,7 @@ Não há build nem suíte de testes — o GitHub Pages publica o diretório `sit
 como está:
 
 - Preview local: `python3 -m http.server -d site 8000`
+- Testes: `python3 -m unittest discover -s tests`. O preço vem de tokens `{{plan_price|…}}` renderizados por `scripts/render_pricing.py` no `deploy.yml`; o preview local mostra só os fallbacks (rode o script numa cópia de `site/` para ver os valores).
 - Deploy: automático no push para `main` (`.github/workflows/deploy.yml`);
   também acionável via workflow_dispatch.
 

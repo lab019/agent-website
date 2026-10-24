@@ -353,10 +353,10 @@
           <h3>Plano Lab019</h3>
           <p class="billing-mode">Pré-pago · assinatura mensal</p>
           <div class="price">
-            <span class="amount">R$125</span>
+            <span class="amount">{{plan_price|Assinatura}}</span>
             <span class="per">/ mês</span>
           </div>
-          <div class="credit-line">✓ R$125 em créditos todo mês, para seus números e seu consumo · teste de 14 dias com cerca de R$ 25 em créditos, sem cartão</div>
+          <div class="credit-line">✓ Cerca de {{plan_franchise|uma quantia}} em créditos todo mês, para seus números e seu consumo · teste de 14 dias com cerca de {{trial_credit|uma quantia}} em créditos, sem cartão</div>
           <p class="plan-rule">Você vê e paga em reais. O preço de cada número e de cada item aparece antes do uso.</p>
           <ul>
             <li><span class="ck">✓</span> Todos os recursos da plataforma, sem pacote de funcionalidades</li>
@@ -410,11 +410,11 @@
           <div class="how">
             <div class="credits-row">
               <span class="b">1</span>
-              <div><strong>14 dias com cerca de R$ 25 em créditos</strong><span>Sem cartão e sem CNPJ: você confirma seu celular. Teste a voz pelo navegador ou pelo nosso número de demonstração. WhatsApp e SMS ficam fora do teste.</span></div>
+              <div><strong>14 dias com cerca de {{trial_credit|uma quantia}} em créditos</strong><span>Sem cartão e sem CNPJ: você confirma seu celular. Teste a voz pelo navegador ou pelo nosso número de demonstração. WhatsApp e SMS ficam fora do teste.</span></div>
             </div>
             <div class="credits-row">
               <span class="b c2">2</span>
-              <div><strong>R$125 em créditos todo mês</strong><span>A mensalidade inteira vira créditos. Eles pagam primeiro o número e o consumo do mês e valem até o fim do ciclo.</span></div>
+              <div><strong>Cerca de {{plan_franchise|uma quantia}} em créditos todo mês</strong><span>A mensalidade inteira vira créditos. Eles pagam primeiro o número e o consumo do mês e valem até o fim do ciclo.</span></div>
             </div>
             <div class="credits-row">
               <span class="b c3">3</span>
@@ -528,11 +528,11 @@ conversations/<span class="p">minha-conversa</span>/messages \
       <div class="faq reveal">
         <details>
           <summary>Como funciona o teste grátis?</summary>
-          <p>Você confirma seu celular e recebe <strong>cerca de R$ 25 em créditos (pela PTAX do cadastro) para usar por 14 dias, sem cartão e sem CNPJ</strong>. Dá para testar a voz pelo navegador e pelo nosso número de demonstração. WhatsApp e SMS ficam fora do teste; o WhatsApp entra depois da assinatura. O saldo não usado vence ao fim do teste. Depois, o plano padrão custa R$125/mês, com os R$125 inteiros em créditos.</p>
+          <p>Você confirma seu celular e recebe <strong>cerca de {{trial_credit|uma quantia}} em créditos (pela PTAX do cadastro) para usar por 14 dias, sem cartão e sem CNPJ</strong>. Dá para testar a voz pelo navegador e pelo nosso número de demonstração. WhatsApp e SMS ficam fora do teste; o WhatsApp entra depois da assinatura. O saldo não usado vence ao fim do teste. Depois, o plano padrão custa {{plan_price|um valor fixo}} por mês, com a mensalidade inteira em créditos.</p>
         </details>
         <details>
-          <summary>O que está incluso nos R$125 por mês?</summary>
-          <p>Todos os recursos da plataforma e <strong>R$125 em créditos mensais</strong>. Os créditos pagam seus números de telefone e WhatsApp e o consumo de IA, voz e mensagens; o preço de cada número aparece em reais antes da compra. A conexão ao WhatsApp depende da habilitação no canal oficial. Para outros volumes ou condições, montamos um contrato por organização. <a href="/preco/" style="color:var(--brand-ink);font-weight:600;">Ver os detalhes de preço e créditos →</a></p>
+          <summary>O que está incluso na mensalidade?</summary>
+          <p>Todos os recursos da plataforma e <strong>cerca de {{plan_franchise|uma quantia}} em créditos mensais</strong>. Os créditos pagam seus números de telefone e WhatsApp e o consumo de IA, voz e mensagens; o preço de cada número aparece em reais antes da compra. A conexão ao WhatsApp depende da habilitação no canal oficial. Para outros volumes ou condições, montamos um contrato por organização. <a href="/preco/" style="color:var(--brand-ink);font-weight:600;">Ver os detalhes de preço e créditos →</a></p>
         </details>
         <details>
           <summary>É preciso integrar a API para começar?</summary>
