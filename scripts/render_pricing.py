@@ -19,7 +19,9 @@ import sys
 from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
-VALUE_PATTERN = re.compile(r"^\d+([.,]\d{1,4})?$")
+VALUE_PATTERN = re.compile(r"[0-9]{1,7}(?:[.,][0-9]{1,2})?", re.ASCII)
+# PTAX has 4 decimals; exactly 3 decimals is rejected (looks like a thousands separator, e.g. "1.250")
+FX_PATTERN = re.compile(r"[0-9]{1,3}(?:[.,](?:[0-9]{1,2}|[0-9]{4}))?", re.ASCII)
 TOKEN_PATTERN = re.compile(r"\{\{(plan_price|plan_franchise|trial_credit)\|([^}]*)\}\}")
 
 ENV_PLAN_PRICE = "PUBLIC_PLAN_PRICE_BRL"
@@ -36,12 +38,12 @@ def format_brl(value):
     return "R$ %s" % whole if frac == "00" else "R$ %s,%s" % (whole, frac)
 
 
-def _parse(env, name):
+def _parse(env, name, pattern=VALUE_PATTERN):
     """Return a positive Decimal, or None (with a warning if the value is set but invalid)."""
     raw = (env.get(name) or "").strip()
     if not raw:
         return None
-    if VALUE_PATTERN.match(raw):
+    if pattern.fullmatch(raw):
         value = Decimal(raw.replace(",", "."))
         if value > 0:
             return value
@@ -53,20 +55,32 @@ def _whole(value):
     return value.quantize(Decimal("1"), rounding=ROUND_HALF_UP)
 
 
+def _derived(amount_usd, fx):
+    """Return amount x fx rounded to whole reais, or None when it is not positive."""
+    if amount_usd is None or fx is None:
+        return None
+    result = _whole(amount_usd * fx)
+    return result if result > 0 else None
+
+
 def load_config(env):
     """Build the rendered strings per token; a token is absent when its inputs are."""
     price = _parse(env, ENV_PLAN_PRICE)
     franchise_usd = _parse(env, ENV_FRANCHISE_USD)
     trial_usd = _parse(env, ENV_TRIAL_USD)
-    fx = _parse(env, ENV_FX)
+    fx = _parse(env, ENV_FX, FX_PATTERN)
     config = {}
-    if price is not None:
-        config["plan_price"] = format_brl(price)
-    if fx is not None:
-        if franchise_usd is not None:
-            config["plan_franchise"] = format_brl(_whole(franchise_usd * fx))
-        if trial_usd is not None:
-            config["trial_credit"] = format_brl(_whole(trial_usd * fx))
+    try:
+        if price is not None:
+            config["plan_price"] = format_brl(price)
+        franchise = _derived(franchise_usd, fx)
+        if franchise is not None:
+            config["plan_franchise"] = format_brl(franchise)
+        trial = _derived(trial_usd, fx)
+        if trial is not None:
+            config["trial_credit"] = format_brl(trial)
+    except ArithmeticError:
+        print("warning: pricing math failed; affected tokens use fallbacks", file=sys.stderr)
     return config
 
 
@@ -85,6 +99,8 @@ def main(argv):
         rendered = render(original, config)
         if rendered != original:
             path.write_text(rendered, encoding="utf-8")
+        if "{{" in rendered:
+            print("warning: %s still contains '{{' after rendering" % path, file=sys.stderr)
     print("pricing rendered: %s" % (", ".join(sorted(config)) or "no values (fallbacks only)"))
     return 0
 
