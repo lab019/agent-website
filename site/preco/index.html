@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Lab019 — Preço e créditos: R$25/mês que viram saldo de uso</title>
-<meta name="description" content="Um plano simples: R$25/mês que viram R$25 em créditos de IA. Comece grátis por 14 dias, sem cartão. Você só paga o que usar, vê o custo de cada conversa em reais e define um teto por atendimento." />
+<title>Preço e condições comerciais — Lab019</title>
+<meta name="description" content="Teste por 14 dias sem cartão. Plano padrão com mensalidade de {{plan_price|um valor fixo}} por mês, e a mensalidade inteira vira créditos para números e consumo. Enterprise pós-pago, com contas-filhas e uma fatura." />
 <meta name="theme-color" content="#1971c2" />
 <link rel="canonical" href="https://lab019.ai/preco/" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Preço e créditos — R$25/mês que viram saldo de uso" />
-<meta property="og:description" content="R$25/mês que viram R$25 em créditos. 14 dias grátis, sem cartão. Você só paga o que usar, com custo à vista e teto por conversa." />
+<meta property="og:title" content="Preço e condições comerciais — Lab019" />
+<meta property="og:description" content="Padrão com a mensalidade inteira em créditos e Enterprise com contas-filhas e uma fatura." />
 <meta property="og:url" content="https://lab019.ai/preco/" />
 <meta property="og:image" content="https://lab019.ai/assets/og-image.png?v=2" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Preço e créditos — R$25/mês que viram saldo" />
-<meta name="twitter:description" content="R$25/mês em créditos, 14 dias grátis sem cartão. Você só paga o que usar." />
+<meta name="twitter:title" content="Preço e condições comerciais — Lab019" />
+<meta name="twitter:description" content="Padrão com a mensalidade inteira em créditos e Enterprise com contas-filhas e uma fatura." />
 <meta name="twitter:image" content="https://lab019.ai/assets/og-image.png?v=2" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -53,55 +53,109 @@
       <div class="inner">
         <a class="back-link" href="/">← Voltar para a home</a>
         <div style="height:14px"></div>
-        <span class="eyebrow">Preço & créditos</span>
-        <h1>Um plano. <span class="hl">R$25/mês que viram créditos</span>.</h1>
+        <span class="eyebrow">Preço e contratação</span>
+        <h1>Comece com um fluxo real. <span class="hl">Escale com condições para sua operação.</span></h1>
         <p class="lead">
-          Preço previsível em reais, sem pegadinha. A mensalidade vira saldo de uso — e você
-          só investe além disso se usar mais. Comece grátis por 14 dias, sem cartão.
+          Teste por 14 dias com cerca de {{trial_credit|uma quantia}} em créditos, pela PTAX do cadastro, sem cartão: basta confirmar seu celular.
+          Depois, o plano padrão custa {{plan_price|um valor fixo}} por mês, e a mensalidade inteira vira créditos para seus números e seu consumo.
+          Para a operação em escala, o Enterprise é pós-pago, com um compromisso mínimo que o consumo do mês abate,
+          e reúne as contas das suas unidades ou clientes numa fatura só.
         </p>
         <div class="hero-actions">
           <a class="btn btn-primary btn-lg" href="https://app.lab019.ai">Testar grátis por 14 dias</a>
-          <a class="btn btn-ghost btn-lg" href="/#recursos">Ver o que ele faz</a>
+          <a class="btn btn-ghost btn-lg" href="mailto:contato@lab019.ai?subject=Lab019%20-%20plano%20Enterprise">Conversar sobre Enterprise</a>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section" style="padding-top:32px;">
+  <section id="planos" class="section" style="padding-top:32px;scroll-margin-top:66px;">
     <div class="wrap">
       <div class="pricing-wrap">
-        <div class="plan reveal">
-          <span class="tag">Mais popular</span>
+        <article class="plan plan--standard reveal">
+          <span class="tag">Plano padrão</span>
           <h3>Plano Lab019</h3>
+          <p class="billing-mode">Pré-pago · assinatura mensal</p>
           <div class="price">
-            <span class="amount">R$25</span>
+            <span class="amount">{{plan_price|Assinatura}}</span>
             <span class="per">/ mês</span>
           </div>
-          <div class="credit-line">✓ Os R$25 viram R$25 em créditos de IA todo mês · 14 dias grátis, sem cartão</div>
+          <div class="credit-line">✓ Cerca de {{plan_franchise|uma quantia}} em créditos todo mês, para seus números e seu consumo · teste de 14 dias com cerca de {{trial_credit|uma quantia}} em créditos, sem cartão</div>
+          <p class="plan-rule">Você vê e paga em reais. O preço de cada número e de cada item aparece antes do uso.</p>
           <ul>
+            <li><span class="ck">✓</span> Todos os recursos da plataforma, sem pacote de funcionalidades</li>
             <li><span class="ck">✓</span> Atende por chat, voz e WhatsApp (API oficial da Meta)</li>
-            <li><span class="ck">✓</span> Telefone com número próprio, Telegram e widget no site</li>
-            <li><span class="ck">✓</span> Escolha automática de modelo, com opção 100% no Brasil</li>
+            <li><span class="ck">✓</span> Seu número para telefone e WhatsApp, escolhido no catálogo, com preço em reais antes da compra e debitado da carteira todo mês (WhatsApp após habilitação)</li>
+            <li><span class="ck">✓</span> Telegram e widget no site</li>
+            <li><span class="ck">✓</span> Tarefas agendadas, jornadas de WhatsApp e disparos por telefone</li>
+            <li><span class="ck">✓</span> Escolha automática ou fixa do modelo, conforme o fluxo</li>
             <li><span class="ck">✓</span> Especialistas, sub-agentes, skills e integrações</li>
             <li><span class="ck">✓</span> Passa para um humano (handoff) em voz e texto</li>
-            <li><span class="ck">✓</span> Traga sua própria chave (BYOK), se quiser</li>
+            <li><span class="ck">✓</span> Use sua própria chave de IA, conta Twilio ou conta da Meta, se quiser</li>
             <li><span class="ck">✓</span> Teto de gasto por conversa e acesso via API</li>
             <li><span class="ck">✓</span> Sem fidelidade — cancele quando quiser</li>
           </ul>
           <a class="btn btn-primary btn-lg" href="https://app.lab019.ai">Testar grátis</a>
-        </div>
+        </article>
 
-        <div class="credits-card reveal">
-          <h3>Como funcionam os créditos?</h3>
-          <p>Os créditos pagam o uso da IA — as respostas de chat e de voz. Você só paga pelo que consome, e vê o custo de cada conversa em reais.</p>
+        <article id="enterprise" class="plan plan--enterprise reveal" style="scroll-margin-top:84px;">
+          <span class="tag">Enterprise</span>
+          <h3>Para a sua operação</h3>
+          <p class="billing-mode">Pós-pago · contrato por organização</p>
+          <div class="price"><span class="amount amount--consult">Sob consulta</span></div>
+          <div class="credit-line">Compromisso mínimo mensal negociado. O consumo elegível do mês conta para cumpri-lo.</div>
+          <p class="plan-rule">Ao fechar o período, se o consumo ficar abaixo do mínimo, cobra-se o mínimo. Se superar, cobra-se o consumo efetivo.</p>
+          <ul>
+            <li><span class="ck">✓</span> Contas-filhas para unidades ou clientes, com uma fatura</li>
+            <li><span class="ck">✓</span> Preços, capacidade e condições definidos em contrato</li>
+            <li><span class="ck">✓</span> Números para telefone e WhatsApp conforme a operação</li>
+            <li><span class="ck">✓</span> Implantação e suporte avaliados com sua equipe</li>
+            <li><span class="ck">✓</span> Controles e requisitos de segurança definidos para o projeto</li>
+            <li><span class="ck">✓</span> Conta criada por convite da equipe Lab019</li>
+            <li><span class="ck">✓</span> Pagamento por cartão na Stripe ou PIX/transferência</li>
+          </ul>
+          <a class="btn btn-primary btn-lg" href="mailto:contato@lab019.ai?subject=Lab019%20-%20plano%20Enterprise">Conversar sobre Enterprise</a>
+        </article>
+      </div>
+
+      <article id="contas-filhas" class="reseller-card reveal">
+        <div class="reseller-copy">
+          <span class="eyebrow">Enterprise com contas-filhas</span>
+          <h3>Uma organização. Várias contas, uma fatura.</h3>
+          <p class="billing-mode">Sob consulta · contrato Enterprise pós-pago</p>
+          <p>Para redes, franquias e empresas que atendem os próprios clientes. A conta-mãe cria uma conta para cada unidade ou cliente, por convite de e-mail.</p>
+          <p class="reseller-followup">Cada conta-filha vê o próprio consumo. A conta-mãe vê o total, pode entrar nas filhas para apoiar a operação e recebe a única fatura da Lab019.</p>
+          <div class="reseller-rule">As filhas herdam as condições do contrato da mãe. O consumo de todas abate o compromisso mínimo; acima dele, paga-se o uso efetivo.</div>
+          <a class="btn btn-ghost" href="mailto:contato@lab019.ai?subject=Lab019%20-%20Enterprise%20com%20contas-filhas">Conversar sobre contas-filhas</a>
+        </div>
+        <div class="reseller-flow" aria-label="A Lab019 fecha o contrato com a conta-mãe, que convida as filhas e recebe uma fatura com o consumo de todas">
+          <div class="invite-step">1 · Contrato Enterprise com a Lab019</div>
+          <div class="parent">Conta-mãe<span>Contrato, condições e fatura única</span></div>
+          <div class="connector">2 · A conta-mãe convida as filhas por e-mail</div>
+          <div class="reseller-overview">
+            <strong>3 · A mãe vê o consumo de cada filha</strong>
+            <span class="overview-caption">Exemplo ilustrativo de consumo no ciclo</span>
+            <div class="usage-row"><span>Unidade Centro</span><span>R$ 1.200</span></div>
+            <div class="usage-row"><span>Unidade Norte</span><span>R$ 800</span></div>
+            <div class="usage-row"><span>Outras contas-filhas</span><span>R$ 500</span></div>
+            <div class="usage-row usage-total"><strong>Total do ciclo</strong><strong>R$ 2.500</strong></div>
+            <small>Valores fictícios. Cada filha vê só a própria linha; a cobrança final segue o compromisso negociado.</small>
+          </div>
+          <div class="total"><strong>4 · Uma fatura para a conta-mãe</strong>Compromisso mínimo abatido pelo consumo de todas as contas</div>
+        </div>
+      </article>
+
+      <div class="credits-card credits-card--wide reveal">
+          <h3>Como funcionam os créditos no Padrão?</h3>
+          <p>Os créditos pagam tudo o que sua operação usa: números, IA, voz e mensagens. Você vê o custo de cada conversa em reais.</p>
           <div class="how">
             <div class="credits-row">
               <span class="b">1</span>
-              <div><strong>Comece grátis por 14 dias</strong><span>Sem cartão. Teste o Agente à vontade.</span></div>
+              <div><strong>14 dias com cerca de {{trial_credit|uma quantia}} em créditos</strong><span>Pela PTAX do cadastro, sem cartão e sem CNPJ: você confirma seu celular. Teste a voz pelo navegador ou ligando para o nosso número de demonstração. WhatsApp e SMS ficam fora do teste e entram depois da assinatura.</span></div>
             </div>
             <div class="credits-row">
               <span class="b c2">2</span>
-              <div><strong>R$25 viram R$25 em créditos</strong><span>Todo mês, junto com a assinatura.</span></div>
+              <div><strong>Cerca de {{plan_franchise|uma quantia}} em créditos todo mês</strong><span>A mensalidade inteira vira créditos. Eles pagam primeiro o número e o consumo do mês e valem até o fim do ciclo.</span></div>
             </div>
             <div class="credits-row">
               <span class="b c3">3</span>
@@ -112,6 +166,63 @@
               <div><strong>Economize com o modelo certo</strong><span>A escolha automática usa o mais barato que resolve.</span></div>
             </div>
           </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- mock: bloco do pós-enforcement. Fica oculto até a LIC-2053 e a LIC-2055 aplicarem os limites (v3.1 §2.3 e §11); abra com ?niveis=1 -->
+  <section id="capacidade" class="section section-sm" data-pos-enforcement hidden style="scroll-margin-top:66px;">
+    <div class="wrap">
+      <div class="mock-flag">Mock · só vai ao ar depois da LIC-2053 e da LIC-2055. Valores iniciais medidos em 16/10, a recalibrar.</div>
+      <div class="section-head reveal">
+        <span class="eyebrow">Capacidade</span>
+        <h2>Todos os recursos em todo plano. O nível muda só a capacidade.</h2>
+        <p>A capacidade cresce com o seu uso, sem taxa extra.</p>
+      </div>
+      <div class="cap-table-wrap reveal">
+        <table class="cap-table">
+          <thead>
+            <tr><th scope="col"></th><th scope="col">Teste</th><th scope="col">Starter</th><th scope="col" class="is-hl">Growth</th><th scope="col">Enterprise</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Quem tem</th><td>Os 14 dias de teste</td><td>Todo assinante do Padrão</td><td class="is-hl">Pelo uso ou por recarga recorrente</td><td>Contrato</td></tr>
+            <tr><th scope="row">Requisições de IA por minuto</th><td>60</td><td>300</td><td class="is-hl">1.000</td><td>Em contrato</td></tr>
+            <tr><th scope="row">Conversas processadas ao mesmo tempo</th><td>3</td><td>15</td><td class="is-hl">50</td><td>Em contrato</td></tr>
+            <tr><th scope="row">Ligações ao mesmo tempo</th><td>1</td><td>5</td><td class="is-hl">20</td><td>Em contrato</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="cap-rules reveal">
+        <div><strong>Growth pelo uso</strong><span>R$500 de consumo pago com recargas em 30 dias, com a conta ativa há 60 dias ou mais. Os créditos mensais do plano e os de cupom não contam.</span></div>
+        <div><strong>Growth na hora</strong><span>Recarga recorrente a partir de R$500 por mês. Se a recarga for cancelada, vale de novo o nível pelo uso.</span></div>
+        <div><strong>Sem susto</strong><span>Reavaliamos todo mês. O nível só cai depois de dois meses seguidos abaixo, com aviso, e quem assina nunca fica abaixo do Starter.</span></div>
+        <div><strong>Acima de R$2.500 por mês</strong><span>Fale com a gente sobre o Enterprise, com capacidade e condições em contrato.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="consumo" class="section section-sm" style="scroll-margin-top:66px;">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Como cobramos o consumo</span>
+        <h2>Cada item tem preço em reais, visível antes do uso</h2>
+        <p>O preço de cada item é o custo do provedor com margem, em reais, e aparece no painel antes do uso. Os exemplos abaixo são aproximados e usam a hipótese de R$ 5 por US$ 1.</p>
+      </div>
+      <div class="features">
+        <div class="feature reveal">
+          <div class="ico">📞</div>
+          <h3>Voz, item por item</h3>
+          <p>O minuto soma PSTN (a operadora), transcrição, voz sintética e modelo de IA. Exemplo: um minuto para celular no Brasil custa ≈ R$ 0,91.</p>
+        </div>
+        <div class="feature reveal">
+          <div class="ico b">💬</div>
+          <h3>WhatsApp pelas categorias da Meta</h3>
+          <p>Cada mensagem segue a categoria da Meta: marketing, utilidade, autenticação ou serviço. Exemplos: marketing ≈ R$ 0,68, utilidade ≈ R$ 0,12 e serviço dentro da janela de 24 horas ≈ R$ 0,05.</p>
+        </div>
+        <div class="feature reveal">
+          <div class="ico o">☎️</div>
+          <h3>Número pelo catálogo</h3>
+          <p>O preço mensal do número aparece em reais no catálogo, antes da compra, e é debitado da carteira todo mês.</p>
         </div>
       </div>
     </div>
@@ -133,12 +244,12 @@
         <div class="feature reveal">
           <div class="ico">🧾</div>
           <h3>Custo à vista, em reais</h3>
-          <p>Cada conversa mostra quanto custou. Sem letra miúda, sem estimativa por fora.</p>
+          <p>O preço de cada item aparece antes do uso, e cada conversa mostra quanto custou. Sem letra miúda, sem estimativa por fora.</p>
         </div>
         <div class="feature reveal">
           <div class="ico b">🔑</div>
-          <h3>Use sua própria chave (BYOK)</h3>
-          <p>Já tem conta na OpenAI, Anthropic ou Google? Conecte e use os seus créditos direto no provedor.</p>
+          <h3>Use suas próprias contas</h3>
+          <p>Já tem chave da OpenAI, Anthropic ou Google (BYOK), conta na Twilio (BYO Twilio) ou conta na Meta (BYO Meta)? Conecte e pague o fornecedor diretamente. A Lab019 cobra 10% do preço de tabela do fornecedor pelo uso da plataforma. A exceção é o WhatsApp pela sua conta Twilio, que tem uma taxa fixa por mensagem, mostrada no painel antes do uso.</p>
         </div>
       </div>
     </div>
@@ -153,23 +264,39 @@
       <div class="faq reveal">
         <details>
           <summary>Como funciona o teste grátis?</summary>
-          <p>São <strong>14 dias, sem cartão de crédito</strong>. Dá para testar chat e voz à vontade. Gostou? Assine por R$25/mês, que viram R$25 em créditos.</p>
+          <p>Você confirma seu celular e recebe <strong>cerca de {{trial_credit|uma quantia}} em créditos, pela PTAX do cadastro, para usar por 14 dias, sem cartão e sem CNPJ</strong>. Dá para testar a voz pelo navegador e ligando do seu celular para o nosso número de demonstração. WhatsApp e SMS ficam fora do teste; o WhatsApp entra depois da assinatura. Cada celular faz um teste, e o saldo não usado vence ao fim do prazo. Depois, o plano padrão custa {{plan_price|um valor fixo}} por mês.</p>
         </details>
         <details>
-          <summary>O que está incluso nos R$25 por mês?</summary>
-          <p>Acesso completo (web e API) e <strong>R$25 em créditos de IA</strong> para usar os modelos — a mensalidade volta em créditos, e você só investe além disso se usar mais. Como o Agente escolhe sozinho o modelo mais barato que resolve (em geral um econômico como o <strong>GPT-4o mini</strong>), os créditos rendem bastante. No <strong>texto</strong> (chat ou WhatsApp), recebendo mensagens entra só o custo da IA: dá para <strong>~3.000 mensagens</strong> por mês. A <strong>voz</strong> soma transcrição, voz e IA, então rende menos por minuto: <strong>~90 min</strong> pelo site; por telefone*, a ligação entra na conta — cerca de <strong>~75 min</strong> recebendo (inbound) e <strong>~50 min</strong> quando é você que liga (outbound). E no WhatsApp iniciado por você, só a <strong>mensagem de abertura</strong> é paga na Meta — o resto da conversa entra no custo da IA. São estimativas ilustrativas: o custo real aparece em reais a cada conversa e varia com o canal, o tamanho da conversa e o modelo.<br><span style="display:inline-block;margin-top:8px;font-size:13px;color:var(--ink-3);">* Atender por telefone exige um número próprio, com assinatura à parte de ~US$6/mês (≈ R$30). A voz no site, pelo navegador, não precisa de número.</span></p>
+          <summary>O que está incluso na mensalidade?</summary>
+          <p>Todos os recursos da plataforma e <strong>cerca de {{plan_franchise|uma quantia}} em créditos mensais</strong>. Os créditos pagam seus números de telefone e WhatsApp e o consumo de IA, voz e mensagens. O preço mensal de cada número aparece em reais antes da compra, e o de cada item, no painel antes do uso. A habilitação do WhatsApp depende dos requisitos do canal oficial. Para outros volumes ou condições de preço, montamos um contrato por organização.</p>
+        </details>
+        <details>
+          <summary>O número é meu?</summary>
+          <p>O número é um serviço da Lab019, ativo enquanto a assinatura estiver em dia. Ao cancelar, ele deixa a sua conta. Se você usa a sua própria conta Twilio, o número é seu, e a Lab019 cobra 10% do preço de tabela da Twilio sobre a voz.</p>
+        </details>
+        <details>
+          <summary>Como funciona a cobrança do Enterprise?</summary>
+          <p>O contrato define um compromisso mínimo de consumo mensal e quais itens contam para ele. Ao fim do período, o consumo elegível abate esse mínimo: se usar menos, paga o mínimo contratado; se usar mais, paga o consumo efetivo. O pagamento é pós-pago, por cartão na Stripe ou por PIX/transferência fora dela. Valores, números, capacidade e demais condições são negociados por organização. A conta é criada por convite de e-mail da equipe Lab019.</p>
+        </details>
+        <details>
+          <summary>Como funcionam as contas-filhas?</summary>
+          <p>No Enterprise, a conta-mãe cria uma conta para cada unidade ou cliente, por convite de e-mail. Cada filha vê o próprio consumo e herda as condições do contrato da mãe. A equipe da conta-mãe pode entrar nas filhas para apoiar a operação. A Lab019 cobra só a conta-mãe, numa fatura, após o fechamento do período.</p>
         </details>
         <details>
           <summary>Os créditos expiram?</summary>
-          <p>Os créditos da franquia mensal (os R$25 do plano) valem dentro do mês. Já os créditos que você <strong>compra além disso não expiram</strong>.</p>
+          <p>Os créditos do teste valem por 14 dias. Os créditos mensais do plano valem até o fim do ciclo de cobrança. Já os créditos que você <strong>compra além disso não expiram</strong>.</p>
         </details>
         <details>
-          <summary>E se acabarem no meio do mês?</summary>
-          <p>É só recarregar, na hora, e seguir atendendo. Sem pacote gigante obrigatório.</p>
+          <summary>Como funcionam descontos e cupons?</summary>
+          <p>Um cupom pode dar desconto na mensalidade ou somar créditos bônus. Ele não muda o preço de nenhum item de consumo, e, se reduz a mensalidade, os créditos mensais continuam os do plano. Você insere o código na tela de faturamento, e as condições aparecem antes da confirmação. Avisamos 15 dias antes do fim da vigência. Cada cupom vale uma vez por CNPJ ou CPF, e créditos de cupom não são reembolsáveis.</p>
+        </details>
+        <details>
+          <summary>E se os créditos acabarem no meio do mês?</summary>
+          <p>É só recarregar, na hora, e seguir atendendo. Sem pacote gigante obrigatório. Sem saldo, o consumo para até a recarga. Se faltar saldo na renovação do número, avisamos e há um prazo de carência antes da suspensão.</p>
         </details>
         <details>
           <summary>Tem fidelidade ou multa?</summary>
-          <p>Não. É mês a mês. Cancele quando quiser, sem multa.</p>
+          <p>Não. É mês a mês: cancele quando quiser, sem multa. Nos primeiros 7 dias, devolvemos o valor pago menos o que você consumiu.</p>
         </details>
       </div>
     </div>
@@ -181,7 +308,7 @@
       <div class="section-head reveal">
         <span class="eyebrow">Na prática</span>
         <h2>O custo de cada conversa, à vista</h2>
-        <p>Saldo em reais, franquia e recargas, e o que cada atendimento consumiu.</p>
+        <p>Saldo em reais, créditos do mês e recargas, e o que cada atendimento consumiu.</p>
       </div>
       <div class="reveal" style="max-width:560px;margin:0 auto;">
         <div class="appshot">
@@ -189,25 +316,34 @@
           <div class="as-screen">
             <div class="as-panel-card" style="max-width:520px;">
               <div class="as-panel-head">Créditos &amp; faturamento</div>
-              <div class="as-balance"><span class="amt">R$ 23,80</span><span class="cur">≈ US$ 4,76 em créditos</span></div>
+              <div class="as-balance"><span class="amt">R$ 63,80</span><span class="cur">saldo disponível</span></div>
               <div class="as-split">
-                <span class="as-pill"><span class="dot2" style="background:var(--support);"></span>Franquia restante R$ 21,00 · expira em 12 dias</span>
+                <span class="as-pill"><span class="dot2" style="background:var(--support);"></span>Créditos do mês R$ 61,00 · expiram em 12 dias</span>
                 <span class="as-pill"><span class="dot2" style="background:var(--brand);"></span>Comprados R$ 2,80 · não expiram</span>
+              </div>
+              <div style="margin-top:16px;padding:14px;border:1px solid var(--border);border-radius:10px;background:var(--bg-soft);">
+                <strong style="display:block;margin-bottom:5px;font-size:13px;color:var(--ink);">Condições comerciais</strong>
+                <span style="display:block;color:var(--ink-2);font-size:12px;line-height:1.5;">Seu contrato e os cupons ativos definem a mensalidade, os créditos bônus e os preços de uso.</span>
+                <span style="display:inline-block;margin-top:10px;padding:5px 9px;border-radius:999px;background:var(--support-soft);color:var(--support-ink);font-size:11.5px;font-weight:700;">BEMVINDO · −20% na mensalidade até 15/01 · créditos mensais mantidos</span>
+                <div style="display:flex;gap:8px;margin-top:11px;">
+                  <span style="flex:1;min-width:0;padding:8px 10px;border:1px solid var(--border);border-radius:7px;background:var(--surface);color:var(--ink-2);font-size:12px;">Digite um código</span>
+                  <span style="padding:8px 12px;border-radius:7px;background:var(--brand);color:#fff;font-size:12px;font-weight:700;">Aplicar</span>
+                </div>
               </div>
               <div style="height:16px;"></div>
               <table class="as-table">
-                <thead><tr><th>Quando</th><th>Tipo</th><th>Modelo</th><th style="text-align:right;">Custo</th></tr></thead>
+                <thead><tr><th>Quando</th><th>Tipo</th><th>Detalhe</th><th style="text-align:right;">Custo</th></tr></thead>
                 <tbody>
                   <tr><td>hoje 14:32</td><td>Chat</td><td>sabia-4-br-sp <span class="as-tag">· roteado</span></td><td class="num">R$ 0,04</td></tr>
-                  <tr><td>hoje 11:08</td><td>Voz</td><td>—</td><td class="num">R$ 0,25</td></tr>
-                  <tr><td>ontem 18:20</td><td>WhatsApp</td><td>—</td><td class="num">R$ 0,10</td></tr>
+                  <tr><td>hoje 11:08</td><td>Voz</td><td>celular BR · 2 min</td><td class="num">≈ R$ 1,83</td></tr>
+                  <tr><td>ontem 18:20</td><td>WhatsApp</td><td>utilidade</td><td class="num">≈ R$ 0,12</td></tr>
                   <tr><td>ontem 09:15</td><td>Chat</td><td>claude-sonnet</td><td class="num">R$ 0,07</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
         </div>
-        <p class="appshot-cap">Ilustração da tela de créditos — a interface real pode variar.</p>
+        <p class="appshot-cap">Ilustração da tela de créditos, com valores fictícios — a interface real pode variar.</p>
       </div>
     </div>
   </section>
@@ -215,8 +351,8 @@
   <section class="section">
     <div class="wrap">
       <div class="cta-band reveal">
-        <h2>Comece hoje, por R$25.</h2>
-        <p>Teste grátis por 14 dias, sem cartão. Depois, R$25/mês que viram créditos — e um agente atendendo por você.</p>
+        <h2>Escolha um processo para começar.</h2>
+        <p>Teste a plataforma diretamente ou converse conosco sobre os requisitos da sua organização.</p>
         <a class="btn btn-primary btn-lg" href="https://app.lab019.ai">Quero começar</a>
       </div>
     </div>
@@ -275,6 +411,10 @@
 </footer>
 
 <script>
+  // mock: ?niveis=1 mostra o bloco de capacidade do pós-enforcement
+  if (/[?&]niveis=1(&|$)/.test(location.search)) {
+    document.querySelectorAll("[data-pos-enforcement]").forEach(function (el) { el.hidden = false; });
+  }
   (function () {
     var els = document.querySelectorAll(".reveal");
     if (!("IntersectionObserver" in window)) { els.forEach(function (el) { el.classList.add("in"); }); return; }
