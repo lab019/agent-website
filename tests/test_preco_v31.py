@@ -12,11 +12,12 @@ from urllib.parse import urlparse, unquote
 
 ROOT = Path(__file__).resolve().parent.parent
 SITE = ROOT / "site"
-FIXTURE_ENV = {  # plan 137, franchise 25 USD x 4 = R$ 100, trial 5 USD x 4 = R$ 20
-    "PUBLIC_PLAN_PRICE_BRL": "137",
-    "PUBLIC_PLAN_FRANCHISE_USD": "25",
-    "PUBLIC_TRIAL_CREDIT_USD": "5",
-    "PUBLIC_FX_BRL_PER_USD": "4",
+FIXTURE_PLAN = {  # billing payload: plan 137 (franchise = price), trial 5 USD x 4 = R$ 20
+    "plan_id": "base",
+    "price_brl_cents": 13700,
+    "currency": "BRL",
+    "trial_credits": 5000000,
+    "fx_brl_per_usd": "4.000000",
 }
 PRICE_LITERAL = re.compile(r"R\$(?:\s|&nbsp;|&#160;|\u00a0)*1?25(?!\d)")
 
@@ -111,7 +112,7 @@ def parse_rendered(rel):
     import render_pricing
     html = (SITE / rel).read_text(encoding="utf-8")
     p = Page()
-    p.feed(render_pricing.render(html, render_pricing.load_config(FIXTURE_ENV)))
+    p.feed(render_pricing.render(html, render_pricing.build_config(FIXTURE_PLAN)))
     p.close()
     return p
 
@@ -159,11 +160,10 @@ class PrecoV31(unittest.TestCase):
         import render_pricing
         pages = sorted(SITE.rglob("*.html"))
         self.assertTrue(pages, "no html pages found under site/")
-        for env in (FIXTURE_ENV, {}):
-            config = render_pricing.load_config(env)
-            for f in pages:
-                out = render_pricing.render(f.read_text(encoding="utf-8"), config)
-                self.assertNotIn("{{", out, "%s: leftover token (env=%s)" % (f.relative_to(SITE), bool(env)))
+        config = render_pricing.build_config(FIXTURE_PLAN)
+        for f in pages:
+            out = render_pricing.render(f.read_text(encoding="utf-8"), config)
+            self.assertNotIn("{{", out, "%s: leftover token" % f.relative_to(SITE))
 
     def has(self, t, pattern, msg):
         self.assertTrue(re.search(pattern, t, re.I), msg)
@@ -261,7 +261,7 @@ class PrecoV31(unittest.TestCase):
     # 9
     def test_c09_valores_de_cambio_aproximados_no_texto_visivel(self):
         rt = self.rendered_texts()
-        franquia = r"R\$\s?100(?![\d.,]\d)"   # 25 USD x 4
+        franquia = r"R\$\s?137(?![\d.,]\d)"   # franchise = plan price
         trial = r"R\$\s?20(?![\d.,]\d)"       # 5 USD x 4
         exemplos = [r"R\$\s?0,91", r"R\$\s?0,12", r"R\$\s?0,68", r"R\$\s?0,05", r"R\$\s?1,83"]
         for v in exemplos[1:]:
@@ -269,10 +269,10 @@ class PrecoV31(unittest.TestCase):
         marca = re.compile(r"(≈|cerca de|a partir de)\s*$", re.I)
         for nome in ("/preco", "home"):
             t = rt[nome]
-            self.has(t, franquia, nome + ": falta franquia renderizada (R$ 100)")
+            self.has(t, franquia, nome + ": falta franquia renderizada (R$ 137)")
             if nome == "/preco":  # a home (main) cita o teste de 14 dias sem valor
                 self.has(t, trial, nome + ": falta credito de teste renderizado (R$ 20)")
-            for v in [franquia, trial] + exemplos:
+            for v in [trial] + exemplos:  # franchise == plan price, no approximation marker
                 for m in re.finditer(v, t):
                     antes = t[max(0, m.start() - 12):m.start()]
                     self.assertRegex(antes, marca,
