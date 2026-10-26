@@ -83,6 +83,21 @@ jobs:
             echo "::warning::PUBLIC_API_BASE inválido (esperado https://host). Usando o default do chat.js."
           fi
 
+      # Renderiza preço, franquia e crédito de teste nas páginas (tokens
+      # {{plan_price|…}}, {{plan_franchise|…}}, {{trial_credit|…}}) a partir do
+      # endpoint público do billing (GET <API base>/billing/v1/public/plan) —
+      # nenhum valor fica escrito no código nem em Variable. Billing fora do ar
+      # ou resposta inválida FALHA o build (mensagem "billing …"): o site não
+      # publica preço que não conseguiu ler. A base vem de PUBLIC_API_BASE
+      # (opcional; padrão https://api.lab019.ai).
+      - name: Render pricing from billing
+        env:
+          PUBLIC_API_BASE: ${{ vars.PUBLIC_API_BASE }}
+        run: |
+          PUBLIC_API_BASE="$(printf '%s' "$PUBLIC_API_BASE" | tr -d '[:space:]' | sed 's:/*$::')"
+          export PUBLIC_API_BASE
+          python3 scripts/render_pricing.py site
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
