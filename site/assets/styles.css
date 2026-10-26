@@ -475,7 +475,6 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
   margin-top: 28px;
   padding: 30px 32px;
 }
-.plan .plan-rule + .plan-rule { font-size: 13px; margin-top: -12px; }
 .reseller-teaser { display: flex; align-items: center; justify-content: space-between; gap: 28px; }
 .reseller-teaser h3, .reseller-card h3 { font-size: clamp(22px, 2.5vw, 29px); margin: 8px 0 10px; }
 .reseller-teaser p, .reseller-card p { color: var(--ink-2); font-size: 15.5px; margin: 0; }
