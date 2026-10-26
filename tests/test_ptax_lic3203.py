@@ -94,8 +94,9 @@ class PtaxFaq(unittest.TestCase):
 
 
 class StillNoFixedValues(unittest.TestCase):
+    # aplicado depois de html.unescape: &nbsp; e &#160; ja viraram U+00A0
     FIXED = re.compile(
-        r"R\$(?:\s|&nbsp;|&#160;| )*(?:125|25|95|490|2\.490)(?![\d.,]*\d)")
+        r"R\$[\s\u00a0]*(?:125|25|95|490|2\.490)(?![\d.,]*\d)")
 
     def test_no_fixed_price_literal_on_home_and_preco(self):
         for name in PAGES:
