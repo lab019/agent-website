@@ -11,7 +11,7 @@
 
 **Lançar pequeno e perto de casa:** validar com 10–20 clientes reais (Campinas e rede de
 contatos), transformar esses clientes em prova social, e só então abrir o funil público —
-com a mensagem "IA de verdade, a preço de gente" e o CTA "Sua IA começa hoje, por R$25".
+com a mensagem "IA de verdade, a preço de gente" e o CTA "Sua IA começa hoje" (valor vindo do billing).
 
 ## Metas do lançamento (sugestão — ajustar)
 
@@ -19,7 +19,7 @@ com a mensagem "IA de verdade, a preço de gente" e o CTA "Sua IA começa hoje, 
 |---|---|
 | Contas trial criadas | 300 |
 | Ativação (agente publicado + 1ª conversa real) | 40% dos trials |
-| Conversão trial → assinante R$25 | 15% dos ativados |
+| Conversão trial → assinante | 15% dos ativados |
 | Assinantes pagantes | ~20–30 |
 | Depoimentos/casos de uso publicáveis | 5 |
 
@@ -56,7 +56,7 @@ Objetivo: prova social e aprendizado, não volume.
 
 1. **Recrutar 10–20 negócios** da rede de contatos e de Campinas (delivery, salão,
    clínica, escritório de serviços). Oferta clara: *setup acompanhado de graça + 3 meses
-   por R$25 congelado* em troca de feedback e depoimento.
+   por valor congelado* em troca de feedback e depoimento.
 2. **Onboarding assistido:** acompanhar cada um colocando o agente no ar (a Aura faz o
    trabalho; você observa onde travam — isso vira backlog de produto e de conteúdo).
 3. **Medir e documentar resultados por cliente:** nº de atendimentos automatizados,
@@ -110,7 +110,7 @@ Objetivo: prova social e aprendizado, não volume.
 ## Mensagens-chave (usar em tudo)
 
 - **Promessa:** "Coloque uma equipe de agentes de IA para trabalhar no seu negócio."
-- **Preço:** "Sua IA começa hoje, por R$25" / "Inteligência artificial de verdade, a
+- **Preço:** "Sua IA começa hoje" / "Inteligência artificial de verdade, a
   preço de gente."
 - **Simplicidade:** "Não é técnico? Use tudo pelo navegador." / "Do zero ao atendimento
   em minutos."

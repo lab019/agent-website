@@ -381,12 +381,12 @@ O Agente **inicia** conversas, não só responde:
 
 - **Créditos:** unidade em micro-dólares (`US$1 = 1.000.000 créditos`). Carteira
   **append-only** (razão imutável, saldo derivado por soma) — trilha auditável.
-- **Plano base (confirmado):** **R$25/mês de assinatura que se convertem em créditos na
-  plataforma** — a mensalidade "volta" como saldo de uso. No backend, R$25 concede
+- **Plano base (confirmado):** **mensalidade que se converte em créditos na
+  plataforma** — a mensalidade "volta" como saldo de uso. No backend, a mensalidade concede
   **5.000.000 créditos (US$5)** de franquia mensal ao câmbio seed de R$5/USD (a franquia
   expira no fim do ciclo; créditos **comprados** avulsos não expiram).
   ⚠️ **Corrigir na UI:** o `agent-web` ainda mostra o rótulo hardcoded **"R$ 50/mês"**
-  (`BillingScreen.tsx`) e top-up default R$50 — atualizar para R$25.
+  (`BillingScreen.tsx`) e top-up default fixo — o valor vem do billing.
 - **Trial freemium:** **14 dias, US$1 (~10 min de voz), sem cartão**, 1 por e-mail
   verificado.
 - **Metering por dimensão:** LLM (por token), **Voz STT+TTS US$0,05/min**, **PSTN
@@ -452,8 +452,8 @@ O Agente **inicia** conversas, não só responde:
 
 **Decisões (confirmadas pelo dono do produto):**
 
-1. **Preço — R$25/mês vira crédito.** A assinatura de **R$25/mês se converte em créditos
-   de uso** na plataforma. É o número oficial do site. Falta só corrigir o rótulo
+1. **Preço — a mensalidade vira crédito.** A assinatura **se converte em créditos
+   de uso** na plataforma. O valor oficial vem do billing a cada build do site. Falta só corrigir o rótulo
    **"R$ 50"** ainda hardcoded no `agent-web` (§4).
 2. **Maritaca.ai — incluído e confirmado no config, com soberania de dados.** O
    `litellm-proxy/config.yaml` já traz `sabia-4`, `sabia-4-thinking`, `sabiazinho-4` e as
@@ -484,7 +484,7 @@ O Agente **inicia** conversas, não só responde:
 **Reframe da home (o Agente, não a plataforma):**
 
 - **Hero:** "O Agente de IA que trabalha pelo seu negócio — chat, voz e WhatsApp."
-  CTA: testar grátis 14 dias (sem cartão) / assinar por R$25.
+  CTA: testar grátis 14 dias (sem cartão) / assinar (valor vindo do billing).
 - **Prova rápida (strip):** atende por **chat, voz e WhatsApp**, escolhe o modelo mais
   barato que resolve, e passa para uma pessoa quando precisa.
 - **Strip de modelos:** Sabiá-4 (Maritaca) + Claude, Gemini, GPT e DeepSeek (+ BYOK). O

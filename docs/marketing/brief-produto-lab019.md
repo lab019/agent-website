@@ -78,7 +78,7 @@ modelos de IA do mundo — **incluindo o brasileiro Sabiá** — e **cobra só p
 
 ## 6. Preço e modelo de cobrança
 
-- **Um plano só, sem pegadinha:** **R$ 25/mês**, que devolve **R$ 25 em créditos de IA**
+- **Um plano só, sem pegadinha:** **mensalidade única** (valor vindo do billing), que devolve **o mesmo valor em créditos de IA**
   — na prática, a plataforma "sai de graça"; paga-se apenas o consumo de IA.
 - **Sem fidelidade** — cancela quando quiser; ao cancelar, vale até o fim do ciclo.
 - **Trial sem cartão:** ao criar a conta, o cliente ganha **US$ 1 em créditos
@@ -89,7 +89,7 @@ modelos de IA do mundo — **incluindo o brasileiro Sabiá** — e **cobra só p
   créditos comprados **não expiram** (os da franquia mensal expiram).
 - **Pagamento:** Stripe — **cartão e Pix**, cobrança em reais.
 - **LGPD:** offboarding com apagamento de dados ao encerrar a conta.
-- **Mensagem-síntese de preço:** *"Sua IA começa hoje, por R$25."*
+- **Mensagem-síntese de preço:** *"Sua IA começa hoje, pela mensalidade que vira crédito."* (o valor vem do billing)
 
 ## 7. Diferenciais competitivos (ângulos de comunicação)
 
@@ -123,7 +123,7 @@ modelos de IA do mundo — **incluindo o brasileiro Sabiá** — e **cobra só p
 ## 9. Ativos existentes
 
 - Landing page completa (pt-BR) com hero, features, preço, casos de uso, FAQ e CTA
-  ("Começar por R$25") — pronta para publicar.
+  (CTA com o valor vindo do billing) — pronta para publicar.
 - Página "Em breve" atualmente no ar (pode capturar interesse pré-lançamento).
 - API documentada na própria landing (exemplos de `curl`).
 - Identidade: nome, tagline, tom de voz e âncora regional (Campinas, SP) definidos.
