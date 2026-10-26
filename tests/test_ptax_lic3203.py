@@ -91,6 +91,21 @@ class PtaxFaq(unittest.TestCase):
                 self.assertRegex(ans, r"(?i)dólar")
                 self.assertRegex(ans, r"(?i)câmbio")
                 self.assertRegex(ans, r"(?i)varia")
+                self.assertIn("dia útil anterior", ans)
+
+
+class PtaxAnchorOpens(unittest.TestCase):
+    # o navegador so abre um <details> fechado se o alvo da ancora estiver
+    # DENTRO dele; com o alvo sendo o proprio <details>, so um script abre
+    def test_inline_script_opens_details_targeted_by_hash(self):
+        for name in PAGES:
+            with self.subTest(page=name):
+                scripts = re.findall(r"<script>(.*?)</script>", raw(name), re.S)
+                ok = [s for s in scripts
+                      if "hashchange" in s and "location.hash" in s
+                      and re.search(r"\.open\s*=\s*true", s)
+                      and "DETAILS" in s]
+                self.assertTrue(ok, "falta script que abre o <details> da ancora")
 
 
 class StillNoFixedValues(unittest.TestCase):

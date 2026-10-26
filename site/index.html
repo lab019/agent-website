@@ -536,7 +536,7 @@ conversations/<span class="p">minha-conversa</span>/messages \
         </details>
         <details id="ptax">
           <summary>Por que os valores em reais têm *? O que é a PTAX?</summary>
-          <p>Seus créditos são guardados em dólar, a moeda dos fornecedores de IA, voz e mensagens. Para mostrar em reais, convertemos pela <strong>PTAX de venda do Banco Central</strong>, a cotação do dólar que o Banco Central divulga a cada dia útil. O crédito do teste usa a última PTAX divulgada antes do seu cadastro; o crédito mensal, a última PTAX divulgada antes de cada cobrança. O saldo e o consumo que você vê no painel usam a cotação mais recente. Por isso o valor em reais pode variar um pouco com o câmbio, e o asterisco (*) avisa isso.</p>
+          <p>Seus créditos são guardados em dólar, a moeda dos fornecedores de IA, voz e mensagens. Para mostrar em reais, convertemos pela <strong>PTAX de venda do Banco Central</strong>, a cotação do dólar que o Banco Central divulga a cada dia útil. O crédito do teste usa a PTAX do dia útil anterior ao seu cadastro; o crédito mensal, a PTAX do dia útil anterior a cada cobrança. O saldo e o consumo que você vê no painel usam a cotação mais recente. Por isso o valor em reais pode variar um pouco com o câmbio, e o asterisco (*) avisa isso.</p>
         </details>
         <details>
           <summary>É preciso integrar a API para começar?</summary>
@@ -659,6 +659,7 @@ conversations/<span class="p">minha-conversa</span>/messages \
     }, { threshold: 0.12 });
     els.forEach(function (el) { io.observe(el); });
   })();
+  (function(){function abre(){var h=location.hash;if(h.length<2)return;var d;try{d=document.getElementById(decodeURIComponent(h.slice(1)));}catch(e){return;}if(d&&d.tagName==='DETAILS'){d.open=true;d.scrollIntoView();}}window.addEventListener('hashchange',abre);abre();})();
 </script>
 <script src="/assets/chat.js" defer></script>
 </body>
