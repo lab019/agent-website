@@ -101,7 +101,7 @@ Objetivo: prova social e aprendizado, não volume.
    marketing local — eles têm carteira de clientes exatamente no ICP; oferecer comissão
    recorrente ou créditos.
 5. **Mídia paga só depois do funil provar conversão orgânica.** Começar pequeno
-   (R$20–50/dia) em Meta Ads segmentando donos de pequenos negócios, com o vídeo-demo;
+   (verba diária definida no plano de mídia) em Meta Ads segmentando donos de pequenos negócios, com o vídeo-demo;
    Google Ads em termos de fundo de funil ("chatbot para delivery preço").
 6. **Ritmo de revisão:** ritual quinzenal olhando o funil (visita→trial→ativação→
    assinatura→retenção), decidindo 1 aposta de aquisição e 1 correção de ativação por

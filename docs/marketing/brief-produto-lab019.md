@@ -81,10 +81,10 @@ modelos de IA do mundo — **incluindo o brasileiro Sabiá** — e **cobra só p
 - **Um plano só, sem pegadinha:** **mensalidade única** (valor vindo do billing), que devolve **o mesmo valor em créditos de IA**
   — na prática, a plataforma "sai de graça"; paga-se apenas o consumo de IA.
 - **Sem fidelidade** — cancela quando quiser; ao cancelar, vale até o fim do ciclo.
-- **Trial sem cartão:** ao criar a conta, o cliente ganha **US$ 1 em créditos
-  (~10 minutos de voz)**, válidos por 14 dias. Um trial por e-mail verificado.
+- **Trial sem cartão:** ao criar a conta, o cliente ganha **crédito de teste
+  (valor do billing)**, válidos por 14 dias. Um trial por e-mail verificado.
 - **Como o consumo é medido:** texto é cobrado por token (por mensagem); voz é cobrada
-  por tempo (US$ 0,10/minuto, arredondado para minuto cheio).
+  por tempo (tarifa do billing, arredondado para minuto cheio).
 - **Recarga avulsa (top-up):** via Stripe Checkout, apenas para assinantes ativos;
   créditos comprados **não expiram** (os da franquia mensal expiram).
 - **Pagamento:** Stripe — **cartão e Pix**, cobrança em reais.
