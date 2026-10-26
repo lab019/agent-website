@@ -5,6 +5,7 @@ Somente stdlib. Rodar: python3 -m unittest discover -s tests
 """
 import html
 import re
+from html.parser import HTMLParser
 import unittest
 from pathlib import Path
 
@@ -22,6 +23,28 @@ def text(name):
     """Texto da pagina sem tags, entidades decodificadas, espacos normalizados."""
     no_tags = re.sub(r"<[^>]+>", " ", raw(name))
     return " ".join(html.unescape(no_tags).split())
+
+
+class InlineScripts(HTMLParser):
+    """Corpo de cada <script> inline (sem src), com o parser e nao com regex."""
+
+    def __init__(self, source):
+        super().__init__()
+        self.bodies, self._open = [], False
+        self.feed(source)
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "script" and "src" not in dict(attrs):
+            self._open = True
+            self.bodies.append("")
+
+    def handle_endtag(self, tag):
+        if tag == "script":
+            self._open = False
+
+    def handle_data(self, data):
+        if self._open:
+            self.bodies[-1] += data
 
 
 def faq_item(name):
@@ -100,7 +123,7 @@ class PtaxAnchorOpens(unittest.TestCase):
     def test_inline_script_opens_details_targeted_by_hash(self):
         for name in PAGES:
             with self.subTest(page=name):
-                scripts = re.findall(r"<script>(.*?)</script>", raw(name), re.S)
+                scripts = InlineScripts(raw(name)).bodies
                 ok = [s for s in scripts
                       if "hashchange" in s and "location.hash" in s
                       and re.search(r"\.open\s*=\s*true", s)
