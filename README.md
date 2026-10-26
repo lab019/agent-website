@@ -8,8 +8,8 @@ Site estático, hospedado no **GitHub Pages**.
 - **Proposta:** um Agente que atende por **chat, voz e WhatsApp**, com vários
   modelos de IA (o brasileiro **Sabiá-4** da Maritaca — com opção de
   infraestrutura 100% no Brasil —, Claude, Gemini, GPT e DeepSeek), escolha
-  automática do modelo, BYOK e acesso via web ou API. Plano de **R$25/mês que
-  viram créditos**, com 14 dias grátis sem cartão.
+  automática do modelo, BYOK e acesso via web ou API. Plano mensal **que
+  vira créditos** (o valor vem do billing a cada build), com 14 dias grátis sem cartão.
 
 ## Estrutura
 
