@@ -1,93 +1,111 @@
 #!/usr/bin/env python3
-"""Deploy-time pricing render for the static site (stdlib only).
+"""Build-time pricing render for the static site (stdlib only, LIC-3178).
 
-Replaces tokens in HTML files with values taken from environment variables
-(repo Variables in the deploy workflow), so no price is ever written in the repo:
+Reads the plan on sale from the billing's public endpoint and replaces tokens in
+the HTML files, so no price is ever written in the repo or in a repo Variable:
 
-    {{plan_price|fallback}}      -> "R$ <PUBLIC_PLAN_PRICE_BRL>"
-    {{plan_franchise|fallback}}  -> "R$ <PUBLIC_PLAN_FRANCHISE_USD x PUBLIC_FX_BRL_PER_USD>",
-                                    or the plan price when PUBLIC_PLAN_FRANCHISE_USD is unset
-                                    (the whole monthly fee becomes the franchise)
-    {{trial_credit|fallback}}    -> "R$ <PUBLIC_TRIAL_CREDIT_USD x PUBLIC_FX_BRL_PER_USD>"
+    GET <PUBLIC_API_BASE>/billing/v1/public/plan
+        price_brl_cents  integer, BRL cents of the monthly fee
+        trial_credits    integer, micro-USD granted as trial franchise
+        fx_brl_per_usd   decimal string, the stored USD/BRL rate
 
-A missing or invalid input renders the token's fallback text (never a number).
-Invalid values only warn on stderr; the script never fails the deploy.
+    {{plan_price|fallback}}      -> the monthly fee in reais
+    {{plan_franchise|fallback}}  -> the same amount: the whole monthly fee becomes credits
+    {{trial_credit|fallback}}    -> trial credit in whole reais (micro-USD x rate, half-up)
+
+PUBLIC_API_BASE defaults to https://api.lab019.ai. If the billing is unreachable or
+answers something unusable, the build FAILS with a message naming the billing and no
+file is touched: the site never publishes a price it could not read.
 
 Usage: python3 scripts/render_pricing.py site
 """
 import html
+import json
+import math
 import os
 import re
 import sys
+import urllib.request
 from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
-VALUE_PATTERN = re.compile(r"[0-9]{1,7}(?:[.,][0-9]{1,2})?", re.ASCII)
-# PTAX has 4 decimals; exactly 3 decimals is rejected (looks like a thousands separator, e.g. "1.250")
-FX_PATTERN = re.compile(r"[0-9]{1,3}(?:[.,](?:[0-9]{1,2}|[0-9]{4}))?", re.ASCII)
 TOKEN_PATTERN = re.compile(r"\{\{(plan_price|plan_franchise|trial_credit)\|([^}]*)\}\}")
+API_BASE_PATTERN = re.compile(r"https://[A-Za-z0-9.-]+(?::[0-9]{1,5})?", re.ASCII)
+DEFAULT_API_BASE = "https://api.lab019.ai"
+PLAN_PATH = "/billing/v1/public/plan"
+TIMEOUT_SECONDS = 20
+MAX_BODY_BYTES = 65536
+MICRO = Decimal("1000000")
 
-ENV_PLAN_PRICE = "PUBLIC_PLAN_PRICE_BRL"
-ENV_FRANCHISE_USD = "PUBLIC_PLAN_FRANCHISE_USD"
-ENV_TRIAL_USD = "PUBLIC_TRIAL_CREDIT_USD"
-ENV_FX = "PUBLIC_FX_BRL_PER_USD"
+
+class PlanUnavailable(Exception):
+    """The billing did not give a usable plan; the message always names the billing."""
 
 
 def format_brl(value):
-    """Format a Decimal as pt-BR currency, dropping ",00" (e.g. R$ 125, R$ 1.250,50)."""
+    """Format a Decimal as pt-BR currency, dropping ",00" (e.g. R$ 40, R$ 1.240,50)."""
     cents = value.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
     whole, frac = "{:.2f}".format(cents).split(".")
     whole = "{:,}".format(int(whole)).replace(",", ".")
     return "R$ %s" % whole if frac == "00" else "R$ %s,%s" % (whole, frac)
 
 
-def _parse(env, name, pattern=VALUE_PATTERN):
-    """Return a positive Decimal, or None (with a warning if the value is set but invalid)."""
-    raw = (env.get(name) or "").strip()
-    if not raw:
-        return None
-    if pattern.fullmatch(raw):
-        value = Decimal(raw.replace(",", "."))
-        if value > 0:
-            return value
-    print("warning: %s has an invalid value; treated as absent" % name, file=sys.stderr)
-    return None
+def _is_int(value):
+    return isinstance(value, int) and not isinstance(value, bool)
 
 
-def _whole(value):
-    return value.quantize(Decimal("1"), rounding=ROUND_HALF_UP)
+def _field(plan, name):
+    if name not in plan:
+        raise PlanUnavailable("billing plan has no %s" % name)
+    return plan[name]
 
 
-def _derived(amount_usd, fx):
-    """Return amount x fx rounded to whole reais, or None when it is not positive."""
-    if amount_usd is None or fx is None:
-        return None
-    result = _whole(amount_usd * fx)
-    return result if result > 0 else None
-
-
-def load_config(env):
-    """Build the rendered strings per token; a token is absent when its inputs are."""
-    price = _parse(env, ENV_PLAN_PRICE)
-    franchise_usd = _parse(env, ENV_FRANCHISE_USD)
-    trial_usd = _parse(env, ENV_TRIAL_USD)
-    fx = _parse(env, ENV_FX, FX_PATTERN)
-    config = {}
+def build_config(plan):
+    """Turn the billing's plan payload into {token: text}; raise PlanUnavailable if unusable."""
+    if not isinstance(plan, dict):
+        raise PlanUnavailable("billing plan is not an object")
+    cents = _field(plan, "price_brl_cents")
+    if not _is_int(cents) or cents <= 0:
+        raise PlanUnavailable("billing plan price_brl_cents is not a positive integer")
+    trial = _field(plan, "trial_credits")
+    if not _is_int(trial) or trial <= 0:
+        raise PlanUnavailable("billing plan trial_credits is not a positive integer")
+    raw_fx = _field(plan, "fx_brl_per_usd")
+    if not isinstance(raw_fx, str):
+        raise PlanUnavailable("billing plan fx_brl_per_usd is absent or not a decimal string")
     try:
-        if price is not None:
-            config["plan_price"] = format_brl(price)
-        if (env.get(ENV_FRANCHISE_USD) or "").strip():
-            franchise = _derived(franchise_usd, fx)
-        else:
-            franchise = price
-        if franchise is not None:
-            config["plan_franchise"] = format_brl(franchise)
-        trial = _derived(trial_usd, fx)
-        if trial is not None:
-            config["trial_credit"] = format_brl(trial)
+        fx = Decimal(raw_fx.strip())
     except ArithmeticError:
-        print("warning: pricing math failed; affected tokens use fallbacks", file=sys.stderr)
-    return config
+        raise PlanUnavailable("billing plan fx_brl_per_usd is not a number") from None
+    if not fx.is_finite() or fx <= 0:
+        raise PlanUnavailable("billing plan fx_brl_per_usd is not a positive number")
+    try:
+        price = format_brl(Decimal(cents) / 100)
+        trial_brl = (Decimal(trial) / MICRO * fx).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
+        if trial_brl <= 0:
+            raise PlanUnavailable("billing trial credit rounds to zero reais")
+        return {"plan_price": price, "plan_franchise": price, "trial_credit": format_brl(trial_brl)}
+    except ArithmeticError:
+        raise PlanUnavailable("billing plan values are out of range") from None
+
+
+def fetch_plan(base_url, opener=urllib.request.urlopen, timeout=TIMEOUT_SECONDS):
+    """GET the plan on sale from the billing; raise PlanUnavailable on any failure."""
+    url = base_url + PLAN_PATH
+    request = urllib.request.Request(url, headers={"Accept": "application/json"})
+    try:
+        with opener(request, timeout=timeout) as response:
+            status = getattr(response, "status", None) or response.getcode()
+            if status != 200:
+                raise PlanUnavailable("billing answered HTTP %s at %s" % (status, url))
+            payload = json.loads(response.read(MAX_BODY_BYTES).decode("utf-8"))
+    except PlanUnavailable:
+        raise
+    except (OSError, ValueError) as exc:
+        raise PlanUnavailable("billing unreachable or unreadable at %s (%s)" % (url, exc)) from exc
+    if not isinstance(payload, dict):
+        raise PlanUnavailable("billing answered something that is not a plan at %s" % url)
+    return payload
 
 
 def render(text, config):
@@ -95,23 +113,43 @@ def render(text, config):
     return TOKEN_PATTERN.sub(lambda m: config.get(m.group(1), html.escape(m.group(2))), text)
 
 
-def main(argv):
+def _api_base(env):
+    raw = (env.get("PUBLIC_API_BASE") or "").strip()
+    if not raw:
+        return DEFAULT_API_BASE
+    if not API_BASE_PATTERN.fullmatch(raw):
+        raise PlanUnavailable("PUBLIC_API_BASE is invalid (expected https://host), billing not queried")
+    return raw
+
+
+def main(argv, env=None, opener=urllib.request.urlopen):
     if len(argv) != 2:
         print("usage: render_pricing.py <site_dir>", file=sys.stderr)
-        return 0
-    config = load_config(os.environ)
+        return 2
+    env = os.environ if env is None else env
+    try:
+        config = build_config(fetch_plan(_api_base(env), opener=opener))
+    except PlanUnavailable as exc:
+        print("error: site not rendered: %s" % exc, file=sys.stderr)
+        return 1
+    rendered, failures = {}, []
     for path in sorted(Path(argv[1]).rglob("*.html")):
         try:
             original = path.read_text(encoding="utf-8")
-            rendered = render(original, config)
-            if rendered != original:
-                path.write_text(rendered, encoding="utf-8")
         except (OSError, UnicodeError) as exc:
-            print("warning: %s skipped (%s)" % (path, type(exc).__name__), file=sys.stderr)
+            failures.append("%s unreadable (%s)" % (path, type(exc).__name__))
             continue
-        if "{{" in rendered:
-            print("warning: %s still contains '{{' after rendering" % path, file=sys.stderr)
-    print("pricing rendered: %s" % (", ".join(sorted(config)) or "no values (fallbacks only)"))
+        out = render(original, config)
+        if "{{" in out:
+            failures.append("%s still contains '{{' after rendering" % path)
+        rendered[path] = (original, out)
+    if failures:
+        print("error: site not rendered: %s" % "; ".join(failures), file=sys.stderr)
+        return 1
+    for path, (original, out) in rendered.items():
+        if out != original:
+            path.write_text(out, encoding="utf-8")
+    print("pricing rendered from billing: %s" % ", ".join(sorted(config)))
     return 0
 
 

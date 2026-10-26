@@ -84,17 +84,19 @@ jobs:
           fi
 
       # Renderiza preço, franquia e crédito de teste nas páginas (tokens
-      # {{plan_price|…}}, {{plan_franchise|…}}, {{trial_credit|…}}) a partir de
-      # Variables do repositório — nenhum valor fica escrito no código. Sem a
-      # Variable (ou com valor inválido) o token vira texto neutro, sem número,
-      # e o deploy segue — publica o site sem preços.
-      - name: Render pricing from repo Variables
+      # {{plan_price|…}}, {{plan_franchise|…}}, {{trial_credit|…}}) a partir do
+      # endpoint público do billing (GET <API base>/billing/v1/public/plan) —
+      # nenhum valor fica escrito no código nem em Variable. Billing fora do ar
+      # ou resposta inválida FALHA o build (mensagem "billing …"): o site não
+      # publica preço que não conseguiu ler. A base vem de PUBLIC_API_BASE
+      # (opcional; padrão https://api.lab019.ai).
+      - name: Render pricing from billing
         env:
-          PUBLIC_PLAN_PRICE_BRL: ${{ vars.PUBLIC_PLAN_PRICE_BRL }}
-          PUBLIC_PLAN_FRANCHISE_USD: ${{ vars.PUBLIC_PLAN_FRANCHISE_USD }}
-          PUBLIC_TRIAL_CREDIT_USD: ${{ vars.PUBLIC_TRIAL_CREDIT_USD }}
-          PUBLIC_FX_BRL_PER_USD: ${{ vars.PUBLIC_FX_BRL_PER_USD }}
-        run: python3 scripts/render_pricing.py site
+          PUBLIC_API_BASE: ${{ vars.PUBLIC_API_BASE }}
+        run: |
+          PUBLIC_API_BASE="$(printf '%s' "$PUBLIC_API_BASE" | tr -d '[:space:]' | sed 's:/*$::')"
+          export PUBLIC_API_BASE
+          python3 scripts/render_pricing.py site
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
