@@ -185,13 +185,7 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 @media (max-width: 860px) {
   .nav-links { display: none; }
 }
-/* A home tem um item a mais no menu ("Funcionamento"), e com o link de Docs
-   sua linha precisa de ~990px para caber ao lado da marca e dos dois CTAs —
-   abaixo disso estourava a largura da página. O corte de 860px já deixava
-   passar esse estouro na home antes deste menu (a versão anterior, com os
-   rótulos longos, exigia ~948px). O limite de 1024px dá folga para quem usa
-   fonte mínima maior no navegador, caso em que a linha exige mais.
-   As demais páginas têm um item a menos (~850px) e seguem no corte geral. */
+/* A home mantém o corte mais cedo para preservar os CTAs com zoom ou fonte maior. */
 @media (max-width: 1024px) {
   .nav-links--wide { display: none; }
 }
@@ -299,6 +293,96 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 /* destaque do modelo brasileiro = verde (apoio) */
 .model-chip.br { border-color: var(--support); color: var(--support-ink); background: color-mix(in srgb, var(--support) 8%, var(--surface)); }
 
+/* ---------- Automação da operação ---------- */
+.operations-section { padding-top: 0; scroll-margin-top: 66px; }
+.operations-pillars {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  margin-bottom: 88px; padding: 22px 28px;
+  background: var(--bg-soft); border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.operations-pillars > div { padding: 0 24px; border-right: 1px solid var(--border); }
+.operations-pillars > div:first-child { padding-left: 0; }
+.operations-pillars > div:last-child { border-right: 0; }
+.operations-pillars strong { display: block; font-size: 16px; }
+.operations-pillars span { display: block; color: var(--ink-3); font-size: 13px; margin-top: 3px; }
+.operations-feature {
+  display: grid; grid-template-columns: 1.15fr .85fr; gap: 36px; align-items: center;
+  padding: 38px; background: var(--brand-soft); border-radius: var(--radius);
+}
+.operations-index { color: var(--brand-ink); text-transform: uppercase; letter-spacing: .05em; font-size: 12px; font-weight: 700; }
+.operations-feature h3 { font-size: clamp(25px, 3vw, 33px); margin: 12px 0; }
+.operations-feature p { color: var(--ink-2); font-size: 16px; margin: 0; }
+.operations-flow { list-style: none; margin: 0; padding: 8px 22px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+.operations-flow li { display: flex; align-items: flex-start; gap: 14px; padding: 17px 0; border-bottom: 1px solid var(--border); }
+.operations-flow li:last-child { border-bottom: 0; }
+.operations-flow li > span { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 25px; height: 25px; border-radius: 50%; background: var(--brand-soft); color: var(--brand-ink); font-size: 12px; font-weight: 700; }
+.operations-flow strong { display: block; font-size: 14px; }
+.operations-flow small { display: block; color: var(--ink-3); font-size: 12px; margin-top: 4px; }
+.operations-more { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 18px; }
+.operations-more-card { padding: 27px 28px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-soft); }
+.operations-more-card > span { color: var(--brand-ink); text-transform: uppercase; letter-spacing: .05em; font-size: 12px; font-weight: 700; }
+.operations-more-card h3 { font-size: 20px; margin: 12px 0 8px; }
+.operations-more-card p { color: var(--ink-2); font-size: 15px; margin: 0; }
+.automations-billing { padding-top: 70px; scroll-margin-top: 66px; }
+.automations-channel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.automations-channel { padding: 32px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--radius); }
+.automations-channel.primary { background: var(--brand-soft); border-color: color-mix(in srgb, var(--brand) 26%, var(--border)); }
+.automations-channel-label { color: var(--brand-ink); font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.automations-channel h3 { font-size: 22px; margin: 14px 0 12px; }
+.automations-channel p { color: var(--ink-2); font-size: 15px; margin: 0 0 12px; }
+.automations-process { margin-top: 48px; }
+.automations-process h3 { font-size: 24px; margin-bottom: 20px; }
+.automations-process ol { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; list-style: none; padding: 0; margin: 0; }
+.automations-process li { padding: 22px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.automations-process li > span { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: var(--brand-soft); color: var(--brand-ink); font-size: 13px; font-weight: 700; margin-bottom: 22px; }
+.automations-process strong { display: block; font-size: 17px; margin-bottom: 8px; }
+.automations-process p { color: var(--ink-2); font-size: 14px; margin: 0; }
+.automations-assurance { margin: 26px 0 0; padding: 20px 24px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--radius); color: var(--ink-2); font-size: 15px; }
+.automations-assurance a { color: var(--brand-ink); font-weight: 700; }
+.automations-assurance a:hover { text-decoration: underline; }
+.automations-other { background: var(--bg-soft); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.governance-section { background: #102a43; color: #fff; }
+.governance-section .section-head h2 { color: #fff; }
+.governance-section .section-head p { color: #d5e4ef; }
+.governance-section .eyebrow { color: #a8d8ff; }
+.governance-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.governance-card { padding: 28px; border: 1px solid rgba(255,255,255,.2); border-radius: var(--radius); background: rgba(255,255,255,.06); }
+.governance-card > span { font-size: 12px; font-weight: 700; letter-spacing: .08em; color: #9ed3ff; }
+.governance-card h3 { margin: 16px 0 10px; font-size: 21px; color: #fff; }
+.governance-card p { margin: 0; color: #d5e4ef; font-size: 15px; }
+.governance-note { display: flex; align-items: center; justify-content: space-between; gap: 30px; margin-top: 24px; padding: 26px 28px; border-radius: var(--radius); background: rgba(255,255,255,.1); }
+.governance-note p { margin: 0; max-width: 720px; color: #e0edf5; font-size: 14px; }
+.governance-note strong { color: #fff; }
+.governance-note .more { flex: 0 0 230px; color: #bde2ff; font-size: 14px; font-weight: 700; }
+.governance-note .more:hover { text-decoration: underline; }
+.assurance-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.assurance-card { padding: 27px; border: 1px solid var(--border); background: var(--surface); border-radius: var(--radius); }
+.assurance-card h3 { margin: 0 0 10px; font-size: 20px; }
+.assurance-card p { margin: 0; color: var(--ink-2); font-size: 15px; }
+.assurance-status { max-width: 810px; margin: 0 auto; padding: 30px; background: var(--brand-soft); border-radius: var(--radius); border: 1px solid var(--border); }
+.assurance-status h2 { margin: 0 0 14px; font-size: clamp(24px,3vw,32px); }
+.assurance-status p { color: var(--ink-2); margin: 0 0 12px; }
+.assurance-status p:last-child { margin-bottom: 0; }
+@media (max-width: 880px) {
+  .operations-feature { grid-template-columns: 1fr; }
+  .automations-process ol { grid-template-columns: repeat(2, 1fr); }
+  .governance-grid { grid-template-columns: 1fr; }
+  .governance-note { align-items: flex-start; flex-direction: column; }
+  .governance-note .more { flex: none; }
+}
+@media (max-width: 620px) {
+  .operations-pillars { grid-template-columns: 1fr; gap: 14px; margin-bottom: 64px; }
+  .operations-pillars > div, .operations-pillars > div:first-child { padding: 0; border: 0; }
+  .operations-feature { padding: 26px 22px; gap: 24px; }
+  .operations-more { grid-template-columns: 1fr; }
+  .automations-billing { padding-top: 56px; }
+  .automations-channel-grid, .automations-process ol { grid-template-columns: 1fr; }
+  .automations-channel { padding: 26px 22px; }
+  .assurance-grid { grid-template-columns: 1fr; }
+  .assurance-status { padding: 24px; }
+}
+
 /* ---------- Feature grid ---------- */
 .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
 @media (max-width: 880px) { .features { grid-template-columns: 1fr; } }
@@ -343,14 +427,17 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 @media (max-width: 900px) { .pricing-wrap, .pricing-wrap--two { grid-template-columns: 1fr; } }
 .plan {
   position: relative;
+  display: flex;
+  flex-direction: column;
   background: var(--surface);
-  border: 2px solid var(--brand);
+  border: 2px solid var(--border);
   border-radius: 22px;
   padding: 34px 32px;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-sm);
 }
 .pricing-wrap--two .plan { display: flex; flex-direction: column; }
 .plan--standard { border-color: var(--border); box-shadow: var(--shadow-sm); }
+.plan--enterprise { border-color: var(--brand); box-shadow: var(--shadow-lg); }
 /* selo "mais popular" = laranja (destaque de ação) */
 .plan .tag {
   position: absolute; top: 20px; right: 24px;
