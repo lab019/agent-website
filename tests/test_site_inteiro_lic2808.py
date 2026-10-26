@@ -221,3 +221,41 @@ class ScopeGuards(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PagesFollowMock(unittest.TestCase):
+    """As paginas que o mock reescreve (especialistas, integracoes, modelos)
+    trazem o h1 e a meta description do mock, nao os da main anterior."""
+    EXPECTED = {
+        "especialistas": (
+            "Especialistas de IA com funções e ferramentas definidas.",
+            None),
+        "integracoes": (
+            None,
+            "Conecte agentes da Lab019 a ferramentas e sistemas via MCP e APIs, "
+            "com escopo de acesso, credenciais protegidas e aprovação "
+            "configurável para ações sensíveis."),
+        "modelos": (
+            "Modelos de IA para cada fluxo. Com escolha sob seu controle.",
+            "Escolha automática ou fixa entre modelos de IA, incluindo Sabiá-4, "
+            "Claude, Gemini, GPT e DeepSeek. Avalie custo, desempenho e o fluxo "
+            "de dados de cada processo."),
+    }
+
+    def test_rewritten_pages_carry_mock_h1_and_description(self):
+        for slug, (h1, desc) in self.EXPECTED.items():
+            with self.subTest(page="/" + slug):
+                text = html.unescape(read(slug))
+                if h1:
+                    self.assertEqual([norm(x) for x in Doc(read(slug)).h1], [h1])
+                if desc:
+                    self.assertIn('content="%s"' % desc, norm(text))
+
+    def test_modelos_has_no_priority_selector_claim(self):
+        text = norm(html.unescape(read("modelos"))).lower()
+        for gone in ("equilibrado", "priorizar custo"):
+            self.assertNotIn(gone, text)
+
+    def test_voz_does_not_say_the_plan_includes_a_number(self):
+        text = norm(html.unescape(read("voz"))).lower()
+        self.assertNotIn("plano padrão inclui", text)
