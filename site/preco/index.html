@@ -55,7 +55,7 @@
         <span class="eyebrow">Preço e contratação</span>
         <h1>Comece com um fluxo real. <span class="hl">Escale com condições para sua operação.</span></h1>
         <p class="lead">
-          Teste por 14 dias com cerca de {{trial_credit|uma quantia}} em créditos, pela PTAX do cadastro, sem cartão: basta confirmar seu celular.
+          Teste por 14 dias com {{trial_credit|uma quantia}}* em créditos, pela PTAX do cadastro, sem cartão: basta confirmar seu celular.
           Depois, o plano padrão custa {{plan_price|um valor fixo}} por mês, e a mensalidade inteira vira créditos para seus números e seu consumo.
           Para a operação em escala, o Enterprise é pós-pago, com um compromisso mínimo que o consumo do mês abate,
           e reúne as contas das suas unidades ou clientes numa fatura só.
@@ -79,8 +79,9 @@
             <span class="amount">{{plan_price|Assinatura}}</span>
             <span class="per">/ mês</span>
           </div>
-          <div class="credit-line">✓ Cerca de {{plan_franchise|uma quantia}} em créditos todo mês, para seus números e seu consumo · teste de 14 dias com cerca de {{trial_credit|uma quantia}} em créditos, sem cartão</div>
+          <div class="credit-line">✓ {{plan_franchise|uma quantia}}* em créditos todo mês, para seus números e seu consumo · teste de 14 dias com {{trial_credit|uma quantia}}* em créditos, sem cartão</div>
           <p class="plan-rule">Você vê e paga em reais. O preço de cada número e de cada item aparece antes do uso.</p>
+          <p class="plan-rule" id="nota-ptax">* Créditos guardados em dólar e convertidos pela PTAX de venda do Banco Central; o valor em reais pode variar com o câmbio. <a href="#ptax">Entenda a PTAX</a>.</p>
           <ul>
             <li><span class="ck">✓</span> Todos os recursos da plataforma, sem pacote de funcionalidades</li>
             <li><span class="ck">✓</span> Atende por chat, voz e WhatsApp (API oficial da Meta)</li>
@@ -150,11 +151,11 @@
           <div class="how">
             <div class="credits-row">
               <span class="b">1</span>
-              <div><strong>14 dias com cerca de {{trial_credit|uma quantia}} em créditos</strong><span>Pela PTAX do cadastro, sem cartão e sem CNPJ: você confirma seu celular. Teste a voz pelo navegador ou ligando para o nosso número de demonstração. WhatsApp e SMS ficam fora do teste e entram depois da assinatura.</span></div>
+              <div><strong>14 dias com {{trial_credit|uma quantia}}* em créditos</strong><span>Pela PTAX do cadastro, sem cartão e sem CNPJ: você confirma seu celular. Teste a voz pelo navegador ou ligando para o nosso número de demonstração. WhatsApp e SMS ficam fora do teste e entram depois da assinatura.</span></div>
             </div>
             <div class="credits-row">
               <span class="b c2">2</span>
-              <div><strong>Cerca de {{plan_franchise|uma quantia}} em créditos todo mês</strong><span>A mensalidade inteira vira créditos. Eles pagam primeiro o número e o consumo do mês e valem até o fim do ciclo.</span></div>
+              <div><strong>{{plan_franchise|uma quantia}}* em créditos todo mês</strong><span>A mensalidade inteira vira créditos. Eles pagam primeiro o número e o consumo do mês e valem até o fim do ciclo.</span></div>
             </div>
             <div class="credits-row">
               <span class="b c3">3</span>
@@ -263,11 +264,15 @@
       <div class="faq reveal">
         <details>
           <summary>Como funciona o teste grátis?</summary>
-          <p>Você confirma seu celular e recebe <strong>cerca de {{trial_credit|uma quantia}} em créditos, pela PTAX do cadastro, para usar por 14 dias, sem cartão e sem CNPJ</strong>. Dá para testar a voz pelo navegador e ligando do seu celular para o nosso número de demonstração. WhatsApp e SMS ficam fora do teste; o WhatsApp entra depois da assinatura. Cada celular faz um teste, e o saldo não usado vence ao fim do prazo. Depois, o plano padrão custa {{plan_price|um valor fixo}} por mês.</p>
+          <p>Você confirma seu celular e recebe <strong>{{trial_credit|uma quantia}}* em créditos, pela PTAX do cadastro, para usar por 14 dias, sem cartão e sem CNPJ</strong>. Dá para testar a voz pelo navegador e ligando do seu celular para o nosso número de demonstração. WhatsApp e SMS ficam fora do teste; o WhatsApp entra depois da assinatura. Cada celular faz um teste, e o saldo não usado vence ao fim do prazo. Depois, o plano padrão custa {{plan_price|um valor fixo}} por mês.</p>
         </details>
         <details>
           <summary>O que está incluso na mensalidade?</summary>
-          <p>Todos os recursos da plataforma e <strong>cerca de {{plan_franchise|uma quantia}} em créditos mensais</strong>. Os créditos pagam seus números de telefone e WhatsApp e o consumo de IA, voz e mensagens. O preço mensal de cada número aparece em reais antes da compra, e o de cada item, no painel antes do uso. A habilitação do WhatsApp depende dos requisitos do canal oficial. Para outros volumes ou condições de preço, montamos um contrato por organização.</p>
+          <p>Todos os recursos da plataforma e <strong>{{plan_franchise|uma quantia}}* em créditos mensais</strong>. Os créditos pagam seus números de telefone e WhatsApp e o consumo de IA, voz e mensagens. O preço mensal de cada número aparece em reais antes da compra, e o de cada item, no painel antes do uso. A habilitação do WhatsApp depende dos requisitos do canal oficial. Para outros volumes ou condições de preço, montamos um contrato por organização.</p>
+        </details>
+        <details id="ptax">
+          <summary>Por que os valores em reais têm *? O que é a PTAX?</summary>
+          <p>Seus créditos são guardados em dólar, a moeda dos fornecedores de IA, voz e mensagens. Para mostrar em reais, convertemos pela <strong>PTAX de venda do Banco Central</strong>, a cotação do dólar que o Banco Central divulga a cada dia útil. O crédito do teste usa a PTAX do dia útil anterior ao seu cadastro; o crédito mensal, a PTAX do dia útil anterior a cada cobrança. O saldo e o consumo que você vê no painel usam a cotação mais recente. Por isso o valor em reais pode variar um pouco com o câmbio, e o asterisco (*) avisa isso.</p>
         </details>
         <details>
           <summary>O número é meu?</summary>
@@ -334,8 +339,8 @@
                 <thead><tr><th>Quando</th><th>Tipo</th><th>Detalhe</th><th style="text-align:right;">Custo</th></tr></thead>
                 <tbody>
                   <tr><td>hoje 14:32</td><td>Chat</td><td>sabia-4-br-sp <span class="as-tag">· roteado</span></td><td class="num">R$ 0,04</td></tr>
-                  <tr><td>hoje 11:08</td><td>Voz</td><td>celular BR · 2 min</td><td class="num">≈ R$ 1,83</td></tr>
-                  <tr><td>ontem 18:20</td><td>WhatsApp</td><td>utilidade</td><td class="num">≈ R$ 0,12</td></tr>
+                  <tr><td>hoje 11:08</td><td>Voz</td><td>celular BR · 2 min</td><td class="num">R$ 1,83*</td></tr>
+                  <tr><td>ontem 18:20</td><td>WhatsApp</td><td>utilidade</td><td class="num">R$ 0,12*</td></tr>
                   <tr><td>ontem 09:15</td><td>Chat</td><td>claude-sonnet</td><td class="num">R$ 0,07</td></tr>
                 </tbody>
               </table>
@@ -424,6 +429,7 @@
     }, { threshold: 0.12 });
     els.forEach(function (el) { io.observe(el); });
   })();
+  (function(){function abre(){var h=location.hash;if(h.length<2)return;var d;try{d=document.getElementById(decodeURIComponent(h.slice(1)));}catch(e){return;}if(d&&d.tagName==='DETAILS'){d.open=true;d.scrollIntoView();}}window.addEventListener('hashchange',abre);abre();})();
 </script>
 </body>
 </html>

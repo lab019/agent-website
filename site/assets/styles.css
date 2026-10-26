@@ -464,6 +464,7 @@ h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
 .plan .btn { width: 100%; }
 .pricing-wrap--two .plan .btn { margin-top: auto; white-space: normal; text-align: center; }
 .plan .plan-rule { color: var(--ink-2); font-size: 15px; margin: 0 0 22px; }
+.plan .plan-rule + .plan-rule { font-size: 13px; margin-top: -12px; }
 .plan--enterprise .credit-line { background: var(--brand-soft); border-color: var(--brand); color: var(--brand-ink); }
 .plan--enterprise .tag { background: var(--brand); }
 
