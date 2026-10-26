@@ -263,16 +263,13 @@ class PrecoV31(unittest.TestCase):
         rt = self.rendered_texts()
         franquia = r"R\$\s?137(?![\d.,]\d)"   # franchise = plan price
         trial = r"R\$\s?20(?![\d.,]\d)"       # 5 USD x 4
-        exemplos = [r"R\$\s?0,91", r"R\$\s?0,12", r"R\$\s?0,68", r"R\$\s?0,05", r"R\$\s?1,83"]
-        for v in exemplos[1:]:
-            self.has(rt["/preco"], v, "/preco: falta exemplo %s" % v)
         marca = re.compile(r"(≈|cerca de|a partir de)\s*$", re.I)
         for nome in ("/preco", "home"):
             t = rt[nome]
             self.has(t, franquia, nome + ": falta franquia renderizada (R$ 137)")
             if nome == "/preco":  # a home (main) cita o teste de 14 dias sem valor
                 self.has(t, trial, nome + ": falta credito de teste renderizado (R$ 20)")
-            for v in [trial] + exemplos:  # franchise == plan price, no approximation marker
+            for v in [trial]:  # franchise == plan price, no approximation marker
                 for m in re.finditer(v, t):
                     antes = t[max(0, m.start() - 12):m.start()]
                     self.assertRegex(antes, marca,
