@@ -356,8 +356,9 @@
             <span class="amount">{{plan_price|Assinatura}}</span>
             <span class="per">/ mês</span>
           </div>
-          <div class="credit-line">✓ Cerca de {{plan_franchise|uma quantia}} em créditos todo mês, para seus números e seu consumo · teste de 14 dias com cerca de {{trial_credit|uma quantia}} em créditos, sem cartão</div>
+          <div class="credit-line">✓ {{plan_franchise|uma quantia}}* em créditos todo mês, para seus números e seu consumo · teste de 14 dias com {{trial_credit|uma quantia}}* em créditos, sem cartão</div>
           <p class="plan-rule">Você vê e paga em reais. O preço de cada número e de cada item aparece antes do uso.</p>
+          <p class="plan-rule" id="nota-ptax">* Créditos guardados em dólar e convertidos pela PTAX de venda do Banco Central; o valor em reais pode variar com o câmbio. <a href="#ptax">Entenda a PTAX</a>.</p>
           <ul>
             <li><span class="ck">✓</span> Todos os recursos da plataforma, sem pacote de funcionalidades</li>
             <li><span class="ck">✓</span> Atende por chat, voz e WhatsApp (API oficial da Meta)</li>
@@ -409,11 +410,11 @@
           <div class="how">
             <div class="credits-row">
               <span class="b">1</span>
-              <div><strong>14 dias com cerca de {{trial_credit|uma quantia}} em créditos</strong><span>Sem cartão e sem CNPJ: você confirma seu celular. Teste a voz pelo navegador ou pelo nosso número de demonstração.</span></div>
+              <div><strong>14 dias com {{trial_credit|uma quantia}}* em créditos</strong><span>Sem cartão e sem CNPJ: você confirma seu celular. Teste a voz pelo navegador ou pelo nosso número de demonstração.</span></div>
             </div>
             <div class="credits-row">
               <span class="b c2">2</span>
-              <div><strong>Cerca de {{plan_franchise|uma quantia}} em créditos todo mês</strong><span>A mensalidade inteira vira créditos. Eles pagam primeiro o número e o consumo do mês e valem até o fim do ciclo.</span></div>
+              <div><strong>{{plan_franchise|uma quantia}}* em créditos todo mês</strong><span>A mensalidade inteira vira créditos. Eles pagam primeiro o número e o consumo do mês e valem até o fim do ciclo.</span></div>
             </div>
             <div class="credits-row">
               <span class="b c3">3</span>
@@ -527,11 +528,15 @@ conversations/<span class="p">minha-conversa</span>/messages \
       <div class="faq reveal">
         <details>
           <summary>Como funciona o teste grátis?</summary>
-          <p>Você confirma seu celular e recebe <strong>cerca de {{trial_credit|uma quantia}} em créditos, pela PTAX do cadastro, para usar por 14 dias, sem cartão e sem CNPJ</strong>. Dá para testar a voz pelo navegador e pelo nosso número de demonstração; o WhatsApp entra depois da assinatura. O saldo não usado vence ao fim do teste. Depois, o plano padrão custa {{plan_price|um valor fixo}} por mês, e a mensalidade inteira vira créditos.</p>
+          <p>Você confirma seu celular e recebe <strong>{{trial_credit|uma quantia}}* em créditos, pela PTAX do cadastro, para usar por 14 dias, sem cartão e sem CNPJ</strong>. Dá para testar a voz pelo navegador e pelo nosso número de demonstração; o WhatsApp entra depois da assinatura. O saldo não usado vence ao fim do teste. Depois, o plano padrão custa {{plan_price|um valor fixo}} por mês, e a mensalidade inteira vira créditos.</p>
         </details>
         <details>
           <summary>O que está incluso na mensalidade?</summary>
-          <p>Todos os recursos da plataforma e <strong>cerca de {{plan_franchise|uma quantia}} em créditos mensais</strong>. Os créditos pagam seus números de telefone e WhatsApp e o consumo de IA, voz e mensagens; o preço de cada número aparece em reais antes da compra. A conexão ao WhatsApp depende da habilitação no canal oficial. Para outros volumes ou condições, montamos um contrato por organização. <a href="/preco/" style="color:var(--brand-ink);font-weight:600;">Ver os detalhes de preço e créditos →</a></p>
+          <p>Todos os recursos da plataforma e <strong>{{plan_franchise|uma quantia}}* em créditos mensais</strong>. Os créditos pagam seus números de telefone e WhatsApp e o consumo de IA, voz e mensagens; o preço de cada número aparece em reais antes da compra. A conexão ao WhatsApp depende da habilitação no canal oficial. Para outros volumes ou condições, montamos um contrato por organização. <a href="/preco/" style="color:var(--brand-ink);font-weight:600;">Ver os detalhes de preço e créditos →</a></p>
+        </details>
+        <details id="ptax">
+          <summary>Por que os valores em reais têm *? O que é a PTAX?</summary>
+          <p>Seus créditos são guardados em dólar, a moeda dos fornecedores de IA, voz e mensagens. Para mostrar em reais, convertemos pela <strong>PTAX de venda do Banco Central</strong>, a cotação do dólar que o Banco Central divulga a cada dia útil. O crédito do teste usa a última PTAX divulgada antes do seu cadastro; o crédito mensal, a última PTAX divulgada antes de cada cobrança. O saldo e o consumo que você vê no painel usam a cotação mais recente. Por isso o valor em reais pode variar um pouco com o câmbio, e o asterisco (*) avisa isso.</p>
         </details>
         <details>
           <summary>É preciso integrar a API para começar?</summary>

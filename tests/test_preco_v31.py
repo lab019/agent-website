@@ -188,7 +188,7 @@ class PrecoV31(unittest.TestCase):
             self.has(t, r"14 dias", nome + ": falta '14 dias'")
             self.has(t, r"sem cart[aã]o", nome + ": falta 'sem cartão'")
         for nome, t in (("/preco", rt["/preco"]),):  # a home (main) so cita os 14 dias, sem valor
-            self.has(t, r"R\$\s?20 em cr[eé]ditos", nome + ": falta 'R$ 20 em créditos' (trial da config)")
+            self.has(t, r"R\$\s?20\*? em cr[eé]ditos", nome + ": falta 'R$ 20 em créditos' (trial da config)")
             self.has(t, r"sem cart[aã]o", nome + ": falta 'sem cartão'")
             self.has(t, r"whatsapp[^.]{0,80}(fora|n[aã]o (entra|entram|inclui|incluem|vale|valem))"
                         r"|(fora|n[aã]o inclui|n[aã]o incluem)[^.]{0,80}whatsapp",
@@ -258,8 +258,8 @@ class PrecoV31(unittest.TestCase):
             raw = (SITE / ("index.html" if nome == "home" else "preco/index.html")).read_text(encoding="utf-8")
             self.assertNotRegex(raw, r'(?i)(id|class)="[^"]*revenda', nome + ": id/class de Revenda")
 
-    # 9
-    def test_c09_valores_de_cambio_aproximados_no_texto_visivel(self):
+    # 9  (LIC-3203: "cerca de"/"≈" saiu; o valor em reais leva * com nota da PTAX)
+    def test_c09_valores_de_cambio_com_asterisco_no_texto_visivel(self):
         rt = self.rendered_texts()
         franquia = r"R\$\s?137(?![\d.,]\d)"   # franchise = plan price
         trial = r"R\$\s?20(?![\d.,]\d)"       # 5 USD x 4
@@ -269,12 +269,14 @@ class PrecoV31(unittest.TestCase):
             self.has(t, franquia, nome + ": falta franquia renderizada (R$ 137)")
             if nome == "/preco":  # a home (main) cita o teste de 14 dias sem valor
                 self.has(t, trial, nome + ": falta credito de teste renderizado (R$ 20)")
-            for v in [trial]:  # franchise == plan price, no approximation marker
-                for m in re.finditer(v, t):
-                    antes = t[max(0, m.start() - 12):m.start()]
-                    self.assertRegex(antes, marca,
-                                     "%s: %r sem '≈/cerca de/a partir de' (contexto: %r)"
-                                     % (nome, m.group(0), t[max(0, m.start() - 30):m.end() + 20]))
+            for m in re.finditer(trial, t):
+                antes = t[max(0, m.start() - 12):m.start()]
+                self.assertNotRegex(antes, marca,
+                                    "%s: %r com marcador de aproximacao (contexto: %r)"
+                                    % (nome, m.group(0), t[max(0, m.start() - 30):m.end() + 20]))
+                self.assertEqual(t[m.end():m.end() + 1], "*",
+                                 "%s: %r sem asterisco (contexto: %r)"
+                                 % (nome, m.group(0), t[max(0, m.start() - 30):m.end() + 20]))
 
     # 10
     def test_c10_cupom_fala_de_mensalidade_nao_de_desconto_no_consumo(self):
