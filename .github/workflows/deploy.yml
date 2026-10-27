@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # Injeta o ID do contêiner do GTM (config, não segredo) a partir de uma
       # Variable do repositório/environment. Sem a Variable, o token permanece e
@@ -97,6 +99,13 @@ jobs:
           PUBLIC_API_BASE="$(printf '%s' "$PUBLIC_API_BASE" | tr -d '[:space:]' | sed 's:/*$::')"
           export PUBLIC_API_BASE
           python3 scripts/render_pricing.py site
+
+      # Gera o <lastmod> do sitemap a partir do histórico git (data do último
+      # commit de cada página). Exige o histórico completo (fetch-depth: 0);
+      # clone raso, rota sem commit ou página indexável fora do sitemap
+      # FALHAM o build.
+      - name: Render sitemap lastmod from git
+        run: python3 scripts/render_sitemap.py site
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
