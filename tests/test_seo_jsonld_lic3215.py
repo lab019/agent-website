@@ -196,16 +196,50 @@ class C1Home(unittest.TestCase):
 
 
 class C2Pricing(unittest.TestCase):
-    def _offer(self, src):
-        return one(src, "SoftwareApplication").get("offers")
+    PRICING_URL = "https://lab019.ai/preco/"
 
-    def test_c2_pricing_has_software_application_with_brl_offer(self):
-        app = one(read("preco"), "SoftwareApplication")
-        self.assertEqual(app.get("applicationCategory"), "BusinessApplication")
-        offer = app.get("offers")
+    def _offer(self, src):
+        return one(src, "Product").get("offers")
+
+    def test_c2_pricing_has_product_with_brl_offer(self):
+        product = one(read("preco"), "Product")
+        self.assertTrue(product.get("name"))
+        self.assertTrue(product.get("description"))
+        self.assertEqual(product.get("url"), self.PRICING_URL)
+        image = product.get("image")
+        self.assertIsInstance(image, str)
+        self.assertTrue(asset_exists(image), image)
+        offer = product.get("offers")
         self.assertIsInstance(offer, dict)
         self.assertEqual(offer.get("@type"), "Offer")
         self.assertEqual(offer.get("priceCurrency"), "BRL")
+        self.assertEqual(offer.get("url"), self.PRICING_URL)
+        self.assertEqual(offer.get("availability"), "https://schema.org/InStock")
+
+    def test_c2_product_only_on_pricing_page(self):
+        for path in all_pages():
+            slug = path.parent.relative_to(SITE).as_posix()
+            expected = 1 if slug == "preco" else 0
+            with self.subTest(page=slug):
+                self.assertEqual(len(of_type(path.read_text(encoding="utf-8"), "Product")), expected)
+
+    def test_c2_no_software_application_and_no_invented_ratings(self):
+        def keys(node):
+            if isinstance(node, dict):
+                for k, v in node.items():
+                    yield k
+                    yield from keys(v)
+            elif isinstance(node, list):
+                for v in node:
+                    yield from keys(v)
+
+        for path in all_pages():
+            page = str(path.relative_to(SITE))
+            src = path.read_text(encoding="utf-8")
+            self.assertEqual(of_type(src, "SoftwareApplication"), [], page)
+            for body in Page(src).ld:
+                found = {"aggregateRating", "review"} & set(keys(json.loads(body)))
+                self.assertFalse(found, "%s has %s" % (page, sorted(found)))
 
     def test_c2_raw_price_is_a_token_with_non_numeric_fallback(self):
         price = self._offer(read("preco")).get("price")
@@ -333,7 +367,7 @@ class Edges(unittest.TestCase):
         found = 0
         for path in all_pages():
             src = path.read_text(encoding="utf-8")
-            for kind in ("Organization", "WebSite", "SoftwareApplication", "VideoObject"):
+            for kind in ("Organization", "WebSite", "Product", "VideoObject"):
                 n = len(of_type(src, kind))
                 found += n
                 with self.subTest(page=str(path.relative_to(SITE)), kind=kind):
