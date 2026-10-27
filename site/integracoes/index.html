@@ -26,6 +26,54 @@
 <link rel="stylesheet" href="/assets/styles.css" />
 <link rel="stylesheet" href="/assets/appshot.css" />
 <script src="/assets/analytics.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "O que é MCP?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "É um padrão aberto para conectar ferramentas e sistemas a agentes de IA. Na prática, é o que permite o seu Agente usar buscas, planilhas, CRMs e o seu próprio sistema sem uma integração feita à mão para cada um."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como o acesso aos sistemas é controlado?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Você escolhe as ferramentas disponíveis para o Agente. Quando uma integração usa OAuth, a autorização ocorre no provedor e os tokens ficam protegidos. Credenciais guardadas no cofre não são mostradas ao modelo. Requisitos da sua organização devem ser avaliados antes de conectar dados sensíveis."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Consigo conectar qualquer API ou webhook?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O Agente pode chamar APIs e ferramentas conectadas conforme o escopo configurado. A integração com cada serviço depende da interface disponível, autenticação e política de acesso."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "O Agente pode fazer coisas sem eu ver?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Só o que você permitir. Para ações sensíveis, ele pausa e pede aprovação — você aprova, edita ou recusa antes de executar."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Preciso de um desenvolvedor?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Muitas integrações são prontas e você conecta pela tela. Para casos mais específicos, um desenvolvedor ajuda — mas o básico você resolve sozinho."
+        }
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 

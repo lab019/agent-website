@@ -10,6 +10,8 @@ the HTML files, so no price is ever written in the repo or in a repo Variable:
         fx_brl_per_usd   decimal string, the stored USD/BRL rate
 
     {{plan_price|fallback}}      -> the monthly fee in reais
+    {{plan_price_number|fallback}} -> the monthly fee as a plain decimal (dot, 2 places,
+                                    no symbol), for structured data
     {{plan_franchise|fallback}}  -> the same amount: the whole monthly fee becomes credits
     {{trial_credit|fallback}}    -> trial credit in whole reais (micro-USD x rate, half-up)
 
@@ -29,7 +31,7 @@ import urllib.request
 from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
-TOKEN_PATTERN = re.compile(r"\{\{(plan_price|plan_franchise|trial_credit)\|([^}]*)\}\}")
+TOKEN_PATTERN = re.compile(r"\{\{(plan_price_number|plan_price|plan_franchise|trial_credit)\|([^}]*)\}\}")
 API_BASE_PATTERN = re.compile(r"https://[A-Za-z0-9.-]+(?::[0-9]{1,5})?", re.ASCII)
 DEFAULT_API_BASE = "https://api.lab019.ai"
 PLAN_PATH = "/billing/v1/public/plan"
@@ -81,10 +83,11 @@ def build_config(plan):
         raise PlanUnavailable("billing plan fx_brl_per_usd is not a positive number")
     try:
         price = format_brl(Decimal(cents) / 100)
+        price_number = "{:.2f}".format((Decimal(cents) / 100).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
         trial_brl = (Decimal(trial) / MICRO * fx).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
         if trial_brl <= 0:
             raise PlanUnavailable("billing trial credit rounds to zero reais")
-        return {"plan_price": price, "plan_franchise": price, "trial_credit": format_brl(trial_brl)}
+        return {"plan_price": price, "plan_price_number": price_number, "plan_franchise": price, "trial_credit": format_brl(trial_brl)}
     except ArithmeticError:
         raise PlanUnavailable("billing plan values are out of range") from None
 
