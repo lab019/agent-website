@@ -29,17 +29,21 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
+  "@type": "Product",
   "name": "Lab019",
-  "applicationCategory": "BusinessApplication",
-  "operatingSystem": "Web",
   "url": "https://lab019.ai/preco/",
+  "image": "https://lab019.ai/assets/og-image.png?v=2",
+  "brand": {
+    "@type": "Organization",
+    "name": "Lab019"
+  },
   "description": "Teste por 14 dias sem cartão. Plano padrão com mensalidade de {{plan_price|um valor fixo}} por mês, e a mensalidade inteira vira créditos para números e consumo. Enterprise pós-pago, com contas-filhas e uma fatura.",
   "offers": {
     "@type": "Offer",
     "price": "{{plan_price_number|valor da mensalidade}}",
     "priceCurrency": "BRL",
-    "url": "https://lab019.ai/preco/"
+    "url": "https://lab019.ai/preco/",
+    "availability": "https://schema.org/InStock"
   }
 }
 </script>
