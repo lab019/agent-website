@@ -18,9 +18,12 @@ Não há build nem suíte de testes — o GitHub Pages publica o diretório `sit
 como está:
 
 - Preview local: `python3 -m http.server -d site 8000`
-- Testes: `python3 -m unittest discover -s tests`. O preço vem de tokens `{{plan_price|…}}` renderizados por `scripts/render_pricing.py` no `deploy.yml`, que lê `GET <PUBLIC_API_BASE>/billing/v1/public/plan` (padrão `https://api.lab019.ai`) a cada build; nenhum valor fica no repo nem em Variable, e billing fora do ar falha o build com mensagem "billing …". O preview local mostra só os fallbacks (rode o script numa cópia de `site/` para ver os valores).
+- Testes: `python3 -m unittest discover -s tests`. O preço vem de tokens `{{plan_price|…}}` (e `{{plan_price_number|…}}`, o mesmo valor em decimal com ponto, usado no JSON-LD de `/preco/`) renderizados por `scripts/render_pricing.py` no `deploy.yml`, que lê `GET <PUBLIC_API_BASE>/billing/v1/public/plan` (padrão `https://api.lab019.ai`) a cada build; nenhum valor fica no repo nem em Variable, e billing fora do ar falha o build com mensagem "billing …". O preview local mostra só os fallbacks (rode o script numa cópia de `site/` para ver os valores).
 - Deploy: automático no push para `main` (`.github/workflows/deploy.yml`);
-  também acionável via workflow_dispatch.
+  também acionável via workflow_dispatch. O mesmo deploy preenche o `<lastmod>`
+  de cada rota do `site/sitemap.xml` com a data do último commit da página
+  (`scripts/render_sitemap.py site`, exige o checkout completo, `fetch-depth: 0`);
+  o `sitemap.xml` do repo fica sem `lastmod`.
 
 Como não há lint nem suíte de testes, o equivalente aqui ao "lint e testes
 verdes" e ao "toda mudança vem com teste" dos padrões da plataforma é:

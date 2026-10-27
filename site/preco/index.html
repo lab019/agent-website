@@ -26,6 +26,115 @@
 <link rel="stylesheet" href="/assets/styles.css" />
 <link rel="stylesheet" href="/assets/appshot.css" />
 <script src="/assets/analytics.js" defer></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Lab019",
+  "url": "https://lab019.ai/preco/",
+  "image": "https://lab019.ai/assets/og-image.png?v=2",
+  "brand": {
+    "@type": "Organization",
+    "name": "Lab019"
+  },
+  "description": "Teste por 14 dias sem cartão. Plano padrão com mensalidade de {{plan_price|um valor fixo}} por mês, e a mensalidade inteira vira créditos para números e consumo. Enterprise pós-pago, com contas-filhas e uma fatura.",
+  "offers": {
+    "@type": "Offer",
+    "price": "{{plan_price_number|valor da mensalidade}}",
+    "priceCurrency": "BRL",
+    "url": "https://lab019.ai/preco/",
+    "availability": "https://schema.org/InStock"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Como funciona o teste grátis?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Você confirma seu celular e recebe {{trial_credit|uma quantia}}* em créditos, pela PTAX do cadastro, para usar por 14 dias, sem cartão e sem CNPJ. Dá para testar a voz pelo navegador e ligando do seu celular para o nosso número de demonstração. WhatsApp e SMS ficam fora do teste; o WhatsApp entra depois da assinatura. Cada celular faz um teste, e o saldo não usado vence ao fim do prazo. Depois, o plano padrão custa {{plan_price|um valor fixo}} por mês."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "O que está incluso na mensalidade?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Todos os recursos da plataforma e {{plan_franchise|uma quantia}}* em créditos mensais. Os créditos pagam seus números de telefone e WhatsApp e o consumo de IA, voz e mensagens. O preço mensal de cada número aparece em reais antes da compra, e o de cada item, no painel antes do uso. A habilitação do WhatsApp depende dos requisitos do canal oficial. Para outros volumes ou condições de preço, montamos um contrato por organização."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Por que os valores em reais têm *? O que é a PTAX?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Seus créditos são guardados em dólar, a moeda dos fornecedores de IA, voz e mensagens. Para mostrar em reais, convertemos pela PTAX de venda do Banco Central, a cotação do dólar que o Banco Central divulga a cada dia útil. O crédito do teste usa a PTAX do dia útil anterior ao seu cadastro; o crédito mensal, a PTAX do dia útil anterior a cada cobrança. O saldo e o consumo que você vê no painel usam a cotação mais recente. Por isso o valor em reais pode variar um pouco com o câmbio, e o asterisco (*) avisa isso."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "O número é meu?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "O número é um serviço da Lab019, ativo enquanto a assinatura estiver em dia. Ao cancelar, ele deixa a sua conta. Se você usa a sua própria conta Twilio, o número é seu, e a Lab019 cobra 10% do preço de tabela da Twilio sobre a voz."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como funciona a cobrança do Enterprise?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "O contrato define um compromisso mínimo de consumo mensal e quais itens contam para ele. Ao fim do período, o consumo elegível abate esse mínimo: se usar menos, paga o mínimo contratado; se usar mais, paga o consumo efetivo. O pagamento é pós-pago, por cartão na Stripe ou por PIX/transferência fora dela. Valores, números, capacidade e demais condições são negociados por organização. A conta é criada por convite de e-mail da equipe Lab019."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como funcionam as contas-filhas?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No Enterprise, a conta-mãe cria uma conta para cada unidade ou cliente, por convite de e-mail. Cada filha vê o próprio consumo e herda as condições do contrato da mãe. A equipe da conta-mãe pode entrar nas filhas para apoiar a operação. A Lab019 cobra só a conta-mãe, numa fatura, após o fechamento do período."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Os créditos expiram?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Os créditos do teste valem por 14 dias. Os créditos mensais do plano valem até o fim do ciclo de cobrança. Já os créditos que você compra além disso não expiram."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como funcionam descontos e cupons?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Um cupom pode dar desconto na mensalidade ou somar créditos bônus. Ele não muda o preço de nenhum item de consumo, e, se reduz a mensalidade, os créditos mensais continuam os do plano. Você insere o código na tela de faturamento, e as condições aparecem antes da confirmação. Avisamos 15 dias antes do fim da vigência. Cada cupom vale uma vez por CNPJ ou CPF, e créditos de cupom não são reembolsáveis."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "E se os créditos acabarem no meio do mês?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "É só recarregar, na hora, e seguir atendendo. Sem pacote gigante obrigatório. Sem saldo, o consumo para até a recarga. Se faltar saldo na renovação do número, avisamos e há um prazo de carência antes da suspensão."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Tem fidelidade ou multa?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Não. É mês a mês: cancele quando quiser, sem multa. Nos primeiros 7 dias, devolvemos o valor pago menos o que você consumiu."
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
