@@ -33,7 +33,8 @@ ALLOWED_SAMEAS = {"https://github.com/lab019"}
 
 HOME = SITE / "index.html"
 PRICING = SITE / "preco" / "index.html"
-FAQ_PAGES = ["", "automacoes", "especialistas", "handoff", "integracoes", "modelos", "preco", "voz", "whatsapp"]
+FAQ_PAGES = ["", "automacoes", "especialistas", "handoff", "integracoes", "modelos", "preco", "voz", "whatsapp",
+             "cobranca-whatsapp", "agendamento-confirmacao", "reativacao-de-clientes", "atendimento-whatsapp"]
 NO_FAQ_PAGES = ["seguranca", "privacidade", "termos", "en/privacy", "en/terms"]
 LEGAL = ["privacidade", "termos", "en/privacy", "en/terms"]
 VIDEOS = {
@@ -321,7 +322,7 @@ class C5LegalOpenGraph(unittest.TestCase):
 
 
 class Edges(unittest.TestCase):
-    def test_c_vazio_only_the_nine_faq_pages_have_faqpage(self):
+    def test_c_vazio_only_the_faq_pages_have_faqpage(self):
         for slug in NO_FAQ_PAGES:
             with self.subTest(page=slug):
                 self.assertEqual(of_type(read(slug), "FAQPage"), [])
@@ -333,7 +334,7 @@ class Edges(unittest.TestCase):
             with self.subTest(page=slug):
                 self.assertEqual(of_type(path.read_text(encoding="utf-8"), "FAQPage"), [])
 
-    def test_c_vazio_the_nine_faq_pages_do_have_faqpage(self):
+    def test_c_vazio_the_faq_pages_do_have_faqpage(self):
         for slug in FAQ_PAGES:
             with self.subTest(page=slug or "home"):
                 self.assertEqual(len(of_type(read(slug), "FAQPage")), 1)
