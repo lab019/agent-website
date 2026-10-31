@@ -1,12 +1,9 @@
 """Acceptance LIC-3218: pages by use case for long-tail SEO (cobrança, agendamento, reativação, atendimento).
 
 critério -> teste
-c1 | each use-case page exists, has its canonical and exactly one H1 | UseCasePages::test_c1_page_has_canonical_and_one_h1
-c2 | each page explains problem, how the Agent solves it (channel, integrations, handoff) and has a FAQ with FAQPage JSON-LD | UseCasePages::test_c2_page_links_channel_integrations_and_handoff, ::test_c2_faq_has_visible_questions_and_faqpage
-c3 | each page has a CTA to app.lab019.ai | UseCasePages::test_c3_page_has_cta_to_app
-c4 | home and channel pages link to the use-case pages | InternalLinks::test_c4_home_links_every_page, ::test_c4_channel_pages_link_their_use_cases
-c5 | every indexable page is in sitemap.xml | Sitemap::test_c5_sitemap_lists_every_page
-c6 | text rules: "Agente" (not "especialista"), no number, price, client or vertical not approved | TextRules::test_c6_*
+c1 | each page follows the channel-page pattern (problem, channel/integrations/handoff, FAQ with FAQPage, CTA) and home and channel pages link it | UseCasePages::test_c1_each_page_follows_the_channel_page_pattern, ::test_c1_home_and_channel_pages_link_every_use_case
+c2 | every page is in sitemap.xml | covered by test_sitemap_lastmod_lic3216 (page count 18, one <loc> per page); FAQPage by test_seo_jsonld_lic3215 (FAQ_PAGES)
+c3 | text rules: "Agente" (not "especialista"), no number, price, client or vertical not approved | TextRules::test_c3_text_rules
 c_borda | internal links on the new pages resolve to files in site/ | UseCasePages::test_c_borda_internal_links_resolve
 c_org, c_papel: not applicable (static site, no org and no role).
 
@@ -14,7 +11,6 @@ Stdlib only; HTML read with HTMLParser, never regex on <script>.
 """
 import re
 import unittest
-import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -23,7 +19,7 @@ SITE = ROOT / "site"
 ORIGIN = "https://lab019.ai"
 SLUGS = ["cobranca-whatsapp", "agendamento-confirmacao", "reativacao-de-clientes", "atendimento-whatsapp"]
 CHANNEL_LINKS = {
-    "whatsapp": ["atendimento-whatsapp", "cobranca-whatsapp", "reativacao-de-clientes"],
+    "whatsapp": ["atendimento-whatsapp", "cobranca-whatsapp", "agendamento-confirmacao", "reativacao-de-clientes"],
     "automacoes": ["cobranca-whatsapp", "agendamento-confirmacao", "reativacao-de-clientes"],
 }
 APP = "https://app.lab019.ai"
@@ -107,33 +103,26 @@ def internal_target(href):
 
 
 class UseCasePages(unittest.TestCase):
-    def test_c1_page_has_canonical_and_one_h1(self):
+    def test_c1_each_page_follows_the_channel_page_pattern(self):
         for slug in SLUGS:
             with self.subTest(page=slug):
                 self.assertTrue(path_of(slug).is_file(), "missing page")
                 p = load(slug)
                 self.assertEqual(p.canonical, "%s/%s/" % (ORIGIN, slug))
                 self.assertEqual(p.h1, 1)
-
-    def test_c2_page_links_channel_integrations_and_handoff(self):
-        for slug in SLUGS:
-            with self.subTest(page=slug):
-                hrefs = set(load(slug).hrefs)
+                hrefs = set(p.hrefs)
                 self.assertTrue(hrefs & {"/whatsapp/", "/automacoes/"}, "channel")
                 self.assertIn("/integracoes/", hrefs)
                 self.assertIn("/handoff/", hrefs)
-
-    def test_c2_faq_has_visible_questions_and_faqpage(self):
-        for slug in SLUGS:
-            with self.subTest(page=slug):
-                p = load(slug)
+                self.assertIn(APP, hrefs)
                 self.assertGreaterEqual(len(p.faq), 3)
                 self.assertTrue(any('"FAQPage"' in body for body in p.ld), "FAQPage JSON-LD")
 
-    def test_c3_page_has_cta_to_app(self):
-        for slug in SLUGS:
-            with self.subTest(page=slug):
-                self.assertIn(APP, load(slug).hrefs)
+    def test_c1_home_and_channel_pages_link_every_use_case(self):
+        self.assertTrue(set("/%s/" % s for s in SLUGS) <= set(load("").hrefs), "home")
+        for channel, slugs in CHANNEL_LINKS.items():
+            with self.subTest(channel=channel):
+                self.assertTrue(set("/%s/" % s for s in slugs) <= set(load(channel).hrefs))
 
     def test_c_borda_internal_links_resolve(self):
         for slug in SLUGS:
@@ -147,62 +136,20 @@ class UseCasePages(unittest.TestCase):
                     self.assertTrue(ok, "broken internal link")
 
 
-class InternalLinks(unittest.TestCase):
-    def test_c4_home_links_every_page(self):
-        hrefs = set(load("").hrefs)
-        for slug in SLUGS:
-            with self.subTest(page=slug):
-                self.assertIn("/%s/" % slug, hrefs)
-
-    def test_c4_channel_pages_link_their_use_cases(self):
-        for channel, slugs in CHANNEL_LINKS.items():
-            hrefs = set(load(channel).hrefs)
-            for slug in slugs:
-                with self.subTest(channel=channel, page=slug):
-                    self.assertIn("/%s/" % slug, hrefs)
-
-
-class Sitemap(unittest.TestCase):
-    def test_c5_sitemap_lists_every_page(self):
-        ns = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
-        root = ET.fromstring((SITE / "sitemap.xml").read_text(encoding="utf-8"))
-        locs = {u.find(ns + "loc").text for u in root.findall(ns + "url")}
-        for slug in SLUGS:
-            with self.subTest(page=slug):
-                self.assertIn("%s/%s/" % (ORIGIN, slug), locs)
-
-
 class TextRules(unittest.TestCase):
-    def _texts(self):
-        for slug in SLUGS:
-            yield slug, " ".join(load(slug).main.split())
-
-    def test_c6_says_agente_never_especialista(self):
-        for slug, text in self._texts():
-            with self.subTest(page=slug):
-                self.assertRegex(text, r"\bAgente\b")
-                self.assertNotRegex(text, r"(?i)especialista")
-
-    def test_c6_no_price_percentage_or_billing_token(self):
-        for slug, text in self._texts():
-            with self.subTest(page=slug):
-                self.assertNotIn("R$", text)
-                self.assertNotIn("%", text)
-                self.assertNotIn("{{", text)
-                src = path_of(slug).read_text(encoding="utf-8")
-                self.assertNotIn("{{", src)
-
-    def test_c6_no_vertical_not_approved(self):
-        for slug in SLUGS:
-            with self.subTest(page=slug):
-                src = path_of(slug).read_text(encoding="utf-8")
-                self.assertIsNone(VERTICALS.search(src))
-
-    def test_c6_no_client_testimonial_or_result_claim(self):
+    def test_c3_text_rules(self):
         claim = re.compile(r"(?i)nossos clientes|depoimento|case de sucesso|resultados? garantid|\bgarant[ie]")
         for slug in SLUGS:
             with self.subTest(page=slug):
-                self.assertIsNone(claim.search(path_of(slug).read_text(encoding="utf-8")))
+                src = path_of(slug).read_text(encoding="utf-8")
+                text = " ".join(load(slug).main.split())
+                self.assertRegex(text, r"\bAgente\b")
+                self.assertNotRegex(text, r"(?i)especialista")
+                self.assertNotIn("R$", text)
+                self.assertNotIn("%", text)
+                self.assertNotIn("{{", src)
+                self.assertIsNone(VERTICALS.search(src))
+                self.assertIsNone(claim.search(src))
 
 
 if __name__ == "__main__":
