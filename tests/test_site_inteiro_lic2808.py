@@ -110,7 +110,7 @@ class HomeContent(unittest.TestCase):
     def test_title_is_the_v31_positioning(self):
         self.assertEqual(
             norm(self.doc.title),
-            "Lab019 — Agentes de IA para operações que exigem controle")
+            "Agentes de IA para operações que exigem controle — Lab019")
 
     def test_h1_states_the_positioning(self):
         self.assertIn("Agentes de IA para operações que exigem controle.",
@@ -234,12 +234,12 @@ class PagesFollowMock(unittest.TestCase):
             None,
             "Conecte agentes da Lab019 a ferramentas e sistemas via MCP e APIs, "
             "com escopo de acesso, credenciais protegidas e aprovação "
-            "configurável para ações sensíveis."),
+            "para ações sensíveis."),
         "modelos": (
             "Modelos de IA para cada fluxo. Com escolha sob seu controle.",
             "Escolha automática ou fixa entre modelos de IA, incluindo Sabiá-4, "
             "Claude, Gemini, GPT e DeepSeek. Avalie custo, desempenho e o fluxo "
-            "de dados de cada processo."),
+            "de dados."),
     }
 
     def test_rewritten_pages_carry_mock_h1_and_description(self):
