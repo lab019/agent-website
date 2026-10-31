@@ -153,7 +153,7 @@ class RealSitemap(unittest.TestCase):
 
     def test_c2_real_sitemap_has_one_loc_per_indexable_page(self):
         pages = [p for p in real_pages() if not is_noindex(p)]
-        self.assertEqual(len(pages), 14)
+        self.assertEqual(len(pages), 18)
         expected = set()
         for p in pages:
             rel = p.parent.relative_to(SITE).as_posix()
