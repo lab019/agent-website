@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cobrança automática pelo WhatsApp com IA — Lab019</title>
+<meta name="description" content="O Agente avisa cada cliente no dia certo pelo WhatsApp, acompanha quem não respondeu e chama uma pessoa quando precisa. Você vê cada contato." />
+<meta name="theme-color" content="#1971c2" />
+<link rel="canonical" href="https://lab019.ai/cobranca-whatsapp/" />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Cobrança automática pelo WhatsApp com IA — Lab019" />
+<meta property="og:description" content="O Agente avisa cada cliente no dia certo pelo WhatsApp, acompanha quem não respondeu e chama uma pessoa quando precisa. Você vê cada contato." />
+<meta property="og:url" content="https://lab019.ai/cobranca-whatsapp/" />
+<meta property="og:image" content="https://lab019.ai/assets/og-image.png?v=2" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Cobrança automática pelo WhatsApp com IA — Lab019" />
+<meta name="twitter:description" content="O Agente avisa cada cliente no dia certo pelo WhatsApp, acompanha quem não respondeu e chama uma pessoa quando precisa. Você vê cada contato." />
+<meta name="twitter:image" content="https://lab019.ai/assets/og-image.png?v=2" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg?v=2" />
+<link rel="stylesheet" href="/assets/styles.css" />
+<link rel="stylesheet" href="/assets/appshot.css" />
+<script src="/assets/analytics.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "O Agente confirma se o cliente pagou?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O histórico do disparo mostra se o contato foi enviado, entregue, respondido ou falhou. Para confirmar pagamento, o Agente precisa consultar uma fonte de dados do seu sistema que traga essa informação."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "O acompanhamento para quando a pessoa responde?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sim, em uma jornada de WhatsApp configurada para isso. Os próximos contatos também param se a pessoa pedir para sair ou se a conversa for encerrada."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Posso mandar a cobrança para todos os clientes de uma vez?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sim. Você sobe uma lista em CSV e envia mensagens personalizadas pelo seu número oficial, sempre para quem autorizou receber suas mensagens. Para falar primeiro com quem não conversa com você há mais de 24 horas, use um modelo aprovado pela Meta."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como é cobrado o envio das mensagens?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "As mensagens ativas usam créditos da conta e são cobradas por mensagem enviada. No disparo você vê uma estimativa antes de começar e depois acompanha o consumo realizado."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+<!-- ===================== NAV ===================== -->
+<!-- ===================== NAV ===================== -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="/" aria-label="Lab019">
+      <span class="dot" aria-hidden="true">019</span> Lab019
+    </a>
+    <nav class="nav-links">
+      <a href="/#recursos">Plataforma</a>
+      <a href="/automacoes/">Automações</a>
+      <a href="/seguranca/">Segurança</a>
+      <a href="/#preco">Preço</a>
+      <a href="https://docs.lab019.ai/">Docs</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="https://app.lab019.ai">Entrar</a>
+      <a class="btn btn-primary" href="https://app.lab019.ai">Testar grátis</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ===================== HERO ===================== -->
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="inner">
+        <a class="back-link" href="/">← Voltar para a home</a>
+        <div style="height:14px"></div>
+        <span class="eyebrow">Caso de uso · Cobrança</span>
+        <h1>Cobrança pelo WhatsApp, <span class="hl">no dia certo</span>.</h1>
+        <p class="lead">Uma lista de vencimentos, um contato cordial por mensagem e o andamento de cada pessoa no mesmo lugar. O Agente faz o primeiro contato e acompanha as respostas.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="https://app.lab019.ai">Testar grátis por 14 dias</a>
+          <a class="btn btn-ghost btn-lg" href="/preco/">Ver preço</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PROBLEMA ===================== -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">O problema</span>
+        <h2>Cobrar na mão toma o tempo de quem atende</h2>
+        <p>Lembrar cada cliente no dia certo, voltar a falar com quem não respondeu e saber quem já foi avisado costuma ficar em planilha e em memória. O contato atrasa, o tom varia e ninguém enxerga o andamento de cada pessoa.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== COMO O AGENTE RESOLVE ===================== -->
+  <section class="section section-sm" style="background:var(--bg-soft);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Como o Agente resolve</span>
+        <h2>Canal, integrações e uma pessoa por perto</h2>
+      </div>
+      <div class="features">
+        <div class="feature reveal">
+          <div class="ico">💬</div>
+          <h3>WhatsApp para o primeiro contato</h3>
+          <p>O Agente envia uma mensagem personalizada pelo número oficial da empresa, pela API oficial da Meta. Para falar primeiro com quem está fora da janela de 24 horas, use um modelo aprovado pela Meta.</p>
+          <a class="more" href="/whatsapp/">Conhecer o canal →</a>
+        </div>
+        <div class="feature reveal">
+          <div class="ico o">🔌</div>
+          <h3>Age nos seus sistemas</h3>
+          <p>Para confirmar pagamentos, o Agente consulta uma fonte de dados do seu sistema que traga essa informação. Sem essa conexão, o histórico mostra o que foi enviado, entregue, respondido ou falhou.</p>
+          <a class="more" href="/integracoes/">Ver integrações →</a>
+        </div>
+        <div class="feature reveal">
+          <div class="ico b">🤝</div>
+          <h3>Passa para você quando precisa</h3>
+          <p>Quando o cliente quer negociar ou o caso é delicado, o Agente passa a conversa para uma pessoa, na mesma conversa e com o histórico. Você assume e devolve depois.</p>
+          <a class="more" href="/handoff/">Ver atendimento humano →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PASSO A PASSO ===================== -->
+  <section class="section">
+    <div class="wrap">
+      <div class="automations-process reveal">
+        <h3>Da lista ao resultado, com você no controle</h3>
+        <ol>
+          <li><span>1</span><div><strong>Revise os contatos</strong><p>Cole os contatos ou importe uma lista CSV. Confira telefones, valores, vencimentos e a lista de não perturbe.</p></div></li>
+          <li><span>2</span><div><strong>Escolha a mensagem</strong><p>Escreva o texto com variáveis como o nome do cliente, veja a prévia e agende o horário. O custo estimado aparece antes do envio.</p></div></li>
+          <li><span>3</span><div><strong>Acompanhe as respostas</strong><p>O Agente conversa com quem responder. Com uma jornada configurada, o acompanhamento segue só para quem não respondeu e para quando a pessoa responde ou pede para sair.</p></div></li>
+          <li><span>4</span><div><strong>Veja o andamento</strong><p>Consulte envios, respostas, falhas e custo por contato.</p></div></li>
+        </ol>
+      </div>
+      <p class="automations-assurance reveal">Para um processo com dados ou decisões sensíveis, defina o escopo das ferramentas e os pontos de revisão antes da execução. <a href="/seguranca/">Veja os controles e o estágio atual de segurança →</a> · <a href="/automacoes/">Ver a automação de cobranças →</a></p>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section class="section section-sm" style="background:var(--bg-soft);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Perguntas frequentes</span>
+        <h2>Dúvidas sobre este caso de uso</h2>
+      </div>
+      <div class="faq reveal">
+        <details>
+          <summary>O Agente confirma se o cliente pagou?</summary>
+          <p>O histórico do disparo mostra se o contato foi enviado, entregue, respondido ou falhou. Para confirmar pagamento, o Agente precisa consultar uma fonte de dados do seu sistema que traga essa informação.</p>
+        </details>
+        <details>
+          <summary>O acompanhamento para quando a pessoa responde?</summary>
+          <p>Sim, em uma jornada de WhatsApp configurada para isso. Os próximos contatos também param se a pessoa pedir para sair ou se a conversa for encerrada.</p>
+        </details>
+        <details>
+          <summary>Posso mandar a cobrança para todos os clientes de uma vez?</summary>
+          <p>Sim. Você sobe uma lista em CSV e envia mensagens personalizadas pelo seu número oficial, sempre para quem autorizou receber suas mensagens. Para falar primeiro com quem não conversa com você há mais de 24 horas, use um modelo aprovado pela Meta.</p>
+        </details>
+        <details>
+          <summary>Como é cobrado o envio das mensagens?</summary>
+          <p>As mensagens ativas usam créditos da conta e são cobradas por mensagem enviada. No disparo você vê uma estimativa antes de começar e depois acompanha o consumo realizado.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="cta-band reveal">
+        <h2>Comece pelo vencimento que mais atrasa.</h2>
+        <p>Teste grátis por 14 dias, sem cartão. O WhatsApp entra depois da assinatura, pela API oficial da Meta.</p>
+        <a class="btn btn-primary btn-lg" href="https://app.lab019.ai">Quero começar</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="brand"><span class="dot" aria-hidden="true">019</span> Lab019</div>
+        <p>Agentes de IA para atendimento e operação, com controles para evoluir cada processo. Nascido em Campinas, feito para o Brasil.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Produto</h4>
+          <a href="/#recursos">Plataforma</a>
+          <a href="/automacoes/">Automações</a>
+          <a href="/seguranca/">Segurança</a>
+          <a href="/#canais">Canais</a>
+          <a href="/#como-funciona">Funcionamento</a>
+          <a href="/preco/">Preço e créditos</a>
+        </div>
+        <div class="footer-col">
+          <h4>Páginas</h4>
+          <a href="/modelos/">Modelos</a>
+          <a href="/whatsapp/">WhatsApp</a>
+          <a href="/voz/">Voz e telefone</a>
+          <a href="/especialistas/">Especialistas</a>
+          <a href="/integracoes/">Integrações</a>
+          <a href="/handoff/">Atendimento humano</a>
+          <a href="https://docs.lab019.ai/">Documentação</a>
+        </div>
+        <div class="footer-col">
+          <h4>Empresa</h4>
+          <a href="mailto:contato@lab019.ai">contato@lab019.ai</a>
+          <a href="https://lab019.com">lab019.com</a>
+          <a href="https://lab019.ai">lab019.ai</a>
+          <a href="/#faq">Dúvidas</a>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <a href="/termos/">Termos de Uso</a>
+          <a href="/privacidade/">Política de Privacidade</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-legal">
+      Lab019 é nome fantasia de <strong>INDRA CONSULTORIA EMPRESARIAL LTDA</strong> ·
+      CNPJ 04.022.591/0001-59 · Campinas, SP · Contato:
+      <a href="mailto:contato@lab019.ai">contato@lab019.ai</a>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Lab019 · Feito com 💚 em Campinas, SP</span>
+      <span>Automação com controle, do primeiro teste à operação.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var els = document.querySelectorAll(".reveal");
+    if (!("IntersectionObserver" in window)) {
+      els.forEach(function (el) { el.classList.add("in"); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12 });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Atendimento e pré-venda no WhatsApp com IA — Lab019</title>
+<meta name="description" content="O Agente responde dúvidas, registra pedidos e faz pré-venda no WhatsApp a qualquer hora e chama uma pessoa quando o caso pede. Pela API oficial da Meta." />
+<meta name="theme-color" content="#1971c2" />
+<link rel="canonical" href="https://lab019.ai/atendimento-whatsapp/" />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Atendimento e pré-venda no WhatsApp com IA — Lab019" />
+<meta property="og:description" content="O Agente responde dúvidas, registra pedidos e faz pré-venda no WhatsApp a qualquer hora e chama uma pessoa quando o caso pede. Pela API oficial da Meta." />
+<meta property="og:url" content="https://lab019.ai/atendimento-whatsapp/" />
+<meta property="og:image" content="https://lab019.ai/assets/og-image.png?v=2" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Atendimento e pré-venda no WhatsApp com IA — Lab019" />
+<meta name="twitter:description" content="O Agente responde dúvidas, registra pedidos e faz pré-venda no WhatsApp a qualquer hora e chama uma pessoa quando o caso pede. Pela API oficial da Meta." />
+<meta name="twitter:image" content="https://lab019.ai/assets/og-image.png?v=2" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg?v=2" />
+<link rel="stylesheet" href="/assets/styles.css" />
+<link rel="stylesheet" href="/assets/appshot.css" />
+<script src="/assets/analytics.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "O Agente vende sozinho?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ele responde dúvidas, informa horário e estoque, registra pedido e faz pré-venda. Quando o caso pede uma pessoa, transfere a conversa para um atendente, sem perder o histórico."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Posso usar o número que já tenho?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pode. Um número novo conecta direto. Por enquanto, um número que já está em uso no aplicativo do WhatsApp precisa deixar o aplicativo antes da conexão oficial."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como o Agente passa a conversa para uma pessoa?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Quando faz sentido, ele transfere para um atendente humano na mesma conversa, sem perder o histórico. Você assume, responde e depois devolve o atendimento para o Agente."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "O Agente age nos meus sistemas?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Com as integrações configuradas, sim. Ele consulta e registra em planilhas, agenda e outros sistemas, além de conversar."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+<!-- ===================== NAV ===================== -->
+<!-- ===================== NAV ===================== -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="/" aria-label="Lab019">
+      <span class="dot" aria-hidden="true">019</span> Lab019
+    </a>
+    <nav class="nav-links">
+      <a href="/#recursos">Plataforma</a>
+      <a href="/automacoes/">Automações</a>
+      <a href="/seguranca/">Segurança</a>
+      <a href="/#preco">Preço</a>
+      <a href="https://docs.lab019.ai/">Docs</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="https://app.lab019.ai">Entrar</a>
+      <a class="btn btn-primary" href="https://app.lab019.ai">Testar grátis</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ===================== HERO ===================== -->
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="inner">
+        <a class="back-link" href="/">← Voltar para a home</a>
+        <div style="height:14px"></div>
+        <span class="eyebrow">Caso de uso · Atendimento e pré-venda</span>
+        <h1>Atendimento e pré-venda <span class="hl">no WhatsApp</span>.</h1>
+        <p class="lead">O Agente responde na hora, a qualquer hora, e leva o cliente até o pedido. Quando o caso pede uma pessoa, a conversa passa para você com o histórico.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="https://app.lab019.ai">Testar grátis por 14 dias</a>
+          <a class="btn btn-ghost btn-lg" href="/preco/">Ver preço</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PROBLEMA ===================== -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">O problema</span>
+        <h2>Cliente sem resposta compra de outro lugar</h2>
+        <p>Perguntar horário, preço de uma entrega ou se há estoque são dúvidas simples, mas chegam fora do expediente e em horários de pico. Cada mensagem sem resposta é uma venda que pode esfriar.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== COMO O AGENTE RESOLVE ===================== -->
+  <section class="section section-sm" style="background:var(--bg-soft);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Como o Agente resolve</span>
+        <h2>Canal, integrações e uma pessoa por perto</h2>
+      </div>
+      <div class="features">
+        <div class="feature reveal">
+          <div class="ico">💬</div>
+          <h3>O canal onde o cliente já está</h3>
+          <p>O Agente entra no WhatsApp pela API oficial da Meta. Você conecta numa janela da própria Meta e a conta e o número ficam no seu nome.</p>
+          <a class="more" href="/whatsapp/">Conhecer o canal →</a>
+        </div>
+        <div class="feature reveal">
+          <div class="ico o">🔌</div>
+          <h3>Age nos seus sistemas</h3>
+          <p>Com as integrações configuradas, o Agente consulta e registra em planilhas, agenda e outros sistemas. Ele informa horário e estoque e registra o pedido a partir do que você conectou.</p>
+          <a class="more" href="/integracoes/">Ver integrações →</a>
+        </div>
+        <div class="feature reveal">
+          <div class="ico b">🤝</div>
+          <h3>Passa para você quando precisa</h3>
+          <p>Casos delicados vão para uma pessoa sem perder o histórico. Você acompanha, assume a conversa na hora e devolve para o Agente depois.</p>
+          <a class="more" href="/handoff/">Ver atendimento humano →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PASSO A PASSO ===================== -->
+  <section class="section">
+    <div class="wrap">
+      <div class="automations-process reveal">
+        <h3>Do primeiro contato ao pedido</h3>
+        <ol>
+          <li><span>1</span><div><strong>Conecte o número</strong><p>Em Canais, escolha conectar pela conta oficial. Uma janela da Meta abre, você entra com o Facebook, escolhe a empresa e confirma o número.</p></div></li>
+          <li><span>2</span><div><strong>Ensine o seu negócio</strong><p>Conte ao Agente como você atende e o que ele pode responder. Ele usa o conhecimento do seu negócio nas conversas.</p></div></li>
+          <li><span>3</span><div><strong>Deixe o Agente atender</strong><p>Ele responde dúvidas, informa horário e estoque, registra pedido e faz pré-venda, a qualquer hora.</p></div></li>
+          <li><span>4</span><div><strong>Assuma quando quiser</strong><p>Acompanhe as conversas, assuma uma delas na hora e devolva para o Agente depois.</p></div></li>
+        </ol>
+      </div>
+      <p class="automations-assurance reveal">Para um processo com dados ou decisões sensíveis, defina o escopo das ferramentas e os pontos de revisão antes da execução. <a href="/seguranca/">Veja os controles e o estágio atual de segurança →</a> · <a href="/whatsapp/">Conhecer o WhatsApp →</a></p>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section class="section section-sm" style="background:var(--bg-soft);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Perguntas frequentes</span>
+        <h2>Dúvidas sobre este caso de uso</h2>
+      </div>
+      <div class="faq reveal">
+        <details>
+          <summary>O Agente vende sozinho?</summary>
+          <p>Ele responde dúvidas, informa horário e estoque, registra pedido e faz pré-venda. Quando o caso pede uma pessoa, transfere a conversa para um atendente, sem perder o histórico.</p>
+        </details>
+        <details>
+          <summary>Posso usar o número que já tenho?</summary>
+          <p>Pode. Um número novo conecta direto. Por enquanto, um número que já está em uso no aplicativo do WhatsApp precisa deixar o aplicativo antes da conexão oficial.</p>
+        </details>
+        <details>
+          <summary>Como o Agente passa a conversa para uma pessoa?</summary>
+          <p>Quando faz sentido, ele transfere para um atendente humano na mesma conversa, sem perder o histórico. Você assume, responde e depois devolve o atendimento para o Agente.</p>
+        </details>
+        <details>
+          <summary>O Agente age nos meus sistemas?</summary>
+          <p>Com as integrações configuradas, sim. Ele consulta e registra em planilhas, agenda e outros sistemas, além de conversar.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="cta-band reveal">
+        <h2>Coloque um Agente para atender o seu WhatsApp.</h2>
+        <p>Teste grátis por 14 dias, sem cartão. O WhatsApp entra depois da assinatura, pela API oficial da Meta.</p>
+        <a class="btn btn-primary btn-lg" href="https://app.lab019.ai">Quero começar</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="brand"><span class="dot" aria-hidden="true">019</span> Lab019</div>
+        <p>Agentes de IA para atendimento e operação, com controles para evoluir cada processo. Nascido em Campinas, feito para o Brasil.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Produto</h4>
+          <a href="/#recursos">Plataforma</a>
+          <a href="/automacoes/">Automações</a>
+          <a href="/seguranca/">Segurança</a>
+          <a href="/#canais">Canais</a>
+          <a href="/#como-funciona">Funcionamento</a>
+          <a href="/preco/">Preço e créditos</a>
+        </div>
+        <div class="footer-col">
+          <h4>Páginas</h4>
+          <a href="/modelos/">Modelos</a>
+          <a href="/whatsapp/">WhatsApp</a>
+          <a href="/voz/">Voz e telefone</a>
+          <a href="/especialistas/">Especialistas</a>
+          <a href="/integracoes/">Integrações</a>
+          <a href="/handoff/">Atendimento humano</a>
+          <a href="https://docs.lab019.ai/">Documentação</a>
+        </div>
+        <div class="footer-col">
+          <h4>Empresa</h4>
+          <a href="mailto:contato@lab019.ai">contato@lab019.ai</a>
+          <a href="https://lab019.com">lab019.com</a>
+          <a href="https://lab019.ai">lab019.ai</a>
+          <a href="/#faq">Dúvidas</a>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <a href="/termos/">Termos de Uso</a>
+          <a href="/privacidade/">Política de Privacidade</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-legal">
+      Lab019 é nome fantasia de <strong>INDRA CONSULTORIA EMPRESARIAL LTDA</strong> ·
+      CNPJ 04.022.591/0001-59 · Campinas, SP · Contato:
+      <a href="mailto:contato@lab019.ai">contato@lab019.ai</a>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Lab019 · Feito com 💚 em Campinas, SP</span>
+      <span>Automação com controle, do primeiro teste à operação.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var els = document.querySelectorAll(".reveal");
+    if (!("IntersectionObserver" in window)) {
+      els.forEach(function (el) { el.classList.add("in"); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12 });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+</script>
+</body>
+</html>
