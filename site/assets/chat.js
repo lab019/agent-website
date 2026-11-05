@@ -57,6 +57,9 @@
     'Oi! 👋 Sou o agente virtual da Lab019. Pergunte o que quiser — preços, ' +
     'canais (chat, voz, WhatsApp), como configurar. Estou aqui pra mostrar na ' +
     'prática como funciona.'
+  // Perguntas sugeridas logo abaixo da saudação (somem depois da primeira mensagem).
+  var SUGGESTIONS = ['Quanto custa?', 'Funciona no WhatsApp?', 'Como eu configuro?', 'Posso testar grátis?']
+  var COMPOSER_PLACEHOLDER = 'Pergunte qualquer coisa…'
 
   // Sem widget key configurada → recurso inerte (mantém a ilustração do hero).
   // O token não substituído começa com "__", então não passa daqui.
@@ -728,11 +731,21 @@
   // (a lista é curta). Cada superfície rola para o fim.
   function syncSurface(s) {
     var body = s.body
-    while (body.children.length < messages.length) {
-      body.appendChild(makeBubble())
+    s.bubbles = s.bubbles || []
+    // Sugestões de pergunta valem só enquanto não houve conversa: somem na primeira
+    // mensagem, venha ela do hero, do painel ou de uma sessão restaurada.
+    if (s.suggest && messages.length > 1) {
+      if (s.suggest.parentNode) s.suggest.parentNode.removeChild(s.suggest)
+      s.suggest = null
+    }
+    while (s.bubbles.length < messages.length) {
+      var bubble = makeBubble()
+      s.bubbles.push(bubble)
+      // As bolhas entram antes das sugestões: elas ficam logo abaixo da boas-vindas.
+      body.insertBefore(bubble, s.suggest || null)
     }
     for (var i = 0; i < messages.length; i++) {
-      applyBubble(body.children[i], messages[i])
+      applyBubble(s.bubbles[i], messages[i])
     }
     body.scrollTop = body.scrollHeight
   }
@@ -1528,6 +1541,26 @@
     return form
   }
 
+  // Botões de pergunta sugerida: o clique envia o texto como se o visitante o tivesse
+  // digitado. Ficam dentro do corpo do hero, logo abaixo da saudação.
+  function buildSuggestions() {
+    var wrap = document.createElement('div')
+    wrap.className = 'chat-suggest'
+    wrap.setAttribute('role', 'group')
+    wrap.setAttribute('aria-label', 'Perguntas sugeridas')
+    SUGGESTIONS.forEach(function (text) {
+      var btn = document.createElement('button')
+      btn.type = 'button'
+      btn.className = 'chat-suggest-btn'
+      btn.textContent = text
+      btn.addEventListener('click', function () {
+        send(text)
+      })
+      wrap.appendChild(btn)
+    })
+    return wrap
+  }
+
   // Transforma o card estático do hero em chat ao vivo: corpo rolável + form.
   function mountHero() {
     var card = document.getElementById('hero-chat')
@@ -1540,9 +1573,12 @@
     var foot = card.querySelector('.chat-foot')
     if (!body || !foot) return null
     body.textContent = '' // remove as bolhas roteirizadas de ilustração
-    surfaces.push({ body: body })
+    var surface = { body: body }
+    surface.suggest = buildSuggestions()
+    body.appendChild(surface.suggest)
+    surfaces.push(surface)
 
-    var form = buildForm('Escreva uma mensagem…')
+    var form = buildForm(COMPOSER_PLACEHOLDER)
     foot.parentNode.replaceChild(form, foot)
     card.insertBefore(makeVoiceBar(), form)
     return card
@@ -1579,7 +1615,7 @@
     panel.appendChild(head)
     panel.appendChild(body)
     panel.appendChild(makeVoiceBar())
-    panel.appendChild(buildForm('Escreva uma mensagem…'))
+    panel.appendChild(buildForm(COMPOSER_PLACEHOLDER))
 
     document.body.appendChild(panel)
     document.body.appendChild(fab)
