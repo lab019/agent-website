@@ -29,6 +29,7 @@ def faq_answers(raw):
 
 class MensagemEnviadaERecebida(unittest.TestCase):
     def test_preco_and_whatsapp_say_it_in_visible_text_and_json_ld_alike(self):
+        """LIC-3444 criterion 8 (site half)."""
         preco = (SITE / "preco" / "index.html").read_text(encoding="utf-8")
         whatsapp = (SITE / "whatsapp" / "index.html").read_text(encoding="utf-8")
 
