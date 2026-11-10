@@ -3,46 +3,45 @@
 <head>
 <meta charset="utf-8" />
 <title>og-image Lab019</title>
-<!-- Fonte da imagem de prévia de link (1200x630). Os valores vêm em tempo de build: preço e
-     franquia do billing (os mesmos tokens das páginas do site) e título e linha de apoio da
-     própria home (site/index.html: o <h1> e o og:description); nada de preço nem de texto da
-     home fica escrito aqui. Render: python3 scripts/render_og_image.py site -->
+<!-- Fonte da imagem de prévia de link (1200x630), no visual do hero da home (tema claro: Inter,
+     tokens de site/assets/styles.css). Os valores vêm em tempo de build: preço e franquia do
+     billing (os mesmos tokens das páginas do site) e eyebrow, título (<h1>) e linha de apoio
+     (.hero-sub) da própria home (site/index.html); nada de preço nem de texto da home fica
+     escrito aqui. Render: python3 scripts/render_og_image.py site -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { width: 1200px; height: 630px; overflow: hidden; background: #fff; }
-  body { position: relative; font-family: "Poppins", "Helvetica Neue", Arial, sans-serif; color: #111827; }
-  .mark { position: absolute; left: 62px; top: 52px; font-weight: 700; font-size: 58px; line-height: 50px; letter-spacing: -3px; }
-  .mark .lab { display: block; color: #5170ff; }
-  .mark .num { display: block; color: #ff7a21; }
-  .price { position: absolute; right: 64px; top: 58px; text-align: right; }
-  .price .amount { font-weight: 700; font-size: 66px; line-height: 76px; color: #5170ff; letter-spacing: -1px; }
-  .price .unit { font-weight: 500; font-size: 28px; color: #6b7280; }
-  .price .credits { font-weight: 500; font-size: 22px; line-height: 30px; color: #6b7280; }
-  h1 { position: absolute; left: 64px; top: 200px; width: 1072px; font-weight: 700; font-size: 66px; line-height: 80px; letter-spacing: -1px; }
-  h1 .accent { color: #5170ff; }
-  .tagline { position: absolute; left: 64px; top: 378px; width: 1072px; font-weight: 500; font-size: 26px; line-height: 38px; color: #6b7280; }
-  .pills { position: absolute; left: 64px; top: 506px; display: flex; gap: 12px; }
-  .pill { height: 50px; padding: 0 22px; border-radius: 25px; display: flex; align-items: center; font-weight: 500; font-size: 22px; color: #111827; background: #f6f8fb; border: 2px solid #e4e9f0; }
-  .pill.on { background: #fff0e8; border-color: #ff7a21; color: #ff7a21; }
+  body { position: relative; font-family: "Inter", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; color: #0f1720; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  .glow { position: absolute; inset: 0; background:
+    radial-gradient(760px 360px at 14% 0%, rgba(25, 113, 194, 0.16), transparent 60%),
+    radial-gradient(560px 300px at 94% 4%, rgba(18, 184, 134, 0.10), transparent 60%),
+    radial-gradient(440px 280px at 62% 0%, rgba(232, 89, 12, 0.08), transparent 62%); }
+  .brand { position: absolute; left: 72px; top: 52px; display: flex; align-items: center; gap: 14px; font-weight: 700; font-size: 34px; letter-spacing: -0.01em; line-height: 1; }
+  .dot { width: 52px; height: 52px; border-radius: 15px; background: linear-gradient(135deg, #e8590c, #d9480f); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 21px; font-weight: 700; letter-spacing: -0.04em; }
+  .price { position: absolute; right: 72px; top: 44px; text-align: right; line-height: 1.2; }
+  .price .amount { font-weight: 800; font-size: 60px; color: #1864ab; letter-spacing: -0.02em; }
+  .price .unit { font-weight: 500; font-size: 26px; color: #6b7889; }
+  .price .credits { margin-top: 4px; font-weight: 500; font-size: 21px; color: #6b7889; }
+  .eyebrow { position: absolute; left: 72px; top: 196px; font-size: 20px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #1864ab; }
+  .eyebrow:empty { display: none; }
+  h1 { position: absolute; left: 72px; top: 236px; width: 1060px; font-weight: 700; font-size: 70px; line-height: 1.15; letter-spacing: -0.02em; }
+  h1 .accent { color: #1864ab; }
+  .support { position: absolute; left: 72px; top: 430px; width: 1020px; font-size: 29px; line-height: 1.5; color: #3d4a59; }
+  .support strong { font-weight: 700; color: #0f1720; }
 </style>
 </head>
 <body>
-  <div class="mark"><span class="lab">Lab</span><span class="num">019</span></div>
+  <div class="glow"></div>
+  <div class="brand"><span class="dot">019</span>Lab019</div>
   <div class="price">
     <div><span class="amount">{{plan_price|Assinatura}}</span><span class="unit">/mês</span></div>
     <div class="credits">com {{plan_franchise|créditos}} em créditos inclusos</div>
   </div>
+  <div class="eyebrow">{{eyebrow}}</div>
   <h1>{{headline_html}}</h1>
-  <div class="tagline">{{support_line}}</div>
-  <div class="pills">
-    <span class="pill on">Sabiá-4 · Maritaca</span>
-    <span class="pill">Claude</span>
-    <span class="pill">Gemini</span>
-    <span class="pill">GPT</span>
-    <span class="pill">Voz e telefone</span>
-  </div>
+  <div class="support">{{support_line}}</div>
 </body>
 </html>
