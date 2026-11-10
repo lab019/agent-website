@@ -3,9 +3,10 @@
 <head>
 <meta charset="utf-8" />
 <title>og-image Lab019</title>
-<!-- Fonte da imagem de prévia de link (1200x630). Os valores vêm do billing em tempo de
-     build (os mesmos tokens de preço e franquia das páginas do site); nada de
-     preço fica escrito aqui. Render: python3 scripts/render_og_image.py site -->
+<!-- Fonte da imagem de prévia de link (1200x630). Os valores vêm em tempo de build: preço e
+     franquia do billing (os mesmos tokens das páginas do site) e título e linha de apoio da
+     própria home (site/index.html: o <h1> e o og:description); nada de preço nem de texto da
+     home fica escrito aqui. Render: python3 scripts/render_og_image.py site -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" />
@@ -20,9 +21,9 @@
   .price .amount { font-weight: 700; font-size: 66px; line-height: 76px; color: #5170ff; letter-spacing: -1px; }
   .price .unit { font-weight: 500; font-size: 28px; color: #6b7280; }
   .price .credits { font-weight: 500; font-size: 22px; line-height: 30px; color: #6b7280; }
-  h1 { position: absolute; left: 64px; top: 246px; font-weight: 700; font-size: 66px; line-height: 80px; letter-spacing: -1px; }
+  h1 { position: absolute; left: 64px; top: 200px; width: 1072px; font-weight: 700; font-size: 66px; line-height: 80px; letter-spacing: -1px; }
   h1 .accent { color: #5170ff; }
-  .tagline { position: absolute; left: 64px; top: 418px; font-weight: 500; font-size: 27px; color: #6b7280; }
+  .tagline { position: absolute; left: 64px; top: 378px; width: 1072px; font-weight: 500; font-size: 26px; line-height: 38px; color: #6b7280; }
   .pills { position: absolute; left: 64px; top: 506px; display: flex; gap: 12px; }
   .pill { height: 50px; padding: 0 22px; border-radius: 25px; display: flex; align-items: center; font-weight: 500; font-size: 22px; color: #111827; background: #f6f8fb; border: 2px solid #e4e9f0; }
   .pill.on { background: #fff0e8; border-color: #ff7a21; color: #ff7a21; }
@@ -34,14 +35,14 @@
     <div><span class="amount">{{plan_price|Assinatura}}</span><span class="unit">/mês</span></div>
     <div class="credits">com {{plan_franchise|créditos}} em créditos inclusos</div>
   </div>
-  <h1>Inteligência artificial de<br />verdade, <span class="accent">a preço de gente</span>.</h1>
-  <div class="tagline">O Agente que atende por chat, voz e WhatsApp — 24/7.</div>
+  <h1>{{headline_html}}</h1>
+  <div class="tagline">{{support_line}}</div>
   <div class="pills">
-    <span class="pill on">Sabiá · Maritaca</span>
+    <span class="pill on">Sabiá-4 · Maritaca</span>
     <span class="pill">Claude</span>
     <span class="pill">Gemini</span>
     <span class="pill">GPT</span>
-    <span class="pill">Voz em tempo real</span>
+    <span class="pill">Voz e telefone</span>
   </div>
 </body>
 </html>
