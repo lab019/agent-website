@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<title>og-image Lab019</title>
+<!-- Fonte da imagem de prévia de link (1200x630). Os valores vêm do billing em tempo de
+     build (os mesmos tokens de preço e franquia das páginas do site); nada de
+     preço fica escrito aqui. Render: python3 scripts/render_og_image.py site -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; background: #fff; }
+  body { position: relative; font-family: "Poppins", "Helvetica Neue", Arial, sans-serif; color: #111827; }
+  .mark { position: absolute; left: 62px; top: 52px; font-weight: 700; font-size: 58px; line-height: 50px; letter-spacing: -3px; }
+  .mark .lab { display: block; color: #5170ff; }
+  .mark .num { display: block; color: #ff7a21; }
+  .price { position: absolute; right: 64px; top: 58px; text-align: right; }
+  .price .amount { font-weight: 700; font-size: 66px; line-height: 76px; color: #5170ff; letter-spacing: -1px; }
+  .price .unit { font-weight: 500; font-size: 28px; color: #6b7280; }
+  .price .credits { font-weight: 500; font-size: 22px; line-height: 30px; color: #6b7280; }
+  h1 { position: absolute; left: 64px; top: 246px; font-weight: 700; font-size: 66px; line-height: 80px; letter-spacing: -1px; }
+  h1 .accent { color: #5170ff; }
+  .tagline { position: absolute; left: 64px; top: 418px; font-weight: 500; font-size: 27px; color: #6b7280; }
+  .pills { position: absolute; left: 64px; top: 506px; display: flex; gap: 12px; }
+  .pill { height: 50px; padding: 0 22px; border-radius: 25px; display: flex; align-items: center; font-weight: 500; font-size: 22px; color: #111827; background: #f6f8fb; border: 2px solid #e4e9f0; }
+  .pill.on { background: #fff0e8; border-color: #ff7a21; color: #ff7a21; }
+</style>
+</head>
+<body>
+  <div class="mark"><span class="lab">Lab</span><span class="num">019</span></div>
+  <div class="price">
+    <div><span class="amount">{{plan_price|Assinatura}}</span><span class="unit">/mês</span></div>
+    <div class="credits">com {{plan_franchise|créditos}} em créditos inclusos</div>
+  </div>
+  <h1>Inteligência artificial de<br />verdade, <span class="accent">a preço de gente</span>.</h1>
+  <div class="tagline">O Agente que atende por chat, voz e WhatsApp — 24/7.</div>
+  <div class="pills">
+    <span class="pill on">Sabiá · Maritaca</span>
+    <span class="pill">Claude</span>
+    <span class="pill">Gemini</span>
+    <span class="pill">GPT</span>
+    <span class="pill">Voz em tempo real</span>
+  </div>
+</body>
+</html>

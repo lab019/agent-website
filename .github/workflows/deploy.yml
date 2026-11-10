@@ -100,6 +100,18 @@ jobs:
           export PUBLIC_API_BASE
           python3 scripts/render_pricing.py site
 
+      # Redesenha a imagem de prévia de link (assets/og-image.png, 1200x630) com o
+      # mesmo preço e crédito do billing, a partir de og-image/og-image.template.html,
+      # num Chrome headless (já no runner). Billing fora do ar ou Chrome falho FALHA
+      # o build: o site não publica imagem com preço velho nem em branco.
+      - name: Render og-image from billing
+        env:
+          PUBLIC_API_BASE: ${{ vars.PUBLIC_API_BASE }}
+        run: |
+          PUBLIC_API_BASE="$(printf '%s' "$PUBLIC_API_BASE" | tr -d '[:space:]' | sed 's:/*$::')"
+          export PUBLIC_API_BASE
+          python3 scripts/render_og_image.py site
+
       # Gera o <lastmod> do sitemap a partir do histórico git (data do último
       # commit de cada página). Exige o histórico completo (fetch-depth: 0);
       # clone raso, rota sem commit ou página indexável fora do sitemap
