@@ -101,10 +101,11 @@ jobs:
           python3 scripts/render_pricing.py site
 
       # Redesenha a imagem de prévia de link (assets/og-image.png, 1200x630) com o
-      # mesmo preço e crédito do billing, a partir de og-image/og-image.template.html,
-      # num Chrome headless (já no runner). Billing fora do ar ou Chrome falho FALHA
-      # o build: o site não publica imagem com preço velho nem em branco.
-      - name: Render og-image from billing
+      # mesmo preço e crédito do billing e com o eyebrow, título (<h1>) e linha de apoio
+      # (.hero-sub) lidos de site/index.html, a partir de og-image/og-image.template.html,
+      # num Chrome headless (já no runner). Billing fora do ar, home sem <h1> ou Chrome
+      # falho FALHA o build: o site não publica imagem com preço velho nem em branco.
+      - name: Render og-image from billing and the home
         env:
           PUBLIC_API_BASE: ${{ vars.PUBLIC_API_BASE }}
         run: |
