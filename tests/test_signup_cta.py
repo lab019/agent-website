@@ -5,7 +5,7 @@ criterion -> test
 c1 | every "Testar grátis" link on every page is a signup CTA and every page loads the script that points it at /signup | SignupCta::test_c1_every_free_trial_link_is_a_signup_cta_on_all_pages
 c2 | page opened with utm_* -> /signup opens with the same utm_* | SignupCta::test_c2_c3_utm_params_are_forwarded_and_absent_when_missing
 c3 | no utm_* -> /signup without params | SignupCta::test_c2_c3_utm_params_are_forwarded_and_absent_when_missing
-c4 | "Testar a plataforma" is a signup CTA, "Entrar" goes to /login, "Quero começar" unchanged | SignupCta::test_c4_platform_button_signs_up_enter_goes_to_login
+c4 | "Testar a plataforma" is a signup CTA, "Entrar" goes to /login, "Quero começar" is a signup CTA too | SignupCta::test_c4_platform_button_signs_up_enter_goes_to_login
 c6 | topic pages (support, collections, reactivation, scheduling, voice) carry their theme on the signup CTAs | SignupCta::test_c6_topic_pages_carry_their_theme
 c5 | code, constants and params in English | SignupCta::test_c5_destination_lives_in_one_place_in_english
 
@@ -105,8 +105,7 @@ class SignupCta(unittest.TestCase):
                     self.assertNotIn("data-signup", a, (page, text))
                     self.assertEqual(a.get("href"), LOGIN, (page, text))
                 if text == "Quero começar":
-                    self.assertNotIn("data-signup", a, (page, text))
-                    self.assertEqual(a.get("href"), "https://app.lab019.ai", (page, text))
+                    self.assertIn("data-signup", a, (page, text))
 
     def test_c6_topic_pages_carry_their_theme(self):
         for slug, theme in TOPICS.items():
