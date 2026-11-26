@@ -2,9 +2,8 @@
 how to withdraw consent, with the new date, in both languages.
 
 criterion -> test
-c1 | PT policy cites Meta, data, purpose, legal basis, withdrawal and the new date | PrivacyMeta::test_c1_pt_policy_covers_meta
+c1 | PT policy: Meta, data (no e-mail/phone/name), purpose, legal basis, withdrawal, IP/UA retention, new date | PrivacyMeta::test_c1_pt_policy_covers_meta
 c1 | EN policy says the same, with the same version | PrivacyMeta::test_c1_en_policy_covers_meta
-c1 | the policy does not claim to send e-mail or phone to Meta (the real payload has neither) | PrivacyMeta::test_c1_policy_never_claims_email_or_phone_go_to_meta
 
 Stdlib only.
 """
@@ -36,6 +35,10 @@ class PrivacyMeta(unittest.TestCase):
             "Como retirar o consentimento",
             "Configurações",
             "desmarcada",
+            "origem do evento",
+            "Por quanto tempo guardamos o IP e o navegador",
+            "apagados quando a conta é encerrada",
+            "Não enviamos seu e-mail, seu telefone nem seu nome",
         ):
             self.assertIn(needle, t, needle)
 
@@ -52,19 +55,12 @@ class PrivacyMeta(unittest.TestCase):
             "How to withdraw consent",
             "Settings",
             "unticked",
+            "its origin (the website)",
+            "How long we keep the IP address and browser",
+            "erased when the account is closed",
+            "We do not send your email, phone number or name",
         ):
             self.assertIn(needle, t, needle)
-
-    def test_c1_policies_state_ip_and_user_agent_retention(self):
-        pt, en = _text("privacidade"), _text("en/privacy")
-        self.assertIn("Por quanto tempo guardamos o IP e o navegador", pt)
-        self.assertIn("apagados quando a conta é encerrada", pt)
-        self.assertIn("How long we keep the IP address and browser", en)
-        self.assertIn("erased when the account is closed", en)
-
-    def test_c1_policy_never_claims_email_or_phone_go_to_meta(self):
-        self.assertIn("Não enviamos seu e-mail, seu telefone nem seu nome", _text("privacidade"))
-        self.assertIn("We do not send your email, phone number or name", _text("en/privacy"))
 
 
 if __name__ == "__main__":
