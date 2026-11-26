@@ -55,6 +55,13 @@ class PrivacyMeta(unittest.TestCase):
         ):
             self.assertIn(needle, t, needle)
 
+    def test_c1_policies_state_ip_and_user_agent_retention(self):
+        pt, en = _text("privacidade"), _text("en/privacy")
+        self.assertIn("Por quanto tempo guardamos o IP e o navegador", pt)
+        self.assertIn("apagados quando a conta é encerrada", pt)
+        self.assertIn("How long we keep the IP address and browser", en)
+        self.assertIn("erased when the account is closed", en)
+
     def test_c1_policy_never_claims_email_or_phone_go_to_meta(self):
         self.assertIn("Não enviamos seu e-mail, seu telefone nem seu nome", _text("privacidade"))
         self.assertIn("We do not send your email, phone number or name", _text("en/privacy"))
