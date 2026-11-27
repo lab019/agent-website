@@ -11,11 +11,15 @@
  *
  * Os textos desta página ficam aqui, não no SDK: o SDK só devolve códigos de erro.
  */
+import { createTurnIds } from './turn-ids.js'
+import { askStop, bubble, busyCycles, minimizedStore, sendButtons } from './home-controls.js'
+
 const SDK_URL = '/sdk/v1/lab019.js'
 const KEY_RE = /^wgt_[A-Za-z0-9._-]+$/
 const BASE_RE = /^https?:\/\/[A-Za-z0-9.-]+(:[0-9]+)?$/
 const SIGNUP_URL = 'https://app.lab019.ai/signup'
 const TURN_TIMEOUT_MS = 120000
+const STOP_RETRY_MS = 700
 
 const T = {
   rateLimited: 'Muitas mensagens em pouco tempo. Espere um instante e tente de novo.',
@@ -36,6 +40,8 @@ const T = {
   voiceBusy: 'Já existe uma chamada em andamento.',
   voiceFailed: 'Não consegui iniciar a chamada. Você pode continuar por texto.',
   voiceTag: 'voz',
+  send: 'Enviar',
+  stop: 'Parar resposta',
   actTrial: ['Testar grátis', '14 dias · sem cartão e sem CNPJ'],
   actVoice: ['Testar a voz agora', 'Pelo navegador, nesta página'],
 }
@@ -85,6 +91,7 @@ const feedIn = $('#feed-in')
 const pbody = $('#pbody')
 const q = $('#q')
 const send = $('#send')
+const panelSend = $('#pform .send-btn')
 const fab = $('#fab')
 const fabBadge = $('#fab-badge')
 const panel = $('#panel')
@@ -99,9 +106,15 @@ let SDK = null // the Lab019 class, once the module is loaded
 let chat = null
 let connecting = null
 let busy = false
+let stopping = false // the visitor asked to stop the answer; waiting for the stream's `done`
+let sending = null // the send() of the current question, so a stop never races ahead of it
+const ids = createTurnIds() // drops the late events of a question that already left the screen
+const cycles = busyCycles() // the handoff request releases the busy state only while it is still its own
 let booting = false
 let turn = null // the answer being streamed: { rows, text, id, timer, frame }
 let stageVisible = true
+let minimized = false // the visitor put the conversation in the corner bubble to see the site again
+const minimizedPref = minimizedStore(() => window.sessionStorage)
 let muted = false
 let voiceTimer = null
 let voiceSince = 0
@@ -261,6 +274,7 @@ function paint() {
 
 function onDelta(event) {
   if (!event || typeof event.delta !== 'string') return
+  if (stopping || ids.stale(event)) return
   if (!turn) startTurn()
   turn.text += event.delta
   if (!turn.frame) turn.frame = requestAnimationFrame(paint)
@@ -294,16 +308,43 @@ function finishTurn(silent) {
 
 function release() {
   busy = false
+  stopping = false
+  sending = null
+  ids.drop()
+  cycles.end()
   syncSend()
 }
 
 function onDone(event) {
-  finishTurn(false)
+  if (ids.stale(event)) return
+  // a stopped answer keeps what was written but gets no follow-up cards
+  finishTurn(stopping || !!(event && event.stopped))
+}
+
+async function stopTurn() {
+  if (!busy || stopping) return
+  stopping = true
+  syncSend()
+  if (turn) {
+    cancelAnimationFrame(turn.frame)
+    turn.frame = 0
+  }
+  const asked = sending
+  const mine = () => stopping && sending === asked // `done` may already have closed it and a new question begun
+  if (asked) await asked.catch(() => {})
+  // right after send() the gateway may not have started the run yet: askStop asks once more before giving up
+  const stopped = chat ? await askStop(() => chat.stop(), { stillMine: mine, retryMs: STOP_RETRY_MS }) : false
+  if (!mine()) return
+  // `done` (with `stopped`) closes the turn; if it never comes, close it here. Either way release() drops the
+  // question's id, so whatever its run still streams stays off the screen.
+  if (!stopped) finishTurn(true)
+  else setTimeout(() => mine() && finishTurn(true), 5000)
 }
 
 function onSilentEnd(event) {
+  if (ids.stale(event)) return
   if (!turn) return release()
-  if (turn.text.trim()) return finishTurn(false)
+  if (turn.text.trim()) return finishTurn(stopping)
   const rows = turn.rows
   endTurn()
   for (const row of rows) row.remove()
@@ -355,7 +396,29 @@ function toStage() {
   window.scrollTo({ top: Math.max(0, stage.offsetTop - navHeight()) })
 }
 
+function rememberMinimized(value) {
+  minimized = value
+  minimizedPref.write(value)
+}
+
+// The stage goes back to the start screen; the conversation stays in the corner bubble, closed.
+function minimize() {
+  if (!stage.classList.contains('is-chat') || stage.classList.contains('is-voice')) return
+  rememberMinimized(true)
+  const go = () => stage.classList.remove('is-chat')
+  const shown = document.startViewTransition && !reduceMotion ? document.startViewTransition(go).finished : go()
+  panel.classList.remove('open')
+  window.scrollTo({ top: 0 })
+  syncFab()
+  // the button that was clicked is gone: the bubble takes the focus once it is on screen
+  Promise.resolve(shown).catch(() => {}).then(() => fab.focus({ preventScroll: true }))
+}
+
 function enterChat(callback) {
+  if (minimized) {
+    rememberMinimized(false)
+    syncFab()
+  }
   const go = () => {
     stage.classList.add('is-chat')
     if (callback) callback()
@@ -374,6 +437,7 @@ function resetUi() {
   feedIn.innerHTML = ''
   pbody.innerHTML = ''
   stage.classList.remove('is-chat', 'is-voice')
+  rememberMinimized(false)
   mic.classList.remove('is-on')
   consent.hidden = true
   panel.classList.remove('open')
@@ -397,11 +461,15 @@ async function ask(text, fromPanel) {
   q.value = ''
   autoGrow()
   syncSend()
+  const asked = getChat().then((client) => client.send(text))
+  sending = asked
   try {
-    const client = await getChat()
-    await client.send(text)
+    const { messageId } = (await asked) || {}
+    // closed before the gateway answered (timeout, reset): its run must not reach the screen either
+    if (sending === asked) ids.start(messageId)
+    else if (messageId) ids.drop(messageId)
   } catch (error) {
-    fail(error)
+    if (!stopping) fail(error)
   }
 }
 
@@ -410,13 +478,16 @@ async function ask(text, fromPanel) {
 async function talkToTeam() {
   if (busy || booting) return
   busy = true
+  const cycle = cycles.begin()
   syncSend()
   enterChat()
   try {
     const client = await getChat()
     await client.requestHuman()
-    release()
+    // a stop during the request already released it; a question asked since then must keep its answer
+    if (cycles.owns(cycle)) release()
   } catch (error) {
+    if (!cycles.owns(cycle)) return
     addNotice(error && error.code === 'rate_limited' ? T.rateLimited : T.unavailable, true)
     release()
   }
@@ -431,7 +502,16 @@ function autoGrow() {
 }
 
 function syncSend() {
-  send.disabled = busy || booting || !q.value.trim()
+  // while the agent answers, the send button becomes the stop button (in the stage and in the bubble)
+  const state = sendButtons({ busy, stopping, booting, hasText: !!q.value.trim() })
+  for (const [button, { disabled }] of [[send, state.stage], [panelSend, state.panel]]) {
+    button.classList.toggle('is-stop', state.face.stop)
+    button.setAttribute('aria-label', T[state.face.label])
+    if (state.face.stop) button.title = T.stop
+    else button.removeAttribute('title')
+    button.querySelector('use').setAttribute('href', state.face.icon)
+    button.disabled = disabled
+  }
 }
 
 function prewarm() {
@@ -451,10 +531,12 @@ q.addEventListener('keydown', (event) => {
 })
 $('#composer').addEventListener('submit', (event) => {
   event.preventDefault()
-  ask(q.value, false)
+  if (busy) stopTurn()
+  else ask(q.value, false)
 })
 $('#pform').addEventListener('submit', (event) => {
   event.preventDefault()
+  if (busy) return void stopTurn()
   const field = $('#pq')
   const text = field.value
   field.value = ''
@@ -463,7 +545,8 @@ $('#pform').addEventListener('submit', (event) => {
 $('#pq').addEventListener('keydown', (event) => {
   if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
     event.preventDefault()
-    $('#pform').requestSubmit()
+    // Enter never stops an answer: only the button does
+    if (!busy) $('#pform').requestSubmit()
   }
 })
 $('#mini').addEventListener('submit', (event) => {
@@ -516,11 +599,13 @@ setInterval(() => {
 }, 3200)
 
 // ---------------------------------------------------------------------------------------------------------------
-// bubble: shows up when the stage leaves the screen and there is a conversation
+// bubble: shows up when there is a conversation and the stage left the screen or was minimized
 
 function syncFab() {
-  fab.classList.toggle('is-visible', hasConversation() && !stageVisible)
-  if (stageVisible) panel.classList.remove('open')
+  const state = bubble({ hasConversation: hasConversation(), minimized, stageVisible })
+  fab.classList.toggle('is-visible', state.visible)
+  fab.classList.toggle('is-low', state.low)
+  if (state.closePanel) panel.classList.remove('open')
 }
 
 new IntersectionObserver(
@@ -539,12 +624,10 @@ fab.addEventListener('click', () => {
 $('#p-close').addEventListener('click', () => panel.classList.remove('open'))
 $('#p-expand').addEventListener('click', () => {
   panel.classList.remove('open')
+  if (minimized) return enterChat(scrollDown)
   window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
 })
-$('#to-corner').addEventListener('click', () => {
-  $('#recursos').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' })
-  setTimeout(() => panel.classList.add('open'), reduceMotion ? 0 : 500)
-})
+$('#minimize').addEventListener('click', minimize)
 $('#p-mic').addEventListener('click', () => {
   panel.classList.remove('open')
   askConsent()
@@ -696,10 +779,12 @@ async function boot() {
     const page = await client.history({ limit: 50 })
     await loadSdk()
     if (page && Array.isArray(page.messages) && page.messages.length) {
-      stage.classList.add('is-chat')
+      if (minimizedPref.read()) minimized = true
+      else stage.classList.add('is-chat')
       rowsFromHistory(page.messages)
       clearActs()
       scrollDown()
+      syncFab()
     }
   } catch {
     /* no history: the start screen stays as it is */
