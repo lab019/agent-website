@@ -19,6 +19,7 @@ como está:
 
 - Preview local: `python3 -m http.server -d site 8000`
 - Testes: `python3 -m unittest discover -s tests`. O preço vem de tokens `{{plan_price|…}}` (e `{{plan_price_number|…}}`, o mesmo valor em decimal com ponto, usado no JSON-LD de `/preco/`) renderizados por `scripts/render_pricing.py` no `deploy.yml`, que lê `GET <PUBLIC_API_BASE>/billing/v1/public/plan` (padrão `https://api.lab019.ai`) a cada build; nenhum valor fica no repo nem em Variable, e billing fora do ar falha o build com mensagem "billing …". O preview local mostra só os fallbacks (rode o script numa cópia de `site/` para ver os valores).
+- SDK JS v1 (`site/sdk/v1/lab019.js`, módulo ES sem dependência, servido em `/sdk/v1/lab019.js`): testes com `node --test tests/sdk/*.test.mjs` (gateway simulado em `tests/sdk/mock_gateway.mjs`); contrato em https://docs.lab019.ai/guias/sdk-chat-no-site. A home (`site/index.html` + `assets/home.js` + `assets/home.css`) é construída sobre o SDK e não carrega o `chat.js`.
 - Deploy: automático no push para `main` (`.github/workflows/deploy.yml`);
   também acionável via workflow_dispatch. O mesmo deploy preenche o `<lastmod>`
   de cada rota do `site/sitemap.xml` com a data do último commit da página

@@ -207,3 +207,16 @@ export async function until(fn, { timeout = 4000, step = 15 } = {}) {
     await wait(step)
   }
 }
+
+// The SDK ships as an ES module at site/sdk/v1/lab019.js, but the repo has no "type": "module" (the site's other
+// scripts are classic). Import a verbatim .mjs copy so node treats it as a module without touching the shipped file.
+export async function loadSdk() {
+  const { mkdtempSync, copyFileSync } = await import('node:fs')
+  const { tmpdir } = await import('node:os')
+  const { join } = await import('node:path')
+  const { fileURLToPath, pathToFileURL } = await import('node:url')
+  const dir = mkdtempSync(join(tmpdir(), 'lab019-sdk-'))
+  const target = join(dir, 'lab019.mjs')
+  copyFileSync(fileURLToPath(new URL('../../site/sdk/v1/lab019.js', import.meta.url)), target)
+  return import(pathToFileURL(target).href)
+}

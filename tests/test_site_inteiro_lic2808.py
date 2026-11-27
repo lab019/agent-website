@@ -113,7 +113,7 @@ class HomeContent(unittest.TestCase):
             "Agentes de IA para operações que exigem controle — Lab019")
 
     def test_h1_states_the_positioning(self):
-        self.assertIn("Agentes de IA para operações que exigem controle.",
+        self.assertIn("Agentes de IA que atendem, cobram e executam. Com você no controle.",
                       [norm(h) for h in self.doc.h1])
 
     def test_home_has_enterprise_offer_with_child_accounts(self):

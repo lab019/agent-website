@@ -7,7 +7,8 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { startGateway, memoryStorage, until, wait } from './mock_gateway.mjs'
-import Lab019, { Lab019 as Named } from '../../site/sdk/v1/lab019.js'
+import { loadSdk } from './mock_gateway.mjs'
+const { default: Lab019, Lab019: Named } = await loadSdk()
 
 const KEY = 'wgt_test_key'
 const FAST = { reconnect: { minDelay: 10, maxDelay: 40 } }

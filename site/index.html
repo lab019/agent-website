@@ -6,6 +6,8 @@
 <title>Agentes de IA para operações que exigem controle — Lab019</title>
 <meta name="description" content="Automatize atendimento e rotinas com agentes de IA, escopo de ferramentas, aprovação humana e histórico. WhatsApp, telefone e sistemas conectados." />
 <meta name="theme-color" content="#1971c2" />
+<meta name="lab019-widget-key" content="__PUBLIC_WIDGET_KEY__" />
+<meta name="lab019-api-base" content="__PUBLIC_API_BASE__" />
 <link rel="canonical" href="https://lab019.ai/" />
 
 <meta property="og:type" content="website" />
@@ -25,11 +27,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <script>document.documentElement.classList.add("js");</script>
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=2" />
-<link rel="stylesheet" href="assets/styles.css" />
-<link rel="stylesheet" href="assets/appshot.css" />
+<link rel="stylesheet" href="assets/home.css" />
 <script src="/assets/analytics.js" defer></script>
 <script src="/assets/signup-link.js" defer></script>
-<script src="assets/demo.js" defer></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -172,667 +172,364 @@
 </head>
 <body>
 
-<!-- ===================== NAV ===================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="g019" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8590c"/><stop offset="1" stop-color="#d9480f"/></linearGradient>
+    <symbol id="logo019" viewBox="0 0 64 64">
+      <rect width="64" height="64" rx="16" fill="url(#g019)"/>
+      <g fill="#fff" transform="translate(11.641 41.165)">
+        <path transform="translate(0 0) scale(0.026 -0.026)" d="M326 745Q474 745 540.5 646.0Q607 547 607 375Q607 201 540.5 102.0Q474 3 326 3Q178 3 111.5 102.0Q45 201 45 375Q45 547 111.5 646.0Q178 745 326 745ZM326 585Q257 585 235.0 530.5Q213 476 213 375Q213 307 221.0 262.5Q229 218 253.5 190.5Q278 163 326 163Q374 163 398.5 190.5Q423 218 431.0 262.5Q439 307 439 375Q439 476 417.0 530.5Q395 585 326 585Z"/>
+        <path transform="translate(15.952 0) scale(0.026 -0.026)" d="M27 571V730H304V0H126V571Z"/>
+        <path transform="translate(24.728 0) scale(0.026 -0.026)" d="M321 135Q374 135 396.0 182.0Q418 229 418 335Q396 304 358.0 287.0Q320 270 273 270Q209 270 159.0 296.5Q109 323 80.5 375.5Q52 428 52 503Q52 577 82.5 632.0Q113 687 169.5 717.0Q226 747 303 747Q451 747 510.0 655.0Q569 563 569 384Q569 254 545.5 169.5Q522 85 466.5 41.0Q411 -3 315 -3Q239 -3 185.5 27.0Q132 57 103.5 106.0Q75 155 71 214H229Q244 135 321 135ZM404 500Q404 548 378.0 574.0Q352 600 308 600Q264 600 238.5 573.5Q213 547 213 501Q213 458 238.5 431.5Q264 405 312 405Q354 405 379.0 430.5Q404 456 404 500Z"/>
+      </g>
+    </symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-min" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 10l7-7M15 3h6v6M10 14l-7 7M3 15v6h6"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+    <symbol id="i-ask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  </defs>
+</svg>
+
 <header class="nav">
-  <div class="wrap nav-inner">
-    <a class="brand" href="#top" aria-label="Lab019">
-      <span class="dot" aria-hidden="true">019</span> Lab019
-    </a>
-    <nav class="nav-links nav-links--wide">
-      <a href="#recursos">Plataforma</a>
-      <a href="/automacoes/">Automações</a>
-      <a href="/seguranca/">Segurança</a>
-      <a href="#preco">Preço</a>
-      <a href="https://docs.lab019.ai/">Docs</a>
+  <div class="nav-in">
+    <a class="brand" href="/"><svg aria-hidden="true"><use href="#logo019"/></svg>Lab019</a>
+    <nav class="nav-links" aria-label="Principal">
+      <a href="#recursos">Plataforma</a><a href="/automacoes/">Automações</a><a href="/seguranca/">Segurança</a><a href="#preco">Preço</a><a href="https://docs.lab019.ai/">Docs</a>
     </nav>
-    <div class="nav-cta">
-      <a class="btn btn-ghost" href="https://app.lab019.ai/login">Entrar</a>
-      <a class="btn btn-primary" href="https://app.lab019.ai" data-signup>Testar grátis</a>
+    <div class="nav-actions">
+      <a class="nav-login" href="https://app.lab019.ai/login">Entrar</a>
+      <a class="btn btn-primary btn-sm" href="https://app.lab019.ai" data-signup>Testar grátis</a>
+      <button class="nav-burger" type="button" aria-label="Menu" aria-expanded="false"><svg width="20" height="20"><use href="#i-menu"/></svg></button>
     </div>
   </div>
 </header>
 
-<main id="top">
-  <!-- ===================== HERO ===================== -->
-  <section class="hero">
-    <div class="wrap hero-grid">
-      <div class="reveal">
-        <span class="eyebrow">Plataforma de agentes de IA para empresas</span>
-        <h1>Agentes de IA para operações que <span class="hl">exigem controle.</span></h1>
-        <p class="hero-sub">
-          Atenda por <strong>WhatsApp</strong> e <strong>telefone</strong>, execute rotinas em sistemas
-          conectados e acompanhe cada etapa. Defina o que o Agente pode fazer, quando precisa
-          de aprovação e como o resultado será registrado.
-        </p>
-        <div class="hero-actions">
-          <a class="btn btn-primary btn-lg" href="mailto:contato@lab019.ai?subject=Lab019%20-%20conversa%20sobre%20implantacao">Conversar sobre a operação</a>
-          <a class="btn btn-ghost btn-lg" href="https://app.lab019.ai" data-signup>Testar a plataforma</a>
-        </div>
-        <p class="hero-note">Comece com um fluxo real. Avalie os requisitos da sua organização antes de ampliar.</p>
-      </div>
+<main>
+<!-- ===================== PALCO ===================== -->
+<section class="stage" id="stage" aria-label="Converse com o Agente Lab019">
 
-      <div class="reveal">
-        <!-- Card de chat do hero. Com JS + agente público configurado (ver
-             assets/chat.js) este card vira um CHAT DE VERDADE contra a API
-             pública; sem JS ou sem configuração, permanece como a ilustração
-             abaixo. O mesmo card e a bolinha flutuante compartilham uma única
-             conversa. -->
-        <div class="chat-card" id="hero-chat" role="img" aria-label="Exemplo de conversa com o Agente da Lab019">
-          <div class="chat-head">
-            <span class="dot" aria-hidden="true" style="width:22px;height:22px;font-size:9px;">019</span>
-            <strong>Agente Lab019</strong>
-            <span class="status"><span class="pulse"></span> online</span>
-          </div>
-          <div class="chat-body">
-            <div class="msg bot">Olá. Posso mostrar como um Agente atende clientes e executa processos com acompanhamento.</div>
-            <div class="msg user">Como mantenho o controle de uma cobrança?</div>
-            <div class="msg bot">Você escolhe os contatos, o canal e o horário. A execução registra status e custo por pessoa. A confirmação de pagamento depende dos dados conectados ao seu sistema.</div>
-          </div>
-          <div class="chat-foot">
-            Escreva uma mensagem…
-            <span class="mic" aria-hidden="true">🎙️</span>
-          </div>
-        </div>
+  <div class="chat-head">
+    <div class="chat-head-in">
+      <svg class="logo" aria-hidden="true"><use href="#logo019"/></svg>
+      <div class="chat-title"><strong>Agente Lab019</strong><small><span class="live-dot"></span>online</small></div>
+      <div class="chat-head-actions">
+        <button class="ghost-mini" type="button" id="to-corner" title="Continuar no canto da página"><svg><use href="#i-min"/></svg><span class="lbl">Continuar no canto</span></button>
+        <button class="ghost-mini" type="button" id="new-chat"><svg><use href="#i-plus"/></svg><span class="lbl">Nova conversa</span></button>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- ===================== AUTOMAÇÕES ===================== -->
-  <section id="automacoes" class="section operations-section">
-    <div class="wrap">
-      <div class="operations-pillars reveal" aria-label="O ciclo da operação com o Agente">
-        <div><strong>Atende</strong><span>WhatsApp, voz e site</span></div>
-        <div><strong>Executa</strong><span>Processos e tarefas agendadas</span></div>
-        <div><strong>Acompanha</strong><span>Status, ações e custo</span></div>
-      </div>
-      <div class="section-head reveal">
-        <span class="eyebrow">Automação da operação</span>
-        <h2>Do contato ao trabalho concluído</h2>
-        <p>Automatize um processo de cada vez, com canais, ferramentas e resultados definidos pela sua equipe.</p>
-      </div>
-      <div class="operations-feature reveal">
-        <div class="operations-feature-copy">
-          <span class="operations-index">01 · Cobrança</span>
-          <h3>WhatsApp no dia certo. Ligação quando você escolhe conversar.</h3>
-          <p>Revise a lista de vencimentos e agende o contato pelo WhatsApp oficial. Quando fizer sentido, escolha a ligação telefônica: a conversa por voz tem baixa latência e fica registrada. O andamento aparece por contato.</p>
-          <a class="more" href="/automacoes/">Conhecer as automações →</a>
-        </div>
-        <ol class="operations-flow" aria-label="Exemplo de fluxo de cobrança">
-          <li><span>1</span><div><strong>Lista revisada</strong><small>Telefones, vencimentos e destinatários</small></div></li>
-          <li><span>2</span><div><strong>Contato agendado</strong><small>WhatsApp oficial ou ligação telefônica</small></div></li>
-          <li><span>3</span><div><strong>Resposta acompanhada</strong><small>Conversa, status e custo no histórico</small></div></li>
-        </ol>
-      </div>
-      <div class="operations-more">
-        <div class="operations-more-card reveal"><span>02 · Relatórios</span><h3>Informação no momento certo</h3><p>O Agente consulta dados conectados, organiza um resumo e registra a execução.</p></div>
-        <div class="operations-more-card reveal"><span>03 · Sistemas</span><h3>Rotinas em portais</h3><p>Com acesso e escopo definidos, executa tarefas no horário combinado.</p></div>
+  <div class="hero-copy">
+    <span class="live-pill"><span class="live-dot"></span>Este chat é um agente da Lab019, ao vivo</span>
+    <h1>Agentes de IA que atendem, cobram e executam. <span class="hl">Com você no controle.</span></h1>
+    <p class="hero-sub">Pergunte qualquer coisa. Quem responde é um agente da Lab019, o mesmo tipo de agente que vai atender seus clientes no WhatsApp, no telefone e no seu site.</p>
+  </div>
+
+  <div class="feed" id="feed" aria-live="polite"><div class="feed-in" id="feed-in"></div></div>
+
+  <div class="voicebar" id="voicebar" role="status">
+    <span class="voicebar-label"><span class="level" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><b id="voice-label">Em chamada com o Agente</b><time id="voice-time">00:00</time></span>
+    <button class="vb-btn" type="button" id="mute">Silenciar</button>
+    <button class="vb-btn end" type="button" id="end-call">Encerrar</button>
+  </div>
+
+  <div class="composer-zone">
+    <div class="consent" id="consent" role="group" aria-labelledby="consent-title" hidden>
+      <p id="consent-title"><b>Falar com o agente por voz</b></p>
+      <p>Seu microfone será usado só durante a chamada, e a conversa fica registrada como texto no histórico. Você pode encerrar a qualquer momento.</p>
+      <div class="consent-btns">
+        <button class="btn btn-primary btn-sm" type="button" id="consent-yes">Permitir e começar</button>
+        <button class="btn btn-ghost btn-sm" type="button" id="consent-no">Agora não</button>
       </div>
     </div>
-  </section>
-
-  <!-- ===================== CASOS DE USO ===================== -->
-  <section class="section section-sm">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow">Casos de uso</span>
-        <h2>Comece por um caso de uso</h2>
+    <form class="composer" id="composer" autocomplete="off">
+      <label for="q" class="sr" style="position:absolute;left:-9999px">Mensagem para o Agente Lab019</label>
+      <textarea id="q" rows="1" placeholder="Pergunte qualquer coisa…"></textarea>
+      <div class="composer-row">
+        <span class="composer-tag"><span class="live-dot"></span><span>Agente Lab019 · texto ou voz</span></span>
+        <div class="composer-btns">
+          <button type="button" class="icon-btn mic-label" id="mic" aria-label="Falar com o agente por voz"><svg><use href="#i-mic"/></svg><span class="lbl">Falar</span></button>
+          <button type="submit" class="send-btn" id="send" aria-label="Enviar" disabled><svg><use href="#i-up"/></svg></button>
+        </div>
       </div>
-      <div class="split">
-        <div class="card reveal">
-          <h3>💳 Cobrança pelo WhatsApp</h3>
-          <p>Avise cada cliente no dia certo e acompanhe só quem não respondeu.</p>
-          <a class="more" href="/cobranca-whatsapp/">Ver o caso de uso →</a>
+    </form>
+    <div class="chips start" id="chips">
+      <button class="chip" type="button" data-ask="Quanto custa?">💳 Quanto custa?</button>
+      <button class="chip" type="button" data-ask="Funciona no WhatsApp?">🟢 Funciona no WhatsApp?</button>
+      <button class="chip" type="button" data-ask="Atende por telefone?">🎙️ Atende por telefone?</button>
+      <button class="chip" type="button" data-ask="Como eu configuro?">⚙️ Como eu configuro?</button>
+      <button class="chip" type="button" data-ask="Posso testar grátis?">🎁 Posso testar grátis?</button>
+    </div>
+    <p class="chat-foot-note">Respostas geradas por IA podem conter erros. <a href="#recursos">Conhecer a plataforma ↓</a></p>
+  </div>
+
+  <ul class="proof">
+    <li><svg><use href="#i-check"/></svg>WhatsApp pela API oficial da Meta</li>
+    <li><svg><use href="#i-check"/></svg>Voz em português, com interrupção</li>
+    <li><svg><use href="#i-check"/></svg>Passa para uma pessoa na hora</li>
+    <li><svg><use href="#i-check"/></svg>14 dias de teste, sem cartão e sem CNPJ</li>
+  </ul>
+  <p class="alt-cta">Prefere ir direto? <a href="https://app.lab019.ai" data-signup>Testar grátis por 14 dias →</a><span class="sep">·</span><a href="mailto:contato@lab019.ai?subject=Lab019%20-%20conversa%20sobre%20implantacao" style="color:var(--ink-2)">Conversar com a equipe</a></p>
+
+  <div class="models">
+    <p>Funciona com os modelos que você escolher</p>
+    <div class="models-row"><span>Sabiá-4 <small>· Maritaca</small></span><span>Claude</span><span>Gemini</span><span>GPT</span><span>DeepSeek</span><span>Sua chave <small>(BYOK)</small></span></div>
+    <a class="scroll-hint" href="#recursos">Conheça a plataforma <svg width="14" height="14"><use href="#i-down"/></svg></a>
+  </div>
+</section>
+
+<!-- ===================== O QUE ELE FAZ ===================== -->
+<section class="block" id="recursos">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">O que o agente faz</span>
+      <h2>Do primeiro contato ao trabalho concluído</h2>
+      <p>O mesmo agente atende no WhatsApp e no telefone, executa rotinas nos seus sistemas e pede sua aprovação quando a ação é sensível.</p>
+    </div>
+    <div class="big3" id="canais">
+      <article class="big">
+        <div class="viz" aria-hidden="true">
+          <span class="tag">ILUSTRAÇÃO</span>
+          <div class="wa out">Oi! Seu boleto vence hoje. Quer a 2ª via por aqui?<small>agente · 09:02</small></div>
+          <div class="wa in">Quero sim, obrigada</div>
+          <div class="wa out">Pronto, está aqui. Se preferir, chamo alguém da equipe.<small>agente · 09:02</small></div>
         </div>
-        <div class="card reveal">
-          <h3>📅 Agendamento e confirmação</h3>
-          <p>Lembre o cliente do horário marcado e receba a resposta na mesma conversa.</p>
-          <a class="more" href="/agendamento-confirmacao/">Ver o caso de uso →</a>
+        <div class="body">
+          <h3>WhatsApp oficial, no dia certo</h3>
+          <p>Conecte seu número pela API oficial da Meta. O agente responde, avisa vencimentos e dispara mensagens personalizadas.</p>
+          <div class="links"><button class="ask-link" type="button" data-ask="Funciona no WhatsApp?"><svg><use href="#i-ask"/></svg>Pergunte ao agente</button><a class="more" href="/whatsapp/">Ver o canal →</a></div>
         </div>
-        <div class="card reveal">
-          <h3>🔁 Reativação de clientes</h3>
-          <p>Volte a falar com quem sumiu, com mensagem personalizada pelo WhatsApp.</p>
-          <a class="more" href="/reativacao-de-clientes/">Ver o caso de uso →</a>
+      </article>
+      <article class="big">
+        <div class="viz" aria-hidden="true">
+          <span class="tag">ILUSTRAÇÃO</span>
+          <div class="call"><span class="ring"><svg><use href="#i-phone"/></svg></span><div><b>Ligação em andamento</b><time>01:12</time></div><span class="level"><i></i><i></i><i></i><i></i><i></i></span></div>
+          <div class="line">“Consigo remarcar para quinta às 10h?” <span class="msg-voice">voz</span></div>
+          <div class="line">“Consigo, sim. Já deixei confirmado.” <span class="msg-voice">voz</span></div>
         </div>
-        <div class="card reveal">
-          <h3>💬 Atendimento e pré-venda</h3>
-          <p>Responda dúvidas e leve o cliente até o pedido, a qualquer hora.</p>
-          <a class="more" href="/atendimento-whatsapp/">Ver o caso de uso →</a>
+        <div class="body">
+          <h3>Voz natural em português</h3>
+          <p>Atende e liga com baixa latência, pode ser interrompido no meio da frase. Você escolhe o número no catálogo, sem abrir conta em operadora.</p>
+          <div class="links"><button class="ask-link" type="button" data-ask="Atende por telefone?"><svg><use href="#i-ask"/></svg>Pergunte ao agente</button><a class="more" href="/voz/">Ver voz e telefone →</a></div>
         </div>
+      </article>
+      <article class="big" id="automacoes">
+        <div class="viz" aria-hidden="true">
+          <span class="tag">ILUSTRAÇÃO</span>
+          <ol class="flow">
+            <li><span class="n">1</span>Lista de vencimentos revisada</li>
+            <li><span class="n">2</span>Contatos agendados no WhatsApp</li>
+            <li class="wait"><span class="n">3</span>Enviar 2ª via com desconto<span class="mini-btns"><span>Recusar</span><span class="ok">Aprovar</span></span></li>
+          </ol>
+        </div>
+        <div class="body">
+          <h3>Rotinas com aprovação humana</h3>
+          <p>Defina o que o agente pode fazer, quando ele precisa da sua aprovação e como cada etapa fica registrada.</p>
+          <div class="links"><button class="ask-link" type="button" data-ask="Como funciona a aprovação humana?"><svg><use href="#i-ask"/></svg>Pergunte ao agente</button><a class="more" href="/automacoes/">Ver automações →</a></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CASOS DE USO ===================== -->
+<section class="block soft" id="casos">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Casos de uso</span>
+      <h2>Comece por um processo. Pergunte como ficaria o seu.</h2>
+    </div>
+    <div class="cases">
+      <div class="case"><h3>💳 Cobrança pelo WhatsApp</h3><p>Avise cada cliente no dia certo e acompanhe só quem não respondeu.</p><div class="links"><button class="ask-link" type="button" data-ask="Como funciona a cobrança pelo WhatsApp?"><svg><use href="#i-ask"/></svg>Perguntar ao agente</button><a class="more" href="/cobranca-whatsapp/">Ver o caso →</a></div></div>
+      <div class="case"><h3>📅 Agendamento e confirmação</h3><p>Lembre o cliente do horário marcado e receba a resposta na mesma conversa.</p><div class="links"><button class="ask-link" type="button" data-ask="Como funciona a confirmação de agendamentos?"><svg><use href="#i-ask"/></svg>Perguntar ao agente</button><a class="more" href="/agendamento-confirmacao/">Ver o caso →</a></div></div>
+      <div class="case"><h3>🔁 Reativação de clientes</h3><p>Volte a falar com quem sumiu, com mensagem personalizada pelo WhatsApp.</p><div class="links"><button class="ask-link" type="button" data-ask="Como funciona a reativação de clientes?"><svg><use href="#i-ask"/></svg>Perguntar ao agente</button><a class="more" href="/reativacao-de-clientes/">Ver o caso →</a></div></div>
+      <div class="case"><h3>💬 Atendimento e pré-venda</h3><p>Responda dúvidas e leve o cliente até o pedido, a qualquer hora.</p><div class="links"><button class="ask-link" type="button" data-ask="Como funciona o atendimento e a pré-venda?"><svg><use href="#i-ask"/></svg>Perguntar ao agente</button><a class="more" href="/atendimento-whatsapp/">Ver o caso →</a></div></div>
+    </div>
+    <div class="also">
+      <span>E ainda</span>
+      <span class="pill">🌐 Chat e voz no seu site</span><span class="pill">✈️ Telegram</span><span class="pill">⚡ API com streaming</span><span class="pill">🧑‍💼 Equipe de especialistas</span><span class="pill">📎 Lê imagens, PDF e planilhas</span><span class="pill">⏰ Tarefas recorrentes</span><span class="pill">📊 Limites e custo visível</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== GOVERNANÇA ===================== -->
+<section class="block" id="seguranca">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Segurança e governança</span>
+      <h2>Você decide o que o agente pode fazer</h2>
+    </div>
+    <div class="gov" id="governanca">
+      <div class="gov-card"><span class="num">01</span><h3>Acesso delimitado</h3><p>Defina as ferramentas de cada especialista. Credenciais ficam fora da conversa com o modelo.</p></div>
+      <div class="gov-card"><span class="num">02</span><h3>Pessoas no controle</h3><p>Aprovação humana para ações sensíveis e transferência para uma pessoa quando a decisão exigir.</p></div>
+      <div class="gov-card"><span class="num">03</span><h3>Execução acompanhada</h3><p>Histórico, status e consumo de cada conversa ou tarefa, para revisar o que aconteceu.</p></div>
+    </div>
+    <p class="honest">Ainda não temos certificações independentes de segurança. <a href="/seguranca/">Conheça o estágio atual →</a></p>
+  </div>
+</section>
+
+<!-- ===================== COMO FUNCIONA ===================== -->
+<section class="block soft" id="como-funciona">
+  <div class="wrap how">
+    <div>
+      <span class="eyebrow">Simples assim</span>
+      <h2>Comece por um processo. Valide antes de ampliar.</h2>
+      <ol class="steps">
+        <li><span class="n">1</span><div><b>Escolha um fluxo</b><span>Cobrança, agendamento, atendimento ou uma rotina sua.</span></div></li>
+        <li><span class="n">2</span><div><b>Defina o escopo</b><span>Ferramentas, canais e o que pede aprovação.</span></div></li>
+        <li><span class="n">3</span><div><b>Acompanhe e ajuste</b><span>Veja cada conversa, status e custo no histórico.</span></div></li>
+      </ol>
+    </div>
+    <div>
+      <div class="video"><video preload="none" playsinline controls poster="/assets/videos/agente-aura.jpg" width="1920" height="1080"><source src="/assets/videos/agente-aura.mp4" type="video/mp4" />Seu navegador não reproduz este vídeo. <a href="/assets/videos/agente-aura.mp4">Baixe a demonstração (MP4)</a>.</video></div>
+      <p class="cap">Recriação na identidade da marca, com narração. Não é gravação de tela real.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PREÇO ===================== -->
+<section class="block" id="preco">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Planos</span>
+      <h2>Comece com um fluxo. Contrate para a operação inteira.</h2>
+    </div>
+    <div class="prices">
+      <div class="price-card main">
+        <span class="mode">Pré-pago · assinatura mensal</span>
+        <h3>Plano Lab019</h3>
+        <div class="amount">{{plan_price|Assinatura}}<span class="per"> / mês</span></div>
+        <ul>
+          <li class="credit-line"><svg><use href="#i-check"/></svg><span>{{plan_franchise|uma quantia}}* em créditos todo mês, para seus números e seu consumo</span></li>
+          <li><svg><use href="#i-check"/></svg><span>Todos os recursos: WhatsApp, voz, site, API e especialistas</span></li>
+          <li><svg><use href="#i-check"/></svg><span>Teste de 14 dias com {{trial_credit|uma quantia}}* em créditos, sem cartão</span></li>
+          <li><svg><use href="#i-check"/></svg><span>Sem fidelidade: cancele quando quiser</span></li>
+        </ul>
+        <div class="actions"><a class="btn btn-primary" href="https://app.lab019.ai" data-signup>Testar grátis</a><button class="ask-link" type="button" data-ask="Quanto eu gastaria por mês?"><svg><use href="#i-ask"/></svg>Pergunte quanto você gastaria</button></div>
+        <p class="fine" id="nota-ptax">* Créditos guardados em dólar e convertidos pela PTAX de venda do Banco Central; o valor em reais pode variar com o câmbio. <a href="#ptax">Entenda a PTAX</a>.</p>
+      </div>
+      <div class="price-card plan--enterprise">
+        <span class="mode">Pós-pago · contrato por organização</span>
+        <h3>Para a sua operação</h3>
+        <div class="amount" style="font-size:24px">Sob consulta</div>
+        <ul>
+          <li><svg><use href="#i-check"/></svg><span>Mínimo mensal; acima dele, o consumo efetivo</span></li>
+          <li><svg><use href="#i-check"/></svg><span>Enterprise com contas-filhas e uma fatura da Lab019. <a href="/preco/#contas-filhas">Conhecer as contas-filhas →</a></span></li>
+        </ul>
+        <div class="actions"><a class="btn btn-ghost" href="mailto:contato@lab019.ai?subject=Lab019%20-%20plano%20Enterprise">Conversar sobre Enterprise</a></div>
+        <p class="fine"><a href="/preco/">Ver detalhes de créditos e cobrança →</a></p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ===================== SEGURANÇA E GOVERNANÇA ===================== -->
-  <section id="governanca" class="section governance-section">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow">Segurança e governança</span>
-        <h2>Controle sobre o que o Agente pode fazer</h2>
-        <p>Escopo de ferramentas, aprovação humana e registros ajudam a validar cada fluxo antes de ampliar a automação.</p>
-      </div>
-      <div class="governance-grid">
-        <div class="governance-card reveal"><span>01</span><h3>Acesso delimitado</h3><p>Defina as ferramentas disponíveis para cada especialista. Credenciais ficam fora da conversa com o modelo.</p></div>
-        <div class="governance-card reveal"><span>02</span><h3>Pessoas no controle</h3><p>Configure aprovação humana para ações sensíveis e transfira atendimentos quando a decisão exigir uma pessoa.</p></div>
-        <div class="governance-card reveal"><span>03</span><h3>Execução acompanhada</h3><p>Consulte histórico, status e consumo para revisar o que aconteceu em cada conversa ou tarefa.</p></div>
-      </div>
-      <div class="governance-note reveal">
-        <p><strong>Requisitos regulatórios precisam de avaliação específica.</strong> A Lab019 ainda não possui certificações independentes de segurança para apresentar. A implantação deve considerar os dados, provedores e controles exigidos pela sua organização.</p>
-        <a class="more" href="/seguranca/">Conhecer os controles e o estágio atual →</a>
-      </div>
+<!-- ===================== FAQ ===================== -->
+<section class="block soft" id="faq">
+  <div class="wrap">
+    <div class="head center"><span class="eyebrow">Perguntas frequentes</span><h2>Ainda com dúvida? Pergunte ao agente, ou leia aqui.</h2></div>
+    <div class="faq">
+      <details>
+        <summary>Como funciona o teste grátis?</summary>
+        <p>Você confirma seu celular e recebe <strong>{{trial_credit|uma quantia}}* em créditos, pela PTAX do cadastro, para usar por 14 dias, sem cartão e sem CNPJ</strong>. Dá para testar a voz pelo navegador e pelo nosso número de demonstração; o WhatsApp entra depois da assinatura. O saldo não usado vence ao fim do teste. Depois, o plano padrão custa {{plan_price|um valor fixo}} por mês, e a mensalidade inteira vira créditos.</p>
+      </details>
+      <details>
+        <summary>O que está incluso na mensalidade?</summary>
+        <p>Todos os recursos da plataforma e <strong>{{plan_franchise|uma quantia}}* em créditos mensais</strong>. Os créditos pagam seus números de telefone e WhatsApp e o consumo de IA, voz e mensagens; o preço de cada número aparece em reais antes da compra. A conexão ao WhatsApp depende da habilitação no canal oficial. Para outros volumes ou condições, montamos um contrato por organização. <a href="/preco/">Ver os detalhes de preço e créditos →</a></p>
+      </details>
+      <details id="ptax">
+        <summary>Por que os valores em reais têm *? O que é a PTAX?</summary>
+        <p>Seus créditos são guardados em dólar, a moeda dos fornecedores de IA, voz e mensagens. Para mostrar em reais, convertemos pela <strong>PTAX de venda do Banco Central</strong>, a cotação do dólar que o Banco Central divulga a cada dia útil. O crédito do teste usa a PTAX do dia útil anterior ao seu cadastro; o crédito mensal, a PTAX do dia útil anterior a cada cobrança. O saldo e o consumo que você vê no painel usam a cotação mais recente. Por isso o valor em reais pode variar um pouco com o câmbio, e o asterisco (*) avisa isso.</p>
+      </details>
+      <details>
+        <summary>É preciso integrar a API para começar?</summary>
+        <p>Não. Você pode configurar e testar um Agente pelo navegador, inclusive por conversa. A API é uma opção para integrar a plataforma a fluxos e sistemas existentes.</p>
+      </details>
+      <details>
+        <summary>O Agente atende no WhatsApp?</summary>
+        <p>Sim. Você conecta um número pela <strong>API oficial da Meta</strong> (Cloud API). Ele também atende por voz, telefone, Telegram e por um chat no seu site — sempre com a mesma inteligência.</p>
+      </details>
+      <details>
+        <summary>Quais modelos de IA posso usar?</summary>
+        <p>O brasileiro <strong>Sabiá-4</strong> e os demais modelos da <strong>Maritaca</strong>, além de Claude (Anthropic), Gemini (Google), GPT (OpenAI) e DeepSeek. O Agente escolhe automaticamente o modelo mais econômico que resolve cada pergunta, e você pode fixar um modelo específico quando quiser.</p>
+      </details>
+      <details>
+        <summary>Meus dados ficam no Brasil?</summary>
+        <p>O processamento do modelo pode ocorrer no Brasil quando você escolhe modelos da Maritaca. Isso, por si só, não garante residência de todos os dados da solução: canais, integrações e outros provedores também precisam ser avaliados. <a href="/seguranca/">Veja como abordamos essa avaliação →</a></p>
+      </details>
+      <details>
+        <summary>A Lab019 já possui certificações de segurança?</summary>
+        <p>Ainda não possuímos certificações independentes de segurança para apresentar. Estamos evoluindo controles e documentação. Requisitos de uma operação regulada precisam de análise técnica e contratual específica. <a href="/seguranca/">Conheça o estágio atual →</a></p>
+      </details>
+      <details>
+        <summary>Posso usar minha própria conta de IA (BYOK)?</summary>
+        <p>Sim. Com o BYOK (traga sua própria chave), você paga o provedor diretamente. Pelo uso da plataforma, a Lab019 cobra 10% do preço publicado do modelo. Suas chaves ficam protegidas e nunca são devolvidas ou expostas.</p>
+      </details>
+      <details>
+        <summary>E quando eu precisar atender pessoalmente?</summary>
+        <p>O Agente passa a conversa para um humano a qualquer momento — em texto ou na própria ligação de voz. Você acompanha tudo ao vivo, pode <strong>assumir na hora</strong> e depois devolver o atendimento para o Agente, na mesma conversa.</p>
+      </details>
+      <details>
+        <summary>O atendimento por voz funciona em português?</summary>
+        <p>Sim. A voz é ajustada para o português do Brasil: entende a fala do cliente, responde falando e pode ser interrompida no meio da frase, como numa conversa de verdade. Tudo fica registrado como texto no histórico.</p>
+      </details>
+      <details>
+        <summary>Tem fidelidade ou multa?</summary>
+        <p>Não. É mês a mês. Cancele quando quiser, sem multa.</p>
+      </details>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ===================== MODELS STRIP ===================== -->
-  <section class="strip">
-    <div class="wrap strip-inner">
-      <p>Escolha automática ou modelo definido por você, conforme o fluxo</p>
-      <div class="model-chips">
-        <span class="model-chip br"><span class="flag">🇧🇷</span> Sabiá-4 · Maritaca</span>
-        <span class="model-chip"><span class="flag">✦</span> Claude · Anthropic</span>
-        <span class="model-chip"><span class="flag">✦</span> Gemini · Google</span>
-        <span class="model-chip"><span class="flag">✦</span> GPT · OpenAI</span>
-        <span class="model-chip"><span class="flag">✦</span> DeepSeek</span>
-        <span class="model-chip">+ sua própria chave (BYOK)</span>
-      </div>
+<!-- ===================== CTA ===================== -->
+<section class="block">
+  <div class="wrap">
+    <div class="cta-band">
+      <h2>Traga um processo real.</h2>
+      <p>Descreva o que você quer automatizar. O agente responde agora; a equipe da Lab019 continua a conversa quando você quiser.</p>
+      <form class="mini-composer" id="mini">
+        <input id="mini-q" placeholder="Ex.: cobrar boletos vencidos e avisar quem pagou" aria-label="Descreva seu processo">
+        <button class="send-btn" aria-label="Enviar"><svg><use href="#i-up"/></svg></button>
+      </form>
+      <div class="row-btns"><a class="btn btn-primary" href="https://app.lab019.ai" data-signup>Testar grátis</a><a class="btn btn-ghost" href="mailto:contato@lab019.ai?subject=Lab019%20-%20conversa%20sobre%20implantacao">Conversar com a Lab019</a></div>
     </div>
-  </section>
-
-  <!-- ===================== RECURSOS ===================== -->
-  <section id="recursos" class="section">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow">O que o Agente faz</span>
-        <h2>Uma plataforma para atender, executar e integrar</h2>
-        <p>Comece pela interface web ou use a API para levar os agentes aos processos da sua organização.</p>
-      </div>
-
-      <div class="features">
-        <div class="feature reveal">
-          <div class="ico">💬</div>
-          <h3>Atende em todo canal</h3>
-          <p>Use <strong>WhatsApp</strong>, <strong>telefone</strong> e chat no site para conversar com clientes nos canais da sua operação.</p>
-        </div>
-        <div class="feature reveal">
-          <div class="ico o">🧠</div>
-          <h3>Modelos e custo sob escolha</h3>
-          <p>Use a seleção automática por mensagem ou fixe um modelo para o fluxo. Compare desempenho e custo, considerando também os requisitos de tratamento de dados.</p>
-          <a class="more" href="/modelos/">Como funciona a escolha →</a>
-        </div>
-        <div class="feature reveal">
-          <div class="ico b">🧩</div>
-          <h3>Uma equipe de especialistas</h3>
-          <p>Um agente principal pode delegar tarefas a <strong>especialistas</strong> com ferramentas e conhecimento definidos para cada função.</p>
-          <a class="more" href="/especialistas/">Ver especialistas →</a>
-        </div>
-        <div class="feature reveal">
-          <div class="ico">🔌</div>
-          <h3>Executa tarefas nos seus sistemas</h3>
-          <p>Com os acessos que você configurar, consulta dados, usa ferramentas conectadas e executa rotinas no horário definido.</p>
-          <a class="more" href="/integracoes/">Ver integrações →</a>
-        </div>
-        <div class="feature reveal">
-          <div class="ico b">🤝</div>
-          <h3>Passa para um humano quando precisa</h3>
-          <p>Casos delicados vão para uma pessoa sem perder o histórico — em texto ou na própria ligação. Você acompanha ao vivo, assume na hora e devolve para o Agente depois.</p>
-          <a class="more" href="/handoff/">Ver atendimento humano →</a>
-        </div>
-        <div class="feature reveal">
-          <div class="ico o">🛡️</div>
-          <h3>Limites e custo visível</h3>
-          <p>Defina um <strong>teto de custo por conversa</strong> e acompanhe o consumo. A execução das tarefas também fica no histórico.</p>
-        </div>
-      </div>
-
-      <!-- E ainda -->
-      <div class="strip-inner reveal" style="padding-top:44px;">
-        <p>E ainda</p>
-        <div class="model-chips">
-          <span class="model-chip br">🇧🇷 Modelo brasileiro disponível</span>
-          <span class="model-chip">🧠 Raciocínio à vista</span>
-          <span class="model-chip">📋 Planeja tarefas em passos</span>
-          <span class="model-chip">✅ Aprovação humana de ações</span>
-          <span class="model-chip">📎 Lê imagens, PDF e planilhas</span>
-          <span class="model-chip">🧵 Memória da conversa</span>
-          <span class="model-chip">⏰ Tarefas únicas e recorrentes</span>
-          <span class="model-chip">🔑 BYOK (sua própria chave)</span>
-          <span class="model-chip">⚡ Acesso via API</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== MOCKUP: CHAT ===================== -->
-  <section class="section section-sm">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow">Veja por dentro</span>
-        <h2>Etapas e ferramentas visíveis no histórico</h2>
-        <p>Revise as etapas da execução, as ferramentas usadas e o custo registrado.</p>
-      </div>
-      <div class="reveal" style="max-width:600px;margin:0 auto;">
-        <div class="appshot">
-          <div class="as-chrome">
-            <span class="as-dots"><i></i><i></i><i></i></span>
-            <span class="as-url">app.lab019.ai</span>
-          </div>
-          <div class="as-screen">
-            <div class="as-chat">
-              <div class="as-msg as-user">Resuma os chamados abertos nesta semana</div>
-              <div class="as-turn">
-                <div class="as-node as-reason">
-                  <div class="as-node-head">💭 Pensando <span class="as-muted">210 tokens</span></div>
-                  <div class="as-reason-body">Vou consultar os chamados, agrupar por status e destacar os pendentes…</div>
-                </div>
-                <div class="as-node as-tool">
-                  <div class="as-node-head">🔧 consultar_chamados <span class="as-ok">✓ 0,4s</span></div>
-                </div>
-                <div class="as-answer">Há <strong>12 chamados abertos</strong>. Cinco aguardam retorno da equipe e dois passaram do prazo definido.</div>
-                <div class="as-meta"><span>sabia-4-br-sp</span><span class="as-tag">· roteado</span><span>↑ 1,2k</span><span>↓ 340</span><span>💭 210</span><span>⚡ 0,6s</span></div>
-              </div>
-              <div class="as-statusbar"><span class="on">● pronto</span><b>sabia-4-br-sp</b><span>think:medium</span><span>[████░░░░] 32% ctx</span><span>4 turnos</span></div>
-            </div>
-          </div>
-        </div>
-        <p class="appshot-cap">Ilustração da conversa — a interface real pode variar.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== CANAIS ===================== -->
-  <section id="canais" class="section section-sm" style="background:var(--bg-soft);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow">Onde ele atende</span>
-        <h2>O mesmo Agente, em todos os seus canais</h2>
-        <p>Conecte os canais que fazem parte do processo e acompanhe os contatos em um lugar só.</p>
-      </div>
-      <div class="features">
-        <div class="feature reveal">
-          <div class="ico b">🟢</div>
-          <h3>WhatsApp</h3>
-          <p>Conecte seu número pela <strong>API oficial da Meta</strong> (Cloud API), em poucos minutos. Cada número atende com o seu agente — e você ainda dispara mensagens em massa personalizadas.</p>
-          <a class="more" href="/whatsapp/">Ver o canal WhatsApp →</a>
-        </div>
-        <div class="feature reveal">
-          <div class="ico">🎙️</div>
-          <h3>Voz e telefone</h3>
-          <p>Voz natural em português, com baixa latência: reconhece a fala, responde rápido e pode ser interrompido no meio. Você escolhe <strong>o número de telefone</strong> no catálogo e o paga com os créditos do plano, sem abrir conta em operadora, para o Agente atender 24/7.</p>
-          <a class="more" href="/voz/">Ver voz e telefone →</a>
-        </div>
-        <div class="feature reveal">
-          <div class="ico o">🌐</div>
-          <h3>Site, Telegram e API</h3>
-          <p>Coloque um chat (ou voz) no seu <strong>site</strong>, ligue um bot no <strong>Telegram</strong>, ou integre ao seu sistema pela <strong>API</strong> — com streaming em tempo real.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== COMO FUNCIONA ===================== -->
-  <section id="como-funciona" class="section section-sm">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow">Simples assim</span>
-        <h2>Comece por um processo. Valide antes de ampliar.</h2>
-        <p>Defina o resultado esperado, os acessos e os pontos de revisão com a sua equipe.</p>
-      </div>
-      <div class="steps">
-        <div class="step reveal">
-          <div class="num">1</div>
-          <h3>Escolha um fluxo</h3>
-          <p>Parta de um atendimento, cobrança ou rotina interna. O teste da plataforma permite começar sem cartão.</p>
-        </div>
-        <div class="step reveal">
-          <div class="num b">2</div>
-          <h3>Defina o escopo</h3>
-          <p>Escolha ferramentas, fontes de dados, canais e ações que exigem aprovação. O Agente ajuda na configuração por conversa.</p>
-        </div>
-        <div class="step reveal">
-          <div class="num o">3</div>
-          <h3>Acompanhe e ajuste</h3>
-          <p>Revise as conversas e tarefas, compare resultados e amplie o uso depois de validar o fluxo.</p>
-        </div>
-      </div>
-      <div class="demo reveal" style="margin-top:48px;">
-        <div class="demo-frame">
-          <video preload="none" playsinline controls poster="assets/videos/agente-aura.jpg" width="1920" height="1080">
-            <source src="assets/videos/agente-aura.mp4" type="video/mp4" />
-            Seu navegador não reproduz este vídeo. <a href="assets/videos/agente-aura.mp4">Baixe a demonstração (MP4)</a>.
-          </video>
-          <button type="button" class="demo-play" aria-label="Reproduzir a demonstração de criação do agente conversando com a Aura">
-            <span class="pico" aria-hidden="true">▶</span>
-            <span class="plabel">Veja: configurar um agente conversando · 1min</span>
-          </button>
-        </div>
-        <p class="demo-cap">Recriação na identidade da marca, com narração — não é gravação de tela real.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== PREÇO ===================== -->
-  <section id="preco" class="section" style="background:var(--bg-soft);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow">Planos e contratação</span>
-        <h2>Comece com um fluxo. Contrate para a operação inteira.</h2>
-        <p>Teste a plataforma no Padrão ou contrate sua operação no Enterprise, com contas-filhas para unidades ou clientes.</p>
-        <p style="margin-top:14px;"><a href="/preco/" style="color:var(--brand-ink);font-weight:600;font-size:15px;">Ver detalhes de créditos e cobrança →</a></p>
-      </div>
-
-      <div class="pricing-wrap pricing-wrap--two">
-        <article class="plan plan--standard reveal">
-          <span class="tag">Plano padrão</span>
-          <h3>Plano Lab019</h3>
-          <p class="billing-mode">Pré-pago · assinatura mensal</p>
-          <div class="price">
-            <span class="amount">{{plan_price|Assinatura}}</span>
-            <span class="per">/ mês</span>
-          </div>
-          <div class="credit-line">✓ {{plan_franchise|uma quantia}}* em créditos todo mês, para seus números e seu consumo · teste de 14 dias com {{trial_credit|uma quantia}}* em créditos, sem cartão</div>
-          <p class="plan-rule">Você vê e paga em reais. O preço de cada número e de cada item aparece antes do uso.</p>
-          <p class="plan-rule" id="nota-ptax">* Créditos guardados em dólar e convertidos pela PTAX de venda do Banco Central; o valor em reais pode variar com o câmbio. <a href="#ptax">Entenda a PTAX</a>.</p>
-          <ul>
-            <li><span class="ck">✓</span> Todos os recursos da plataforma, sem pacote de funcionalidades</li>
-            <li><span class="ck">✓</span> Atende por chat, voz e WhatsApp (API oficial da Meta)</li>
-            <li><span class="ck">✓</span> Seu número para telefone e WhatsApp, pago com os créditos (WhatsApp após habilitação)</li>
-            <li><span class="ck">✓</span> Telegram e widget no site</li>
-            <li><span class="ck">✓</span> Escolha automática de modelo (Claude, Gemini, GPT, DeepSeek)</li>
-            <li><span class="ck">✓</span> Equipe de especialistas, sub-agentes e skills do seu negócio</li>
-            <li><span class="ck">✓</span> Tarefas agendadas, jornadas de WhatsApp e integrações</li>
-            <li><span class="ck">✓</span> Passa para um humano (handoff) em voz e texto</li>
-            <li><span class="ck">✓</span> Use sua própria chave de IA, conta Twilio ou conta da Meta, se quiser</li>
-            <li><span class="ck">✓</span> Teto de gasto por conversa e acesso via API</li>
-            <li><span class="ck">✓</span> Sem fidelidade — cancele quando quiser</li>
-          </ul>
-          <a class="btn btn-primary btn-lg" href="https://app.lab019.ai" data-signup>Testar grátis</a>
-        </article>
-
-        <article class="plan plan--enterprise reveal">
-          <span class="tag">Enterprise</span>
-          <h3>Para a sua operação</h3>
-          <p class="billing-mode">Pós-pago · contrato por organização</p>
-          <div class="price"><span class="amount amount--consult">Sob consulta</span></div>
-          <div class="credit-line">Compromisso mínimo mensal negociado. O consumo elegível do mês conta para cumpri-lo.</div>
-          <p class="plan-rule">Ao fechar o período, se o consumo ficar abaixo do mínimo, cobra-se o mínimo. Se superar, cobra-se o consumo efetivo.</p>
-          <ul>
-            <li><span class="ck">✓</span> Contas-filhas para unidades ou clientes, com uma fatura</li>
-            <li><span class="ck">✓</span> Preços, capacidade e condições definidos em contrato</li>
-            <li><span class="ck">✓</span> Números para telefone e WhatsApp conforme a operação</li>
-            <li><span class="ck">✓</span> Implantação e suporte avaliados com sua equipe</li>
-            <li><span class="ck">✓</span> Controles e requisitos de segurança definidos para o projeto</li>
-            <li><span class="ck">✓</span> Conta criada por convite da equipe Lab019</li>
-            <li><span class="ck">✓</span> Fatura única, com prazo de pagamento definido em contrato</li>
-          </ul>
-          <a class="btn btn-primary btn-lg" href="mailto:contato@lab019.ai?subject=Lab019%20-%20plano%20Enterprise">Conversar sobre Enterprise</a>
-        </article>
-      </div>
-
-      <div class="reseller-teaser reveal">
-        <div>
-          <span class="eyebrow">Enterprise com contas-filhas</span>
-          <h3>Várias contas, uma fatura da Lab019</h3>
-          <p>Para redes, franquias e empresas que atendem os próprios clientes. A conta-mãe convida uma conta para cada unidade ou cliente; cada filha vê o próprio consumo, a mãe vê o total e recebe a única fatura.</p>
-        </div>
-        <a class="btn btn-ghost" href="/preco/#contas-filhas">Conhecer as contas-filhas →</a>
-      </div>
-
-      <div class="credits-card credits-card--wide reveal">
-          <h3>Como funcionam os créditos no Padrão?</h3>
-          <p>Os créditos pagam tudo o que sua operação usa: números, IA, voz e mensagens. Você vê o custo de cada conversa em reais.</p>
-          <div class="how">
-            <div class="credits-row">
-              <span class="b">1</span>
-              <div><strong>14 dias com {{trial_credit|uma quantia}}* em créditos</strong><span>Sem cartão e sem CNPJ: você confirma seu celular. Teste a voz pelo navegador ou pelo nosso número de demonstração.</span></div>
-            </div>
-            <div class="credits-row">
-              <span class="b c2">2</span>
-              <div><strong>{{plan_franchise|uma quantia}}* em créditos todo mês</strong><span>A mensalidade inteira vira créditos. Eles pagam primeiro o número e o consumo do mês e valem até o fim do ciclo.</span></div>
-            </div>
-            <div class="credits-row">
-              <span class="b c3">3</span>
-              <div><strong>Recarregue quando quiser</strong><span>Os créditos comprados além dos mensais não expiram.</span></div>
-            </div>
-            <div class="credits-row">
-              <span class="b">4</span>
-              <div><strong>Economize com o modelo certo</strong><span>A escolha automática usa o modelo mais barato que dá conta — seus créditos rendem mais.</span></div>
-            </div>
-          </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== ACESSO (WEB + API) ===================== -->
-  <section id="acesso" class="section section-sm">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow">Do seu jeito</span>
-        <h2>Configure pela web ou integre pela API</h2>
-        <p>A interface permite testar e acompanhar os agentes. A API leva as conversas e ferramentas aos seus fluxos existentes.</p>
-      </div>
-
-      <div class="access">
-        <div class="access-card reveal">
-          <div class="top">
-            <h3>🌐 Pela web</h3>
-            <p>Configure especialistas, teste por texto ou voz e acompanhe o histórico pelo navegador.</p>
-          </div>
-          <div class="web-demo">
-            <div class="browser-bar">
-              <span class="dots"><i></i><i></i><i></i></span>
-              <span class="url">app.lab019.ai</span>
-            </div>
-            <div class="web-chat">
-              <div class="msg bot">Olá. Posso consultar o andamento dos chamados da equipe.</div>
-              <div class="msg user">Quais casos precisam de retorno hoje?</div>
-              <div class="msg bot">Há <strong>5 casos aguardando retorno</strong>. Posso organizar um resumo com responsável e prazo para revisão.</div>
-              <div class="web-composer">
-                <span>Digite ou fale com o Agente…</span>
-                <span class="mic" aria-hidden="true">🎙️</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="access-card reveal">
-          <div class="top">
-            <h3>⚡ Pela API</h3>
-            <p>Converse com o Agente direto do seu sistema. Respostas em tempo real (streaming), voz por WebRTC e os mesmos modelos e ferramentas da web.</p>
-          </div>
-          <div class="api-demo">
-            <div class="term-bar">
-              <span class="dots"><i></i><i></i><i></i></span>
-              <span class="term-title">terminal — streaming SSE</span>
-            </div>
-            <div class="term-body"><code><span class="c"># envie a mensagem</span>
-<span class="k">curl</span> -N https://api.lab019.ai/runtime/v1/\
-conversations/<span class="p">minha-conversa</span>/messages \
-  -H <span class="s">"Authorization: Bearer SEU_TOKEN"</span> \
-  -d <span class="s">'{"messageId":"1",
-       "content":"Resuma os pedidos de hoje"}'</span>
-
-<span class="c"># resposta chega token a token (SSE)</span>
-<span class="g">event: message_delta</span>
-<span class="g">data: {"text":"Hoje você teve "}</span>
-<span class="g">data: {"text":"12 pedidos, "}</span>
-<span class="g">data: {"text":"R$ 574,80 no total."}</span>
-<span class="g">event: done</span> <span class="cur">▋</span></code></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== PARA QUEM ===================== -->
-  <section class="section section-sm" style="background:var(--bg-soft);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow">Onde começar</span>
-        <h2>Processos concretos, em diferentes equipes</h2>
-        <p>O mesmo conjunto de controles serve a um primeiro teste e a uma operação que precisa integrar várias áreas.</p>
-      </div>
-      <div class="features">
-        <div class="feature reveal">
-          <div class="ico">💬</div>
-          <h3>Atendimento e relacionamento</h3>
-          <p>Responde clientes por WhatsApp, site ou telefone e transfere situações que exigem uma pessoa.</p>
-        </div>
-        <div class="feature reveal">
-          <div class="ico b">📋</div>
-          <h3>Rotinas internas</h3>
-          <p>Consulta sistemas conectados, prepara relatórios recorrentes e registra o resultado de cada execução.</p>
-        </div>
-        <div class="feature reveal">
-          <div class="ico o">📞</div>
-          <h3>Cobrança e acompanhamento</h3>
-          <p>Agenda contatos por WhatsApp ou telefone, acompanha respostas e registra status por pessoa.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== FAQ ===================== -->
-  <section id="faq" class="section section-sm">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow">Perguntas frequentes</span>
-        <h2>Ainda com dúvida? A gente responde.</h2>
-      </div>
-      <div class="faq reveal">
-        <details>
-          <summary>Como funciona o teste grátis?</summary>
-          <p>Você confirma seu celular e recebe <strong>{{trial_credit|uma quantia}}* em créditos, pela PTAX do cadastro, para usar por 14 dias, sem cartão e sem CNPJ</strong>. Dá para testar a voz pelo navegador e pelo nosso número de demonstração; o WhatsApp entra depois da assinatura. O saldo não usado vence ao fim do teste. Depois, o plano padrão custa {{plan_price|um valor fixo}} por mês, e a mensalidade inteira vira créditos.</p>
-        </details>
-        <details>
-          <summary>O que está incluso na mensalidade?</summary>
-          <p>Todos os recursos da plataforma e <strong>{{plan_franchise|uma quantia}}* em créditos mensais</strong>. Os créditos pagam seus números de telefone e WhatsApp e o consumo de IA, voz e mensagens; o preço de cada número aparece em reais antes da compra. A conexão ao WhatsApp depende da habilitação no canal oficial. Para outros volumes ou condições, montamos um contrato por organização. <a href="/preco/" style="color:var(--brand-ink);font-weight:600;">Ver os detalhes de preço e créditos →</a></p>
-        </details>
-        <details id="ptax">
-          <summary>Por que os valores em reais têm *? O que é a PTAX?</summary>
-          <p>Seus créditos são guardados em dólar, a moeda dos fornecedores de IA, voz e mensagens. Para mostrar em reais, convertemos pela <strong>PTAX de venda do Banco Central</strong>, a cotação do dólar que o Banco Central divulga a cada dia útil. O crédito do teste usa a PTAX do dia útil anterior ao seu cadastro; o crédito mensal, a PTAX do dia útil anterior a cada cobrança. O saldo e o consumo que você vê no painel usam a cotação mais recente. Por isso o valor em reais pode variar um pouco com o câmbio, e o asterisco (*) avisa isso.</p>
-        </details>
-        <details>
-          <summary>É preciso integrar a API para começar?</summary>
-          <p>Não. Você pode configurar e testar um Agente pelo navegador, inclusive por conversa. A API é uma opção para integrar a plataforma a fluxos e sistemas existentes.</p>
-        </details>
-        <details>
-          <summary>O Agente atende no WhatsApp?</summary>
-          <p>Sim. Você conecta um número pela <strong>API oficial da Meta</strong> (Cloud API). Ele também atende por voz, telefone, Telegram e por um chat no seu site — sempre com a mesma inteligência.</p>
-        </details>
-        <details>
-          <summary>Quais modelos de IA posso usar?</summary>
-          <p>O brasileiro <strong>Sabiá-4</strong> e os demais modelos da <strong>Maritaca</strong>, além de Claude (Anthropic), Gemini (Google), GPT (OpenAI) e DeepSeek. O Agente escolhe automaticamente o modelo mais econômico que resolve cada pergunta, e você pode fixar um modelo específico quando quiser.</p>
-        </details>
-        <details>
-          <summary>Meus dados ficam no Brasil?</summary>
-          <p>O processamento do modelo pode ocorrer no Brasil quando você escolhe modelos da Maritaca. Isso, por si só, não garante residência de todos os dados da solução: canais, integrações e outros provedores também precisam ser avaliados. <a href="/seguranca/" style="color:var(--brand-ink);font-weight:600;">Veja como abordamos essa avaliação →</a></p>
-        </details>
-        <details>
-          <summary>A Lab019 já possui certificações de segurança?</summary>
-          <p>Ainda não possuímos certificações independentes de segurança para apresentar. Estamos evoluindo controles e documentação. Requisitos de uma operação regulada precisam de análise técnica e contratual específica. <a href="/seguranca/" style="color:var(--brand-ink);font-weight:600;">Conheça o estágio atual →</a></p>
-        </details>
-        <details>
-          <summary>Posso usar minha própria conta de IA (BYOK)?</summary>
-          <p>Sim. Com o BYOK (traga sua própria chave), você paga o provedor diretamente. Pelo uso da plataforma, a Lab019 cobra 10% do preço publicado do modelo. Suas chaves ficam protegidas e nunca são devolvidas ou expostas.</p>
-        </details>
-        <details>
-          <summary>E quando eu precisar atender pessoalmente?</summary>
-          <p>O Agente passa a conversa para um humano a qualquer momento — em texto ou na própria ligação de voz. Você acompanha tudo ao vivo, pode <strong>assumir na hora</strong> e depois devolver o atendimento para o Agente, na mesma conversa.</p>
-        </details>
-        <details>
-          <summary>O atendimento por voz funciona em português?</summary>
-          <p>Sim. A voz é ajustada para o português do Brasil: entende a fala do cliente, responde falando e pode ser interrompida no meio da frase, como numa conversa de verdade. Tudo fica registrado como texto no histórico.</p>
-        </details>
-        <details>
-          <summary>Tem fidelidade ou multa?</summary>
-          <p>Não. É mês a mês. Cancele quando quiser, sem multa.</p>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== CTA BAND ===================== -->
-  <section class="section" style="padding-top:0;">
-    <div class="wrap">
-      <div class="cta-band reveal">
-        <h2>Traga um processo real.</h2>
-        <p>Converse com a Lab019 sobre objetivos, integrações e controles. Se quiser explorar primeiro, o teste da plataforma continua aberto.</p>
-        <a class="btn btn-primary btn-lg" href="mailto:contato@lab019.ai?subject=Lab019%20-%20conversa%20sobre%20implantacao">Conversar com a Lab019</a>
-      </div>
-    </div>
-  </section>
+  </div>
+</section>
 </main>
 
-<!-- ===================== FOOTER ===================== -->
 <footer class="footer">
   <div class="wrap">
     <div class="footer-grid">
-      <div>
-        <div class="brand"><span class="dot" aria-hidden="true">019</span> Lab019</div>
-        <p>Agentes de IA para atendimento e operação, com controles para evoluir cada processo. Nascido em Campinas, feito para o Brasil.</p>
-      </div>
+      <div><a class="brand" href="/"><svg aria-hidden="true"><use href="#logo019"/></svg>Lab019</a><p>Agentes de IA para atendimento e operação, com controles para evoluir cada processo. Nascido em Campinas, feito para o Brasil.</p></div>
       <div class="footer-cols">
-        <div class="footer-col">
-          <h4>Produto</h4>
-          <a href="#recursos">Plataforma</a>
-          <a href="/automacoes/">Automações</a>
-          <a href="/seguranca/">Segurança</a>
-          <a href="#canais">Canais</a>
-          <a href="#como-funciona">Funcionamento</a>
-          <a href="#preco">Preço</a>
-        </div>
-        <div class="footer-col">
-          <h4>Páginas</h4>
-          <a href="/modelos/">Modelos</a>
-          <a href="/whatsapp/">WhatsApp</a>
-          <a href="/voz/">Voz e telefone</a>
-          <a href="/especialistas/">Especialistas</a>
-          <a href="/integracoes/">Integrações</a>
-          <a href="/handoff/">Atendimento humano</a>
-          <a href="https://docs.lab019.ai/">Documentação</a>
-        </div>
-        <div class="footer-col">
-          <h4>Empresa</h4>
-          <a href="mailto:contato@lab019.ai">contato@lab019.ai</a>
-          <a href="https://lab019.com">lab019.com</a>
-          <a href="https://lab019.ai">lab019.ai</a>
-          <a href="#faq">Dúvidas</a>
-        </div>
-        <div class="footer-col">
-          <h4>Legal</h4>
-          <a href="/termos/">Termos de Uso</a>
-          <a href="/privacidade/">Política de Privacidade</a>
-        </div>
+        <div><h4>Produto</h4><a href="#recursos">Plataforma</a><a href="/automacoes/">Automações</a><a href="/seguranca/">Segurança</a><a href="#canais">Canais</a><a href="#como-funciona">Funcionamento</a><a href="#preco">Preço</a></div>
+        <div><h4>Páginas</h4><a href="/modelos/">Modelos</a><a href="/whatsapp/">WhatsApp</a><a href="/voz/">Voz e telefone</a><a href="/especialistas/">Especialistas</a><a href="/integracoes/">Integrações</a><a href="/handoff/">Atendimento humano</a><a href="https://docs.lab019.ai/">Documentação</a></div>
+        <div><h4>Empresa</h4><a href="mailto:contato@lab019.ai">contato@lab019.ai</a><a href="https://lab019.com">lab019.com</a><a href="https://lab019.ai">lab019.ai</a><a href="#faq">Dúvidas</a></div>
+        <div><h4>Legal</h4><a href="/termos/">Termos de Uso</a><a href="/privacidade/">Política de Privacidade</a></div>
       </div>
     </div>
-    <div class="footer-legal">
-      Lab019 é nome fantasia de <strong>INDRA CONSULTORIA EMPRESARIAL LTDA</strong> ·
-      CNPJ 04.022.591/0001-59 · Campinas, SP · Contato:
-      <a href="mailto:contato@lab019.ai">contato@lab019.ai</a>
-    </div>
-    <div class="footer-bottom">
-      <span>© 2026 Lab019 · Feito com 💚 em Campinas, SP</span>
-      <span>Automação com controle, do primeiro teste à operação.</span>
-    </div>
+    <p class="legal">Lab019 é nome fantasia de <strong>INDRA CONSULTORIA EMPRESARIAL LTDA</strong> · CNPJ 04.022.591/0001-59 · Campinas, SP · Contato: <a href="mailto:contato@lab019.ai">contato@lab019.ai</a></p>
+    <p class="legal">© 2026 Lab019 · Feito com 💚 em Campinas, SP · Automação com controle, do primeiro teste à operação.</p>
   </div>
 </footer>
 
-<script>
-  // Revelação suave ao rolar
-  (function () {
-    var els = document.querySelectorAll(".reveal");
-    if (!("IntersectionObserver" in window)) {
-      els.forEach(function (el) { el.classList.add("in"); });
-      return;
-    }
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.12 });
-    els.forEach(function (el) { io.observe(el); });
-  })();
-  (function(){function abre(){var h=location.hash;if(h.length<2)return;var d;try{d=document.getElementById(decodeURIComponent(h.slice(1)));}catch(e){return;}if(d&&d.tagName==='DETAILS'){d.open=true;d.scrollIntoView();}}window.addEventListener('hashchange',abre);abre();})();
-</script>
-<script src="/assets/chat.js" defer></script>
+<!-- Bolinha + painel: a MESMA conversa do palco -->
+<button class="fab" type="button" id="fab" aria-label="Abrir conversa com o Agente"><span aria-hidden="true">💬</span><span class="badge" id="fab-badge" hidden>1</span></button>
+<div class="panel" id="panel" role="dialog" aria-label="Conversa com o Agente Lab019">
+  <div class="phead"><svg class="logo" aria-hidden="true"><use href="#logo019"/></svg><strong>Agente Lab019</strong><span class="pstatus"><span class="live-dot"></span>online</span>
+    <button class="pbtn" type="button" id="p-expand" title="Voltar ao centro da página"><svg><use href="#i-min"/></svg></button>
+    <button class="pbtn" type="button" id="p-close" title="Fechar"><svg><use href="#i-x"/></svg></button></div>
+  <div class="pbody" id="pbody"></div>
+  <form class="pfoot" id="pform"><textarea id="pq" rows="1" placeholder="Pergunte qualquer coisa…" aria-label="Mensagem para o Agente Lab019"></textarea><button type="button" class="icon-btn" id="p-mic" aria-label="Voz"><svg><use href="#i-mic"/></svg></button><button class="send-btn" aria-label="Enviar"><svg><use href="#i-up"/></svg></button></form>
+</div>
+
+<script>(function(){function abre(){var h=location.hash;if(h.length<2)return;var d;try{d=document.getElementById(decodeURIComponent(h.slice(1)));}catch(e){return;}if(d&&d.tagName==='DETAILS'){d.open=true;d.scrollIntoView();}}window.addEventListener('hashchange',abre);abre();})();</script>
+<script type="module" src="/assets/home.js"></script>
 </body>
 </html>
