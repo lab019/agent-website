@@ -103,6 +103,8 @@ h1 { margin:0; font-size:clamp(32px, 4.2vw, 54px); line-height:1.06; letter-spac
 .proof svg { width:16px; height:16px; color:var(--support-ink); flex:0 0 auto; }
 .alt-cta { margin-top:18px; font-size:14px; color:var(--ink-3); display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:6px 12px; }
 .alt-cta a { font-weight:600; }
+.alt-cta button, .msg.bot.err button.link { font:inherit; font-weight:600; color:var(--ink-2); background:none; border:0; padding:0; cursor:pointer; }
+.alt-cta button:hover { color:var(--ink); text-decoration:underline; text-underline-offset:2px; }
 .alt-cta .sep { color:var(--border-strong); }
 
 /* Faixa de modelos no pé da primeira dobra */
@@ -391,7 +393,8 @@ h2 { margin:10px 0 0; font-size:clamp(28px, 3.4vw, 42px); line-height:1.12; lett
 .consent p b { color:var(--ink); font-weight:650; }
 .consent-btns { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
 .msg.bot.err { border-color:#f1d0a8; background:#fff8f0; color:var(--ink-2); }
-.msg.bot.err a { font-weight:600; text-decoration:underline; text-underline-offset:2px; }
+.msg.bot.err a, .msg.bot.err button.link { font-weight:600; text-decoration:underline; text-underline-offset:2px; }
+.msg.bot.err button.link { color:inherit; }
 .price-card .amount .per { font-size:15px; font-weight:500; color:var(--ink-3); }
 .price-card .fine a { font-weight:600; }
 .footer .legal + .legal { margin-top:6px; padding-top:0; border-top:0; }
