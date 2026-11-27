@@ -37,6 +37,8 @@ const T = {
   voiceBusy: 'Já existe uma chamada em andamento.',
   voiceFailed: 'Não consegui iniciar a chamada. Você pode continuar por texto.',
   voiceTag: 'voz',
+  send: 'Enviar',
+  stop: 'Parar resposta',
   actTrial: ['Testar grátis', '14 dias · sem cartão e sem CNPJ'],
   actVoice: ['Testar a voz agora', 'Pelo navegador, nesta página'],
 }
@@ -86,6 +88,7 @@ const feedIn = $('#feed-in')
 const pbody = $('#pbody')
 const q = $('#q')
 const send = $('#send')
+const panelSend = $('#pform .send-btn')
 const fab = $('#fab')
 const fabBadge = $('#fab-badge')
 const panel = $('#panel')
@@ -100,6 +103,8 @@ let SDK = null // the Lab019 class, once the module is loaded
 let chat = null
 let connecting = null
 let busy = false
+let stopping = false // the visitor asked to stop the answer; waiting for the stream's `done`
+let sending = null // the send() of the current question, so a stop never races ahead of it
 let booting = false
 let turn = null // the answer being streamed: { rows, text, id, timer, frame }
 let stageVisible = true
@@ -259,6 +264,7 @@ function paint() {
 
 function onDelta(event) {
   if (!event || typeof event.delta !== 'string') return
+  if (stopping) return
   if (!turn) startTurn()
   turn.text += event.delta
   if (!turn.frame) turn.frame = requestAnimationFrame(paint)
@@ -292,16 +298,42 @@ function finishTurn(silent) {
 
 function release() {
   busy = false
+  stopping = false
+  sending = null
   syncSend()
 }
 
 function onDone(event) {
-  finishTurn(false)
+  // a stopped answer keeps what was written but gets no follow-up cards
+  finishTurn(stopping || !!(event && event.stopped))
+}
+
+async function stopTurn() {
+  if (!busy || stopping) return
+  stopping = true
+  syncSend()
+  if (turn) {
+    cancelAnimationFrame(turn.frame)
+    turn.frame = 0
+  }
+  const asked = sending
+  const mine = () => stopping && sending === asked // `done` may already have closed it and a new question begun
+  let stopped = false
+  try {
+    if (asked) await asked.catch(() => {})
+    if (chat) stopped = !!(await chat.stop()).stopped
+  } catch {
+    // the stop did not reach the gateway: give the composer back anyway
+  }
+  if (!mine()) return
+  // `done` (with `stopped`) closes the turn; without a running turn, or if it never comes, close it here
+  if (!stopped) finishTurn(true)
+  else setTimeout(() => mine() && finishTurn(true), 5000)
 }
 
 function onSilentEnd(event) {
   if (!turn) return release()
-  if (turn.text.trim()) return finishTurn(false)
+  if (turn.text.trim()) return finishTurn(stopping)
   const rows = turn.rows
   endTurn()
   for (const row of rows) row.remove()
@@ -396,10 +428,10 @@ async function ask(text, fromPanel) {
   autoGrow()
   syncSend()
   try {
-    const client = await getChat()
-    await client.send(text)
+    sending = getChat().then((client) => client.send(text))
+    await sending
   } catch (error) {
-    fail(error)
+    if (!stopping) fail(error)
   }
 }
 
@@ -412,7 +444,16 @@ function autoGrow() {
 }
 
 function syncSend() {
-  send.disabled = busy || booting || !q.value.trim()
+  // while the agent answers, the send button becomes the stop button (in the stage and in the bubble)
+  for (const button of [send, panelSend]) {
+    button.classList.toggle('is-stop', busy)
+    button.setAttribute('aria-label', busy ? T.stop : T.send)
+    if (busy) button.title = T.stop
+    else button.removeAttribute('title')
+    button.querySelector('use').setAttribute('href', busy ? '#i-stop' : '#i-up')
+  }
+  send.disabled = busy ? stopping : booting || !q.value.trim()
+  panelSend.disabled = busy && stopping
 }
 
 function prewarm() {
@@ -432,10 +473,12 @@ q.addEventListener('keydown', (event) => {
 })
 $('#composer').addEventListener('submit', (event) => {
   event.preventDefault()
-  ask(q.value, false)
+  if (busy) stopTurn()
+  else ask(q.value, false)
 })
 $('#pform').addEventListener('submit', (event) => {
   event.preventDefault()
+  if (busy) return void stopTurn()
   const field = $('#pq')
   const text = field.value
   field.value = ''
@@ -444,7 +487,8 @@ $('#pform').addEventListener('submit', (event) => {
 $('#pq').addEventListener('keydown', (event) => {
   if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
     event.preventDefault()
-    $('#pform').requestSubmit()
+    // Enter never stops an answer: only the button does
+    if (!busy) $('#pform').requestSubmit()
   }
 })
 $('#mini').addEventListener('submit', (event) => {

@@ -1,15 +1,20 @@
-"""Acceptance LIC-3791: the home's idle composer is wider and taller, and the chat state is unchanged.
+"""Acceptance: the home's idle composer size, the hero fills the first screen, and the stop button.
 
 criterion -> test
-c1 | idle composer ~1000 px wide, textarea at least 2 lines tall (also on the phone); the chat keeps its width | HomeComposerSize::test_c1_idle_composer_is_wide_and_tall_and_the_chat_keeps_its_size
+c1 | idle composer ~800 px wide, textarea at least 2 lines tall and growing with the screen height (3 lines floor on the phone); the chat keeps its width | HomeComposerSize::test_c1_idle_composer_size_and_the_chat_keeps_its_size
+c2 | the hero block is centred in the first screen: no free space pushed below the model cards | HomeComposerSize::test_c2_hero_has_no_blank_strip_at_the_bottom
+c3 | while the agent answers, the send button turns into a stop button that calls the SDK stop | HomeComposerSize::test_c3_send_button_turns_into_stop_while_answering
 
-Stdlib only. Sizes were measured in the browser at 1440 and 390 px (see the PR).
+Stdlib only. Sizes were measured in the browser at 1440, 1790 and 390 px (see the PR).
 """
 import re
 import unittest
 from pathlib import Path
 
-CSS = (Path(__file__).resolve().parent.parent / "site" / "assets" / "home.css").read_text(encoding="utf-8")
+SITE = Path(__file__).resolve().parent.parent / "site"
+CSS = (SITE / "assets" / "home.css").read_text(encoding="utf-8")
+JS = (SITE / "assets" / "home.js").read_text(encoding="utf-8")
+HTML = (SITE / "index.html").read_text(encoding="utf-8")
 
 
 def rule(selector: str) -> str:
@@ -18,14 +23,32 @@ def rule(selector: str) -> str:
     return match.group(1)
 
 
+def mobile_rule(selector: str) -> str:
+    match = re.search(rf"@media \(max-width: 640px\) \{{.*?{re.escape(selector)} \{{([^}}]*)\}}", CSS, re.S)
+    assert match, selector
+    return match.group(1)
+
+
 class HomeComposerSize(unittest.TestCase):
-    def test_c1_idle_composer_is_wide_and_tall_and_the_chat_keeps_its_size(self):
-        self.assertIn("--homew:1000px", CSS)
+    def test_c1_idle_composer_size_and_the_chat_keeps_its_size(self):
+        self.assertIn("--homew:800px", CSS)
         self.assertIn("max-width:var(--homew)", rule(".composer-zone .composer"))
-        self.assertIn("min-height:3em", rule(".composer textarea"))
-        self.assertIn("min-height:3em", re.search(r"@media \(max-width: 640px\) \{.*?\.composer textarea \{([^}]*)\}", CSS, re.S).group(1))
+        self.assertIn("min-height:clamp(3em, 8svh, 4.5em)", rule(".composer textarea"))
+        self.assertIn("min-height:3em", mobile_rule(".composer textarea"))
         self.assertIn("min-height:28px", rule(".stage.is-chat .composer textarea"))
         self.assertIn("width:min(var(--chatw), 100% - 32px)", rule(".stage.is-chat .composer-zone"))
+
+    def test_c2_hero_has_no_blank_strip_at_the_bottom(self):
+        models = rule(".models")
+        self.assertNotIn("margin-top:auto", models)
+        self.assertIn("margin-top:clamp(", models)
+
+    def test_c3_send_button_turns_into_stop_while_answering(self):
+        self.assertIn('<symbol id="i-stop"', HTML)
+        self.assertIn(".send-btn.is-stop", CSS)
+        self.assertIn("async function stopTurn()", JS)
+        self.assertIn("chat.stop()", JS)
+        self.assertIn("classList.toggle('is-stop'", JS)
 
 
 if __name__ == "__main__":

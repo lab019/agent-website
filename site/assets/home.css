@@ -13,7 +13,7 @@
   --ink:#0f1720; --ink-2:#3d4a59; --ink-3:#5f6d7e;
   --font:'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --mono:'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
-  --maxw:1120px; --chatw:760px; --homew:1000px; --radius:16px; --radius-sm:10px;
+  --maxw:1120px; --chatw:760px; --homew:800px; --radius:16px; --radius-sm:10px;
   --nav-h:66px;
   --shadow-sm:0 1px 2px rgba(15,23,32,.06);
   --shadow-md:0 8px 24px rgba(24,100,171,.10);
@@ -69,11 +69,11 @@ h1 { margin:0; font-size:clamp(32px, 4.2vw, 54px); line-height:1.06; letter-spac
 .hero-sub { margin:18px auto 0; max-width:640px; font-size:clamp(16px, 1.5vw, 18.5px); color:var(--ink-2); text-wrap:pretty; }
 
 /* Composer — o mesmo componente nos dois estados */
-.composer-zone { width:min(1000px, 100%); margin-top:30px; }
+.composer-zone { width:min(1000px, 100%); margin-top:32px; }
 .composer-zone .composer { max-width:var(--homew); margin:0 auto; }
 .composer { position:relative; background:var(--surface); border:1px solid var(--border-strong); border-radius:var(--radius); box-shadow:var(--shadow-lg); padding:14px 12px 10px 18px; transition:border-color var(--t) ease, box-shadow var(--t) ease; view-transition-name:composer; }
 .composer:focus-within { border-color:var(--brand); box-shadow:0 0 0 4px var(--brand-soft), var(--shadow-lg); }
-.composer textarea { display:block; width:100%; resize:none; border:0; outline:0; background:transparent; color:var(--ink); font:inherit; font-size:17.5px; line-height:1.5; min-height:3em; max-height:160px; padding:2px 0; }
+.composer textarea { display:block; width:100%; resize:none; border:0; outline:0; background:transparent; color:var(--ink); font:inherit; font-size:17.5px; line-height:1.5; min-height:clamp(3em, 8svh, 4.5em); max-height:160px; padding:2px 0; }
 .composer textarea::placeholder { color:var(--ink-3); }
 .composer-row { display:flex; align-items:center; gap:8px; margin-top:6px; }
 .composer-tag { display:inline-flex; align-items:center; gap:7px; font-size:12.5px; color:var(--ink-3); font-weight:500; min-width:0; }
@@ -87,6 +87,9 @@ h1 { margin:0; font-size:clamp(32px, 4.2vw, 54px); line-height:1.06; letter-spac
 .send-btn { width:42px; height:42px; border-radius:50%; border:0; background:var(--brand); color:#fff; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; transition:background var(--t-fast) ease, transform var(--t-fast) ease, opacity var(--t-fast) ease; }
 .send-btn:hover { background:var(--brand-strong); transform:translateY(-1px); }
 .send-btn[disabled] { opacity:.38; cursor:default; transform:none; }
+.send-btn.is-stop { background:var(--ink); }
+.send-btn.is-stop:hover { background:#000; }
+.send-btn.is-stop[disabled] { opacity:.55; }
 .icon-btn svg, .send-btn svg { width:19px; height:19px; }
 
 /* Sugestões */
@@ -103,7 +106,7 @@ h1 { margin:0; font-size:clamp(32px, 4.2vw, 54px); line-height:1.06; letter-spac
 .alt-cta .sep { color:var(--border-strong); }
 
 /* Faixa de modelos no pé da primeira dobra */
-.models { width:100%; margin-top:auto; padding:30px 0 20px; text-align:center; }
+.models { width:100%; margin-top:clamp(24px, 4svh, 56px); padding:0 0 20px; text-align:center; }
 .models p { margin:0 0 10px; font-size:12px; font-family:var(--mono); letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); }
 .models-row { display:flex; flex-wrap:wrap; justify-content:center; gap:8px 26px; font-weight:600; font-size:15px; color:var(--ink-2); }
 .models-row span small { font-weight:500; color:var(--ink-3); }
@@ -353,7 +356,7 @@ h2 { margin:10px 0 0; font-size:clamp(28px, 3.4vw, 42px); line-height:1.12; lett
   .chips.start::-webkit-scrollbar { display:none; }
   .proof { width:auto; display:grid; grid-template-columns:1fr 1fr; gap:10px 12px; margin-top:20px; font-size:12.5px; text-align:left; }
   .proof li { align-items:flex-start; } .proof svg { margin-top:1px; }
-  .models { padding-top:24px; } .models-row { gap:6px 16px; font-size:14px; }
+  .models { margin-top:28px; } .models-row { gap:6px 16px; font-size:14px; }
   .stage.is-chat { min-height:0; height:calc(100svh - var(--nav-h)); }
   .chat-head-in { height:52px; }
   .ghost-mini .lbl { display:none; } .ghost-mini { padding:7px; }
