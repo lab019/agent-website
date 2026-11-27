@@ -3,11 +3,13 @@
 criterion -> test
 c1 | idle composer ~800 px wide, textarea at least 2 lines tall and growing with the screen height (3 lines floor on the phone); the chat keeps its width | HomeComposerSize::test_c1_idle_composer_size_and_the_chat_keeps_its_size
 c2 | the hero block is centred in the first screen: no free space pushed below the model cards | HomeComposerSize::test_c2_hero_has_no_blank_strip_at_the_bottom
-c3 | while the agent answers, the send button turns into a stop button that calls the SDK stop | HomeComposerSize::test_c3_send_button_turns_into_stop_while_answering
+c3 | while the agent answers, the send button turns into a stop button that calls the SDK stop (once more if the run was not registered yet) | HomeComposerSize::test_c3_send_button_turns_into_stop_while_answering + tests/sdk/home-controls.test.mjs
 c3 | a stopped answer stays as it was: late events of that question never reopen it nor close the next one | tests/sdk/turn-ids.test.mjs
-c4 | the bubble's send button turns into the same stop button | HomeComposerSize::test_c4_the_bubble_has_the_same_stop_button
-c5 | "Minimizar" in the chat header hands the screen back to the site; the conversation stays in the corner bubble, also after a reload | HomeComposerSize::test_c5_minimize_returns_to_the_site_with_the_conversation_in_the_bubble
+c4 | the bubble's send button turns into the same stop button | HomeComposerSize::test_c4_the_bubble_has_the_same_stop_button + tests/sdk/home-controls.test.mjs
+c5 | "Minimizar" in the chat header hands the screen back to the site; the conversation stays in the corner bubble, also after a reload | HomeComposerSize::test_c5_minimize_returns_to_the_site_with_the_conversation_in_the_bubble + tests/sdk/home-controls.test.mjs
 
+The rules (stop retry, button state, bubble, the minimized memory) are proven in node against site/assets/home-controls.js
+and site/assets/turn-ids.js; here, the markup and the styles they act on.
 Stdlib only. Sizes were measured in the browser at 1440, 1790 and 390 px (see the PR).
 """
 import re
@@ -48,16 +50,15 @@ class HomeComposerSize(unittest.TestCase):
 
     def test_c3_send_button_turns_into_stop_while_answering(self):
         self.assertIn('<symbol id="i-stop"', HTML)
-        self.assertIn(".send-btn.is-stop", CSS)
-        self.assertIn("chat.stop()", JS)
-        self.assertIn("classList.toggle('is-stop'", JS)
-        # the late-event rule itself is proven in tests/sdk/turn-ids.test.mjs; here, that the three stream handlers use it
+        self.assertIn("background:var(--ink)", rule(".send-btn.is-stop"))
+        # the page runs the rules the node tests prove
         self.assertIn("from './turn-ids.js'", JS)
-        self.assertEqual(JS.count("ids.stale(event)"), 3)
+        self.assertIn("from './home-controls.js'", JS)
 
     def test_c4_the_bubble_has_the_same_stop_button(self):
-        self.assertIn("for (const button of [send, panelSend])", JS)
-        self.assertIn("panelSend.disabled = busy && stopping", JS)
+        panel_form = re.search(r'<form class="pfoot" id="pform">(.*?)</form>', HTML, re.S)
+        self.assertTrue(panel_form, "bubble composer")
+        self.assertIn('class="send-btn"', panel_form.group(1))
 
     def test_c5_minimize_returns_to_the_site_with_the_conversation_in_the_bubble(self):
         button = re.search(r'<button[^>]*id="minimize"[^>]*>(.*?)</button>', HTML, re.S)
@@ -68,13 +69,9 @@ class HomeComposerSize(unittest.TestCase):
         self.assertNotIn('id="to-corner"', HTML)
         # the voice call has its own end button: minimizing is a chat thing
         self.assertIn("display:none", rule(".stage.is-voice #minimize"))
-        # the bubble shows while minimized, even with the hero on screen; on the phone it leaves the live badge alone
-        self.assertIn("minimized || !stageVisible", JS)
+        # on the phone the minimized bubble leaves the live badge (top corner) alone
+        self.assertIn("top:auto", mobile_rule(".fab.is-low"))
         self.assertIn("bottom:", mobile_rule(".fab.is-low"))
-        # the choice survives a reload of the page and is undone by asking again
-        self.assertIn("sessionStorage", JS)
-        self.assertIn("'lab019:home:minimized'", JS)
-        self.assertIn("if (minimized) {\n    rememberMinimized(false)", JS)
 
 
 if __name__ == "__main__":

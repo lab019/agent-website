@@ -12,6 +12,7 @@
  * Os textos desta página ficam aqui, não no SDK: o SDK só devolve códigos de erro.
  */
 import { createTurnIds } from './turn-ids.js'
+import { askStop, bubble, minimizedStore, sendButtons } from './home-controls.js'
 
 const SDK_URL = '/sdk/v1/lab019.js'
 const KEY_RE = /^wgt_[A-Za-z0-9._-]+$/
@@ -113,7 +114,7 @@ let booting = false
 let turn = null // the answer being streamed: { rows, text, id, timer, frame }
 let stageVisible = true
 let minimized = false // the visitor put the conversation in the corner bubble to see the site again
-const MINIMIZED_KEY = 'lab019:home:minimized'
+const minimizedPref = minimizedStore(() => window.sessionStorage)
 let muted = false
 let voiceTimer = null
 let voiceSince = 0
@@ -327,16 +328,8 @@ async function stopTurn() {
   const asked = sending
   const mine = () => stopping && sending === asked // `done` may already have closed it and a new question begun
   if (asked) await asked.catch(() => {})
-  // right after send() the gateway may not have started the run yet: ask once more before closing it here
-  let stopped = false
-  for (let attempt = 0; attempt < 2 && !stopped && mine(); attempt += 1) {
-    if (attempt) await new Promise((resolve) => setTimeout(resolve, STOP_RETRY_MS))
-    try {
-      if (chat && mine()) stopped = !!(await chat.stop()).stopped
-    } catch {
-      // the stop did not reach the gateway: close it here anyway
-    }
-  }
+  // right after send() the gateway may not have started the run yet: askStop asks once more before giving up
+  const stopped = chat ? await askStop(() => chat.stop(), { stillMine: mine, retryMs: STOP_RETRY_MS }) : false
   if (!mine()) return
   // `done` (with `stopped`) closes the turn; if it never comes, close it here. Either way release() drops the
   // question's id, so whatever its run still streams stays off the screen.
@@ -401,12 +394,7 @@ function toStage() {
 
 function rememberMinimized(value) {
   minimized = value
-  try {
-    if (value) sessionStorage.setItem(MINIMIZED_KEY, '1')
-    else sessionStorage.removeItem(MINIMIZED_KEY)
-  } catch {
-    /* storage blocked: it only lasts until the next page */
-  }
+  minimizedPref.write(value)
 }
 
 // The stage goes back to the start screen; the conversation stays in the corner bubble, closed.
@@ -491,15 +479,15 @@ function autoGrow() {
 
 function syncSend() {
   // while the agent answers, the send button becomes the stop button (in the stage and in the bubble)
-  for (const button of [send, panelSend]) {
-    button.classList.toggle('is-stop', busy)
-    button.setAttribute('aria-label', busy ? T.stop : T.send)
-    if (busy) button.title = T.stop
+  const state = sendButtons({ busy, stopping, booting, hasText: !!q.value.trim() })
+  for (const [button, { disabled }] of [[send, state.stage], [panelSend, state.panel]]) {
+    button.classList.toggle('is-stop', state.face.stop)
+    button.setAttribute('aria-label', T[state.face.label])
+    if (state.face.stop) button.title = T.stop
     else button.removeAttribute('title')
-    button.querySelector('use').setAttribute('href', busy ? '#i-stop' : '#i-up')
+    button.querySelector('use').setAttribute('href', state.face.icon)
+    button.disabled = disabled
   }
-  send.disabled = busy ? stopping : booting || !q.value.trim()
-  panelSend.disabled = busy && stopping
 }
 
 function prewarm() {
@@ -585,9 +573,10 @@ setInterval(() => {
 // bubble: shows up when there is a conversation and the stage left the screen or was minimized
 
 function syncFab() {
-  fab.classList.toggle('is-visible', hasConversation() && (minimized || !stageVisible))
-  fab.classList.toggle('is-low', minimized)
-  if (stageVisible && !minimized) panel.classList.remove('open')
+  const state = bubble({ hasConversation: hasConversation(), minimized, stageVisible })
+  fab.classList.toggle('is-visible', state.visible)
+  fab.classList.toggle('is-low', state.low)
+  if (state.closePanel) panel.classList.remove('open')
 }
 
 new IntersectionObserver(
@@ -761,13 +750,7 @@ async function boot() {
     const page = await client.history({ limit: 50 })
     await loadSdk()
     if (page && Array.isArray(page.messages) && page.messages.length) {
-      let wasMinimized = false
-      try {
-        wasMinimized = sessionStorage.getItem(MINIMIZED_KEY) === '1'
-      } catch {
-        /* storage blocked */
-      }
-      if (wasMinimized) minimized = true
+      if (minimizedPref.read()) minimized = true
       else stage.classList.add('is-chat')
       rowsFromHistory(page.messages)
       clearActs()
