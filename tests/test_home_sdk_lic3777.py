@@ -36,7 +36,7 @@ class Sdk(unittest.TestCase):
         self.assertIn("export default Lab019", SDK)
 
     def test_c1_sdk_has_no_fixed_phrase(self):
-        code = re.sub(r"/\*.*?\*/|//[^\n]*", "", SDK, flags=re.S)
+        code = re.sub(r"/\*.*?\*/|(?<!:)//[^\n]*", "", SDK, flags=re.S)
         strings = re.findall(r"'([^'\n]*)'|\"([^\"\n]*)\"|`([^`]*)`", code)
         for parts in strings:
             text = "".join(parts)

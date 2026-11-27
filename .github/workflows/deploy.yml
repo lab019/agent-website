@@ -27,6 +27,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Contrato do SDK (LIC-3777): reconexão, envio idempotente, voz e markdown
+      # contra um gateway local. Falhou, não publica.
+      - name: Test SDK contract
+        run: node --test tests/sdk/*.test.mjs
+
       # Injeta o ID do contêiner do GTM (config, não segredo) a partir de uma
       # Variable do repositório/environment. Sem a Variable, o token permanece e
       # o site fica sem GTM — deploy seguro. Escopo por Environment permite

@@ -316,8 +316,7 @@ function onAttendant(event) {
 function onError(event) {
   const code = event && event.code
   if (code === 'session_expired') {
-    chat = null
-    connecting = null
+    // the SDK renews the session on its own and keeps this client: dropping it would leave two streams open
     endTurn()
     addNotice(T.expired, false)
     release()
@@ -475,7 +474,9 @@ $('#new-chat').addEventListener('click', async () => {
       await chat.voice.stop()
       await chat.newConversation()
     } catch {
-      /* the stage is reset anyway; the next message opens a conversation */
+      // the server is still on the old conversation: do not pretend it started from scratch
+      addNotice(T.unavailable, true)
+      return
     }
   }
   resetUi()
@@ -554,7 +555,8 @@ $('#consent-yes').addEventListener('click', async () => {
     if (!error || !String(error.code || '').startsWith('voice') && !String(error.code || '').startsWith('mic')) {
       addNotice(T.voiceFailed, false)
     }
-    stopVoiceUi()
+    // a second click while a call is live must not tear that call's UI down
+    if (!error || error.code !== 'voice_busy') stopVoiceUi()
   }
 })
 muteButton.addEventListener('click', async () => {
@@ -588,6 +590,7 @@ function onVoiceState(event) {
     voiceLabel.textContent = T.voiceLive
     voiceSince = Date.now()
     tickVoice()
+    clearInterval(voiceTimer)
     voiceTimer = setInterval(tickVoice, 1000)
   } else if (event.state === 'idle') {
     stopVoiceUi()
@@ -603,7 +606,7 @@ function onVoiceError(event) {
     voice_busy: T.voiceBusy,
   }
   addNotice(messages[event.code] || T.voiceFailed, false)
-  stopVoiceUi()
+  if (event.code !== 'voice_busy') stopVoiceUi()
 }
 
 function onTranscript(event) {

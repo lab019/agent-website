@@ -19,6 +19,7 @@ const LIVEKIT_SRI = 'sha384-s/eoT8qpr81c6c9MG5V7GA5xi5IzfEUQLyk3liFfzu9seBzZ3beF
 const SEEN_LIMIT = 500
 const SEND_ATTEMPTS = 4
 const RETRYABLE_STATUS = new Set([502, 503, 504])
+const REQUEST_TIMEOUT_MS = 30000
 
 // ---------------------------------------------------------------------------------------------------------------
 // errors
@@ -259,17 +260,34 @@ class Client {
     }
   }
 
-  async _call(method, path, { body, headers, query } = {}) {
+  async _call(method, path, { body, headers, query } = {}, renewed = false) {
     const qs = query ? '?' + new URLSearchParams(query).toString() : ''
-    const res = await this._fetch(this.baseUrl + path + qs, {
-      method,
-      headers: {
-        authorization: `Bearer ${this.sessionToken}`,
-        ...(body !== undefined ? { 'content-type': 'application/json' } : {}),
-        ...headers,
-      },
-      body: body !== undefined ? JSON.stringify(body) : undefined,
-    })
+    const abort = new AbortController()
+    const timer = setTimeout(() => abort.abort(), REQUEST_TIMEOUT_MS)
+    let res
+    try {
+      res = await this._fetch(this.baseUrl + path + qs, {
+        method,
+        headers: {
+          authorization: `Bearer ${this.sessionToken}`,
+          ...(body !== undefined ? { 'content-type': 'application/json' } : {}),
+          ...headers,
+        },
+        body: body !== undefined ? JSON.stringify(body) : undefined,
+        signal: abort.signal,
+      })
+    } catch (err) {
+      // a stalled request is a lost one: surface it as a network error so a write can be retried with its key
+      if (err && err.name === 'AbortError') throw new Lab019Error('network_error', { cause: err })
+      throw err
+    } finally {
+      clearTimeout(timer)
+    }
+    if (res.status === 401 && !renewed && !this._closed) {
+      // the token died between stream reconnects: renew once and replay the call
+      await this._renew()
+      return this._call(method, path, { body, headers, query }, true)
+    }
     if (!res.ok) throw await errorFromResponse(res)
     return res
   }
@@ -417,7 +435,11 @@ class Client {
         if (res.status === 401 || res.status === 404) {
           clearTimeout(idle)
           await this._renew().catch(() => {})
-          if (gen === this._gen) await this._pause(this.reconnect.minDelay)
+          if (gen !== this._gen || this._closed) return
+          // a renewal that keeps failing backs off like any other reconnect instead of hammering the gateway
+          this._setConnection('reconnecting')
+          const wait = Math.min(this.reconnect.minDelay * 2 ** attempt++, this.reconnect.maxDelay)
+          await this._pause(wait * (0.75 + Math.random() * 0.5))
           continue
         }
         if (!res.ok || !res.body) throw await errorFromResponse(res)

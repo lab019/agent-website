@@ -17,6 +17,7 @@ export async function startGateway(opts = {}) {
     config: { title: 'Agent', channels: ['text', 'voice'], media_input: { enabled: true }, ...opts.config },
     failSendAfterProcessing: 0, // number of POST /messages to kill AFTER the turn was recorded
     expireTokens: false,
+    sessionStatus: 201, // set to 503 to make every new session fail
     replayInclusive: false,
     voiceStatus: 200,
     sendStatus: 202,
@@ -72,6 +73,7 @@ export async function startGateway(opts = {}) {
       if (path === '/sessions' && req.method === 'POST') {
         if (!req.headers['x-publishable-key']) return json(res, 404, { error: 'not_found' })
         if (body && body.external_user_id) return json(res, 400, { code: 'browser_mode_no_external_user_id' })
+        if (state.sessionStatus !== 201) return json(res, state.sessionStatus, { code: 'unavailable' })
         state.sessionCount++
         const token = `wst_${state.sessionCount}`
         const sess = { sessionId: `s${state.sessionCount}`, conversationId: `conv_${state.sessionCount}` }

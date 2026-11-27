@@ -368,6 +368,38 @@ test('an expired session while streaming emits session_expired and opens a new s
   })
 })
 
+test('a send that meets an expired token renews the session once and replays with the SAME key', async () => {
+  await withGateway({}, async (gw, connect) => {
+    const c = await connect()
+    await until(() => gw.state.streams.size === 1)
+    gw.state.sessions.clear() // the token died between stream reconnects
+    const out = await c.send('hello')
+    assert.ok(out.messageId)
+    assert.equal(gw.state.sessionCount, 2, 'exactly one renewal')
+    const posts = gw.requests('POST', '/conversations/me/messages')
+    assert.equal(posts.length, 2, 'the 401 and the replay')
+    assert.equal(posts[0].headers['x-idempotency-key'], posts[1].headers['x-idempotency-key'])
+    assert.equal(gw.state.turnsRun, 1)
+  })
+})
+
+test('a renewal that keeps failing backs off instead of hammering the gateway', async () => {
+  await withGateway({}, async (gw, connect) => {
+    const c = await connect()
+    await until(() => gw.state.streams.size === 1)
+    const states = []
+    c.on('connection', (e) => states.push(e.state))
+    gw.state.sessionStatus = 503
+    gw.state.sessions.clear()
+    gw.cut()
+    await wait(600)
+    const tries = gw.requests('POST', '/sessions').length - 1 // minus the initial open
+    assert.ok(tries >= 2, `it keeps trying (${tries})`)
+    assert.ok(tries <= 25, `it backs off (${tries} tries in 600 ms)`)
+    assert.ok(states.includes('reconnecting'))
+  })
+})
+
 test('history, stop, conversations, newConversation and approve call the me routes', async () => {
   await withGateway({}, async (gw, connect) => {
     const c = await connect()
