@@ -11,12 +11,15 @@
  *
  * Os textos desta página ficam aqui, não no SDK: o SDK só devolve códigos de erro.
  */
+import { createTurnIds } from './turn-ids.js'
+
 const SDK_URL = '/sdk/v1/lab019.js'
 const KEY_RE = /^wgt_[A-Za-z0-9._-]+$/
 const BASE_RE = /^https?:\/\/[A-Za-z0-9.-]+(:[0-9]+)?$/
 const SIGNUP_URL = 'https://app.lab019.ai/signup'
 const TEAM_URL = 'mailto:contato@lab019.ai?subject=Lab019%20-%20conversa%20sobre%20implantacao'
 const TURN_TIMEOUT_MS = 120000
+const STOP_RETRY_MS = 700
 
 const T = {
   rateLimited: 'Muitas mensagens em pouco tempo. Espere um instante e tente de novo.',
@@ -105,6 +108,7 @@ let connecting = null
 let busy = false
 let stopping = false // the visitor asked to stop the answer; waiting for the stream's `done`
 let sending = null // the send() of the current question, so a stop never races ahead of it
+const ids = createTurnIds() // drops the late events of a question that already left the screen
 let booting = false
 let turn = null // the answer being streamed: { rows, text, id, timer, frame }
 let stageVisible = true
@@ -264,7 +268,7 @@ function paint() {
 
 function onDelta(event) {
   if (!event || typeof event.delta !== 'string') return
-  if (stopping) return
+  if (stopping || ids.stale(event)) return
   if (!turn) startTurn()
   turn.text += event.delta
   if (!turn.frame) turn.frame = requestAnimationFrame(paint)
@@ -300,10 +304,12 @@ function release() {
   busy = false
   stopping = false
   sending = null
+  ids.drop()
   syncSend()
 }
 
 function onDone(event) {
+  if (ids.stale(event)) return
   // a stopped answer keeps what was written but gets no follow-up cards
   finishTurn(stopping || !!(event && event.stopped))
 }
@@ -318,20 +324,26 @@ async function stopTurn() {
   }
   const asked = sending
   const mine = () => stopping && sending === asked // `done` may already have closed it and a new question begun
+  if (asked) await asked.catch(() => {})
+  // right after send() the gateway may not have started the run yet: ask once more before closing it here
   let stopped = false
-  try {
-    if (asked) await asked.catch(() => {})
-    if (chat) stopped = !!(await chat.stop()).stopped
-  } catch {
-    // the stop did not reach the gateway: give the composer back anyway
+  for (let attempt = 0; attempt < 2 && !stopped && mine(); attempt += 1) {
+    if (attempt) await new Promise((resolve) => setTimeout(resolve, STOP_RETRY_MS))
+    try {
+      if (chat && mine()) stopped = !!(await chat.stop()).stopped
+    } catch {
+      // the stop did not reach the gateway: close it here anyway
+    }
   }
   if (!mine()) return
-  // `done` (with `stopped`) closes the turn; without a running turn, or if it never comes, close it here
+  // `done` (with `stopped`) closes the turn; if it never comes, close it here. Either way release() drops the
+  // question's id, so whatever its run still streams stays off the screen.
   if (!stopped) finishTurn(true)
   else setTimeout(() => mine() && finishTurn(true), 5000)
 }
 
 function onSilentEnd(event) {
+  if (ids.stale(event)) return
   if (!turn) return release()
   if (turn.text.trim()) return finishTurn(stopping)
   const rows = turn.rows
@@ -427,9 +439,13 @@ async function ask(text, fromPanel) {
   q.value = ''
   autoGrow()
   syncSend()
+  const asked = getChat().then((client) => client.send(text))
+  sending = asked
   try {
-    sending = getChat().then((client) => client.send(text))
-    await sending
+    const { messageId } = (await asked) || {}
+    // closed before the gateway answered (timeout, reset): its run must not reach the screen either
+    if (sending === asked) ids.start(messageId)
+    else if (messageId) ids.drop(messageId)
   } catch (error) {
     if (!stopping) fail(error)
   }
