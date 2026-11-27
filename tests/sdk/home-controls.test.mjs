@@ -59,7 +59,7 @@ test('c4: the send button of the stage and of the bubble turns into the same sto
   }
 })
 
-test('c5: minimized, the conversation lives in the corner bubble, even with the hero on screen', () => {
+test('c5: minimized, the conversation lives in the corner bubble, even with the hero on screen and after a reload', () => {
   const cases = [
     { name: 'no conversation yet', in: { hasConversation: false, minimized: false, stageVisible: false }, visible: false, low: false, closePanel: false },
     { name: 'chat on the stage', in: { hasConversation: true, minimized: false, stageVisible: true }, visible: false, low: false, closePanel: true },
@@ -70,9 +70,8 @@ test('c5: minimized, the conversation lives in the corner bubble, even with the 
   for (const c of cases) {
     assert.deepEqual(bubble(c.in), { visible: c.visible, low: c.low, closePanel: c.closePanel }, c.name)
   }
-})
 
-test('c5: "Minimizar" survives a reload in the same tab; blocked storage only forgets it', () => {
+  // "Minimizar" survives a reload in the same tab; blocked storage only forgets it
   const memory = new Map()
   const storage = { getItem: (k) => (memory.has(k) ? memory.get(k) : null), setItem: (k, v) => memory.set(k, String(v)), removeItem: (k) => memory.delete(k) }
   const store = minimizedStore(() => storage)
