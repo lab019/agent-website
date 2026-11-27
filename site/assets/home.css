@@ -128,6 +128,7 @@ h1 { margin:0; font-size:clamp(32px, 4.2vw, 54px); line-height:1.06; letter-spac
 .ghost-mini { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); background:var(--surface); color:var(--ink-2); border-radius:999px; font-size:13px; font-weight:600; padding:6px 12px; cursor:pointer; white-space:nowrap; }
 .ghost-mini:hover { background:var(--bg-soft); color:var(--ink); }
 .ghost-mini svg { width:14px; height:14px; }
+.stage.is-voice #minimize { display:none; }
 .stage.is-chat .feed { display:block; flex:1 1 auto; width:100%; overflow-y:auto; scroll-behavior:smooth; }
 .feed-in { width:min(var(--chatw), 100% - 32px); margin:0 auto; padding:28px 0 18px; display:flex; flex-direction:column; gap:16px; }
 .stage.is-chat .composer-zone { margin-top:0; width:min(var(--chatw), 100% - 32px); padding-top:6px; }
@@ -368,6 +369,8 @@ h2 { margin:10px 0 0; font-size:clamp(28px, 3.4vw, 42px); line-height:1.12; lett
   .stage.is-chat .chat-foot-note { font-size:11.5px; padding:7px 12px 10px; }
   .voicebar { flex-wrap:wrap; }
   .fab { top:calc(var(--nav-h) + 12px); right:14px; }
+  /* minimized over the hero: the top corner is the live badge's; the bubble goes to the bottom one */
+  .fab.is-low { top:auto; bottom:calc(16px + env(safe-area-inset-bottom)); }
   .panel { inset:0; top:0; right:0; width:auto; max-width:none; height:100dvh; border:0; border-radius:0; z-index:101; }
   section.block { padding:64px 0; }
   .cases { grid-template-columns:1fr; }

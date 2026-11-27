@@ -112,6 +112,8 @@ const ids = createTurnIds() // drops the late events of a question that already 
 let booting = false
 let turn = null // the answer being streamed: { rows, text, id, timer, frame }
 let stageVisible = true
+let minimized = false // the visitor put the conversation in the corner bubble to see the site again
+const MINIMIZED_KEY = 'lab019:home:minimized'
 let muted = false
 let voiceTimer = null
 let voiceSince = 0
@@ -397,7 +399,34 @@ function toStage() {
   window.scrollTo({ top: Math.max(0, stage.offsetTop - navHeight()) })
 }
 
+function rememberMinimized(value) {
+  minimized = value
+  try {
+    if (value) sessionStorage.setItem(MINIMIZED_KEY, '1')
+    else sessionStorage.removeItem(MINIMIZED_KEY)
+  } catch {
+    /* storage blocked: it only lasts until the next page */
+  }
+}
+
+// The stage goes back to the start screen; the conversation stays in the corner bubble, closed.
+function minimize() {
+  if (!stage.classList.contains('is-chat') || stage.classList.contains('is-voice')) return
+  rememberMinimized(true)
+  const go = () => stage.classList.remove('is-chat')
+  const shown = document.startViewTransition && !reduceMotion ? document.startViewTransition(go).finished : go()
+  panel.classList.remove('open')
+  window.scrollTo({ top: 0 })
+  syncFab()
+  // the button that was clicked is gone: the bubble takes the focus once it is on screen
+  Promise.resolve(shown).catch(() => {}).then(() => fab.focus({ preventScroll: true }))
+}
+
 function enterChat(callback) {
+  if (minimized) {
+    rememberMinimized(false)
+    syncFab()
+  }
   const go = () => {
     stage.classList.add('is-chat')
     if (callback) callback()
@@ -416,6 +445,7 @@ function resetUi() {
   feedIn.innerHTML = ''
   pbody.innerHTML = ''
   stage.classList.remove('is-chat', 'is-voice')
+  rememberMinimized(false)
   mic.classList.remove('is-on')
   consent.hidden = true
   panel.classList.remove('open')
@@ -552,11 +582,12 @@ setInterval(() => {
 }, 3200)
 
 // ---------------------------------------------------------------------------------------------------------------
-// bubble: shows up when the stage leaves the screen and there is a conversation
+// bubble: shows up when there is a conversation and the stage left the screen or was minimized
 
 function syncFab() {
-  fab.classList.toggle('is-visible', hasConversation() && !stageVisible)
-  if (stageVisible) panel.classList.remove('open')
+  fab.classList.toggle('is-visible', hasConversation() && (minimized || !stageVisible))
+  fab.classList.toggle('is-low', minimized)
+  if (stageVisible && !minimized) panel.classList.remove('open')
 }
 
 new IntersectionObserver(
@@ -575,12 +606,10 @@ fab.addEventListener('click', () => {
 $('#p-close').addEventListener('click', () => panel.classList.remove('open'))
 $('#p-expand').addEventListener('click', () => {
   panel.classList.remove('open')
+  if (minimized) return enterChat(scrollDown)
   window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
 })
-$('#to-corner').addEventListener('click', () => {
-  $('#recursos').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' })
-  setTimeout(() => panel.classList.add('open'), reduceMotion ? 0 : 500)
-})
+$('#minimize').addEventListener('click', minimize)
 $('#p-mic').addEventListener('click', () => {
   panel.classList.remove('open')
   askConsent()
@@ -732,10 +761,18 @@ async function boot() {
     const page = await client.history({ limit: 50 })
     await loadSdk()
     if (page && Array.isArray(page.messages) && page.messages.length) {
-      stage.classList.add('is-chat')
+      let wasMinimized = false
+      try {
+        wasMinimized = sessionStorage.getItem(MINIMIZED_KEY) === '1'
+      } catch {
+        /* storage blocked */
+      }
+      if (wasMinimized) minimized = true
+      else stage.classList.add('is-chat')
       rowsFromHistory(page.messages)
       clearActs()
       scrollDown()
+      syncFab()
     }
   } catch {
     /* no history: the start screen stays as it is */

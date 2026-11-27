@@ -1,10 +1,12 @@
-"""Acceptance: the home's idle composer size, the hero fills the first screen, and the stop button.
+"""Acceptance: the home's idle composer size, the hero fills the first screen, the stop button and minimizing the chat.
 
 criterion -> test
 c1 | idle composer ~800 px wide, textarea at least 2 lines tall and growing with the screen height (3 lines floor on the phone); the chat keeps its width | HomeComposerSize::test_c1_idle_composer_size_and_the_chat_keeps_its_size
 c2 | the hero block is centred in the first screen: no free space pushed below the model cards | HomeComposerSize::test_c2_hero_has_no_blank_strip_at_the_bottom
 c3 | while the agent answers, the send button turns into a stop button that calls the SDK stop | HomeComposerSize::test_c3_send_button_turns_into_stop_while_answering
 c3 | a stopped answer stays as it was: late events of that question never reopen it nor close the next one | tests/sdk/turn-ids.test.mjs
+c4 | the bubble's send button turns into the same stop button | HomeComposerSize::test_c4_the_bubble_has_the_same_stop_button
+c5 | "Minimizar" in the chat header hands the screen back to the site; the conversation stays in the corner bubble, also after a reload | HomeComposerSize::test_c5_minimize_returns_to_the_site_with_the_conversation_in_the_bubble
 
 Stdlib only. Sizes were measured in the browser at 1440, 1790 and 390 px (see the PR).
 """
@@ -52,6 +54,27 @@ class HomeComposerSize(unittest.TestCase):
         # the late-event rule itself is proven in tests/sdk/turn-ids.test.mjs; here, that the three stream handlers use it
         self.assertIn("from './turn-ids.js'", JS)
         self.assertEqual(JS.count("ids.stale(event)"), 3)
+
+    def test_c4_the_bubble_has_the_same_stop_button(self):
+        self.assertIn("for (const button of [send, panelSend])", JS)
+        self.assertIn("panelSend.disabled = busy && stopping", JS)
+
+    def test_c5_minimize_returns_to_the_site_with_the_conversation_in_the_bubble(self):
+        button = re.search(r'<button[^>]*id="minimize"[^>]*>(.*?)</button>', HTML, re.S)
+        self.assertTrue(button, "minimize button in the chat header")
+        self.assertIn('aria-label="Minimizar a conversa"', button.group(0))
+        self.assertIn('href="#i-minimize"', button.group(1))
+        self.assertIn('<symbol id="i-minimize"', HTML)
+        self.assertNotIn('id="to-corner"', HTML)
+        # the voice call has its own end button: minimizing is a chat thing
+        self.assertIn("display:none", rule(".stage.is-voice #minimize"))
+        # the bubble shows while minimized, even with the hero on screen; on the phone it leaves the live badge alone
+        self.assertIn("minimized || !stageVisible", JS)
+        self.assertIn("bottom:", mobile_rule(".fab.is-low"))
+        # the choice survives a reload of the page and is undone by asking again
+        self.assertIn("sessionStorage", JS)
+        self.assertIn("'lab019:home:minimized'", JS)
+        self.assertIn("if (minimized) {\n    rememberMinimized(false)", JS)
 
 
 if __name__ == "__main__":
