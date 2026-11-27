@@ -142,6 +142,7 @@ export async function startGateway(opts = {}) {
         return
       }
       if (sub === '/stop' && req.method === 'POST') return json(res, 200, { stopped: true })
+      if (sub === '/handoff' && req.method === 'POST') return json(res, 202, { outcome: 'requested' })
       if (sub === '/new' && req.method === 'POST') return json(res, 201, { conversationId: 'conv_new' })
       if (sub === '/conversations' && req.method === 'GET') {
         return json(res, 200, { conversations: [{ conversationId: sess.conversationId, current: true }] })
