@@ -513,6 +513,15 @@ class Client {
     return this._json('POST', '/conversations/me/stop')
   }
 
+  /**
+   * Ask for a person without typing anything: the product flow hands the conversation to the human queue.
+   * No text goes out on the visitor's behalf; the gateway answers 202 with `{ outcome }` — `requested`,
+   * `already` or `unavailable` (the default no-attendant notice then arrives on the event stream).
+   */
+  requestHuman() {
+    return this._json('POST', '/conversations/me/handoff')
+  }
+
   async history({ limit, before } = {}) {
     const query = {}
     if (limit !== undefined) query.limit = String(limit)

@@ -426,6 +426,17 @@ add('renewal')('a renewal that keeps failing backs off instead of hammering the 
   })
 })
 
+// LIC-3792 — the visitor asks for a person without typing: one POST, no body, no text sent for them
+add('contract')('requestHuman posts to the handoff route with no message text', async () => {
+  await withGateway({}, async (gw, connect) => {
+    const c = await connect()
+    assert.deepEqual(await c.requestHuman(), { outcome: 'requested' })
+    const [r] = gw.requests('POST', '/conversations/me/handoff')
+    assert.ok(r.headers.authorization.startsWith('Bearer '))
+    assert.equal(gw.requests('POST', '/conversations/me/messages').length, 0)
+  })
+})
+
 add('contract')('history, stop, conversations, newConversation and approve call the me routes', async () => {
   await withGateway({}, async (gw, connect) => {
     const c = await connect()

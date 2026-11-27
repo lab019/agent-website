@@ -15,7 +15,6 @@ const SDK_URL = '/sdk/v1/lab019.js'
 const KEY_RE = /^wgt_[A-Za-z0-9._-]+$/
 const BASE_RE = /^https?:\/\/[A-Za-z0-9.-]+(:[0-9]+)?$/
 const SIGNUP_URL = 'https://app.lab019.ai/signup'
-const TEAM_URL = 'mailto:contato@lab019.ai?subject=Lab019%20-%20conversa%20sobre%20implantacao'
 const TURN_TIMEOUT_MS = 120000
 
 const T = {
@@ -210,8 +209,11 @@ function addNotice(text, withAlt) {
     const trial = document.createElement('a')
     trial.href = signupUrl()
     trial.textContent = T.altTrial
-    const team = document.createElement('a')
-    team.href = TEAM_URL
+    // LIC-3792: the team is reached through the conversation (handoff to a person), never through an e-mail
+    const team = document.createElement('button')
+    team.type = 'button'
+    team.className = 'link'
+    team.dataset.team = ''
     team.textContent = T.altTeam
     msg.append(trial, document.createTextNode(` ${T.or} `), team, document.createTextNode('.'))
   })
@@ -403,6 +405,23 @@ async function ask(text, fromPanel) {
   }
 }
 
+// "Conversar com a equipe": opens the conversation and asks the product for a person. Nothing is typed or sent for
+// the visitor; the gateway answers on the stream (queue notice, or the default no-attendant notice).
+async function talkToTeam() {
+  if (busy || booting) return
+  busy = true
+  syncSend()
+  enterChat()
+  try {
+    const client = await getChat()
+    await client.requestHuman()
+    release()
+  } catch (error) {
+    addNotice(error && error.code === 'rate_limited' ? T.rateLimited : T.unavailable, true)
+    release()
+  }
+}
+
 // ---------------------------------------------------------------------------------------------------------------
 // composer
 
@@ -465,6 +484,11 @@ document.addEventListener('click', (event) => {
   if (voice) {
     event.preventDefault()
     askConsent()
+    return
+  }
+  if (event.target.closest('[data-team]')) {
+    event.preventDefault()
+    talkToTeam()
   }
 })
 
