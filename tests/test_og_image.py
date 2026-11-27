@@ -82,14 +82,14 @@ class OgImageTests(unittest.TestCase):
     def test_titulo_e_apoio_da_imagem_vem_do_hero_da_home_e_o_build_falha_sem_h1(self):
         # Critérios 6 e 7: eyebrow, <h1> (com o destaque) e .hero-sub da home viram título e apoio; sem <h1> falha sem trocar o PNG.
         home = (SITE / "index.html").read_text(encoding="utf-8")
-        self.assertEqual(render_og_image.headline_html(home), 'Agentes de IA para operações que <span class="accent">exigem controle.</span>')
-        self.assertEqual(render_og_image.eyebrow_text(home), "Plataforma de agentes de IA para empresas")
+        self.assertEqual(render_og_image.headline_html(home), 'Agentes de IA que atendem, cobram e executam. <span class="accent">Com você no controle.</span>')
+        self.assertEqual(render_og_image.eyebrow_text(home), "")  # the hero has no eyebrow: the line is hidden
         support = render_og_image.support_line(home)
-        self.assertTrue(support.startswith("Atenda por <strong>WhatsApp</strong> e <strong>telefone</strong>, execute rotinas"))
+        self.assertEqual(support, "Pergunte qualquer coisa.")
         self.assertLessEqual(len(re.sub(r"<[^>]*>", "", support)), render_og_image.SUPPORT_MAX_CHARS)
         page = render_og_image.render_html(render_og_image.TEMPLATE.read_text(encoding="utf-8"), {
             **render_pricing.build_config(PLAN), "headline_html": render_og_image.headline_html(home), "support_line": support, "eyebrow": render_og_image.eyebrow_text(home)})
-        self.assertIn("exigem controle.</span></h1>", page)
+        self.assertIn("Com você no controle.</span></h1>", page)
         self.assertNotIn("a preço de gente", page)
         with tempfile.TemporaryDirectory() as tmp:
             (Path(tmp) / "assets").mkdir()
@@ -105,7 +105,7 @@ class OgImageTests(unittest.TestCase):
         self.assertNotIn("pill", template)
         for name in ("Sabiá", "Claude", "Gemini", "GPT"):
             self.assertNotIn(name, template)
-        hero = (SITE / "index.html").read_text(encoding="utf-8").split("<h1>")[0].split("hero-grid")[-1]
+        hero = (SITE / "index.html").read_text(encoding="utf-8").split("<h1>")[0].split("hero-copy")[-1]
         self.assertNotRegex(hero, r"Sabiá|Claude|Gemini|GPT")
 
     def test_meta_de_compartilhamento_sem_preco_antigo(self):

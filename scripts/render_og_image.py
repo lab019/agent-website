@@ -92,8 +92,8 @@ def headline_html(home_text):
 
 
 def eyebrow_text(home_text):
-    """The home's hero eyebrow as escaped text; empty (the line is hidden) if the home has none."""
-    found = EYEBROW_PATTERN.search(home_text)
+    """The hero eyebrow (only the markup between the hero container and the <h1>) as escaped text; empty (the line is hidden) if the hero has none."""
+    found = EYEBROW_PATTERN.search(home_text.split("<h1", 1)[0].split("hero-copy")[-1])
     return _inline_html(found.group(1), {}) if found else ""
 
 

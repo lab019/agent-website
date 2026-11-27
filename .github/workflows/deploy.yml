@@ -27,6 +27,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Contrato do SDK (LIC-3777): reconexão, envio idempotente, voz e markdown
+      # contra um gateway local. Falhou, não publica.
+      - name: Test SDK contract
+        run: node --test tests/sdk/*.test.mjs
+
       # Injeta o ID do contêiner do GTM (config, não segredo) a partir de uma
       # Variable do repositório/environment. Sem a Variable, o token permanece e
       # o site fica sem GTM — deploy seguro. Escopo por Environment permite
@@ -67,9 +72,9 @@ jobs:
           # token e o chat fica inerte (ou, para a base, cai no default do JS).
           key="$(printf '%s' "$PUBLIC_WIDGET_KEY" | tr -d '[:space:]')"
           if [ -z "$key" ]; then
-            echo "vars.PUBLIC_WIDGET_KEY não definido — hero publicado como ilustração estática (sem chat ao vivo)."
+            echo "vars.PUBLIC_WIDGET_KEY não definido — home e widget publicados sem chat ao vivo (a home oferece o caminho alternativo)."
           elif printf '%s' "$key" | grep -qE '^wgt_[A-Za-z0-9._-]+$'; then
-            sed -i "s|__PUBLIC_WIDGET_KEY__|${key}|g" site/assets/chat.js
+            sed -i "s|__PUBLIC_WIDGET_KEY__|${key}|g" site/assets/chat.js site/index.html
             echo "PUBLIC_WIDGET_KEY injetada (${key})."
           else
             echo "::warning::PUBLIC_WIDGET_KEY inválido (esperado wgt_…). Publicando sem chat ao vivo."
@@ -79,7 +84,7 @@ jobs:
           if [ -z "$base" ]; then
             echo "vars.PUBLIC_API_BASE não definido — chat.js usa o default https://api.lab019.ai."
           elif printf '%s' "$base" | grep -qE '^https?://[A-Za-z0-9.-]+(:[0-9]+)?$'; then
-            sed -i "s|__PUBLIC_API_BASE__|${base}|g" site/assets/chat.js
+            sed -i "s|__PUBLIC_API_BASE__|${base}|g" site/assets/chat.js site/index.html
             echo "PUBLIC_API_BASE injetado (${base})."
           else
             echo "::warning::PUBLIC_API_BASE inválido (esperado https://host). Usando o default do chat.js."
