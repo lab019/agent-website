@@ -12,7 +12,7 @@
  * Os textos desta página ficam aqui, não no SDK: o SDK só devolve códigos de erro.
  */
 import { createTurnIds } from './turn-ids.js'
-import { askStop, bubble, minimizedStore, sendButtons } from './home-controls.js'
+import { askStop, bubble, busyCycles, minimizedStore, sendButtons } from './home-controls.js'
 
 const SDK_URL = '/sdk/v1/lab019.js'
 const KEY_RE = /^wgt_[A-Za-z0-9._-]+$/
@@ -109,6 +109,7 @@ let busy = false
 let stopping = false // the visitor asked to stop the answer; waiting for the stream's `done`
 let sending = null // the send() of the current question, so a stop never races ahead of it
 const ids = createTurnIds() // drops the late events of a question that already left the screen
+const cycles = busyCycles() // the handoff request releases the busy state only while it is still its own
 let booting = false
 let turn = null // the answer being streamed: { rows, text, id, timer, frame }
 let stageVisible = true
@@ -310,6 +311,7 @@ function release() {
   stopping = false
   sending = null
   ids.drop()
+  cycles.end()
   syncSend()
 }
 
@@ -476,13 +478,16 @@ async function ask(text, fromPanel) {
 async function talkToTeam() {
   if (busy || booting) return
   busy = true
+  const cycle = cycles.begin()
   syncSend()
   enterChat()
   try {
     const client = await getChat()
     await client.requestHuman()
-    release()
+    // a stop during the request already released it; a question asked since then must keep its answer
+    if (cycles.owns(cycle)) release()
   } catch (error) {
+    if (!cycles.owns(cycle)) return
     addNotice(error && error.code === 'rate_limited' ? T.rateLimited : T.unavailable, true)
     release()
   }

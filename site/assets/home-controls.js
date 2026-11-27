@@ -27,6 +27,24 @@ export async function askStop(stop, { stillMine, retryMs, attempts = 2, wait = s
   return false
 }
 
+// Who holds the busy state. release() ends the cycle; whoever began one only releases it while it is still its own:
+// a stop may have released it and a new question begun in the meantime.
+export function busyCycles() {
+  let current = null
+  return {
+    begin() {
+      current = {}
+      return current
+    },
+    owns(cycle) {
+      return cycle !== null && current === cycle
+    },
+    end() {
+      current = null
+    },
+  }
+}
+
 // The corner bubble: there is a conversation and the stage left the screen or was minimized.
 export function bubble({ hasConversation, minimized, stageVisible }) {
   return {

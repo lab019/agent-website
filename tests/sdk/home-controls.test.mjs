@@ -14,7 +14,7 @@ async function loadControls() {
   return import(pathToFileURL(target).href)
 }
 
-const { askStop, sendButtons, bubble, minimizedStore } = await loadControls()
+const { askStop, busyCycles, sendButtons, bubble, minimizedStore } = await loadControls()
 
 test('c3: one click asks the gateway to stop once, and once more only when the run was not registered yet', async () => {
   const cases = [
@@ -38,6 +38,20 @@ test('c3: one click asks the gateway to stop once, and once more only when the r
     assert.equal(result, stopped, `${name}: result`)
     assert.equal(made, calls, `${name}: stop() calls`)
     assert.deepEqual(waited, waits, `${name}: waits`)
+  }
+
+  // a stop while "Conversar com a equipe" is still asking for a person: the late end of that request never releases
+  // the question asked after the stop
+  const flows = [
+    { name: 'the request ends with nothing in between', steps: (c, team) => team, owns: true },
+    { name: 'stopped during the request', steps: (c, team) => (c.end(), team), owns: false },
+    { name: 'stopped, then a new question', steps: (c, team) => (c.end(), c.begin(), team), owns: false },
+    { name: 'no cycle', steps: () => null, owns: false },
+  ]
+  for (const { name, steps, owns } of flows) {
+    const c = busyCycles()
+    const team = c.begin()
+    assert.equal(c.owns(steps(c, team)), owns, name)
   }
 })
 
