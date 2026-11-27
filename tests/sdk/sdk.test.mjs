@@ -1,7 +1,7 @@
 // LIC-3777 — SDK JS v1 (site/sdk/v1/lab019.js) against a local stand-in for the browser-mode gateway (LIC-3776).
-// Criterion -> test:
-//   1  contract of section 4 (connect/send/on/approve/stop/history/conversations/newConversation/voice/disconnect/markdown)
-//   2  cut and restore the network: reconnect with Last-Event-ID, nothing duplicated, nothing lost
+// Criterion -> test (max 2 per criterion, processo.md §3):
+//   1  contract of section 4; no dependency outside voice, no fixed phrase
+//   2  cut and restore the network (nothing duplicated or lost); expired session renewed once, same key, backoff
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
@@ -29,14 +29,18 @@ async function withGateway(opts, fn) {
   }
 }
 
-test('exports Lab019 as default and named, with connect and markdown, and sets no global', () => {
+/** Criteria hold several behaviours each; they run as cases of one test per area and a failure names its case. */
+const cases = { contract: [], deps: [], network: [], renewal: [] }
+const add = (area) => (name, fn) => cases[area].push([name, fn])
+
+add('contract')('exports Lab019 as default and named, with connect and markdown, and sets no global', () => {
   assert.equal(Lab019, Named)
   assert.equal(typeof Lab019.connect, 'function')
   assert.equal(typeof Lab019.markdown, 'function')
   assert.equal(globalThis.Lab019, undefined)
 })
 
-test('connect opens a session with the publishable key, loads config, and stores the session', async () => {
+add('contract')('connect opens a session with the publishable key, loads config, and stores the session', async () => {
   await withGateway({ config: { title: 'Lab019' } }, async (gw, connect) => {
     const storage = memoryStorage()
     const c = await connect({ storage })
@@ -51,7 +55,7 @@ test('connect opens a session with the publishable key, loads config, and stores
   })
 })
 
-test('connect resumes the stored session instead of opening a new one', async () => {
+add('contract')('connect resumes the stored session instead of opening a new one', async () => {
   await withGateway({}, async (gw, connect) => {
     const storage = memoryStorage()
     const first = await connect({ storage })
@@ -62,7 +66,7 @@ test('connect resumes the stored session instead of opening a new one', async ()
   })
 })
 
-test('an expired stored session is replaced by a new one, once', async () => {
+add('renewal')('an expired stored session is replaced by a new one, once', async () => {
   await withGateway({}, async (gw, connect) => {
     const storage = memoryStorage({
       [`lab019:session:${KEY}`]: JSON.stringify({ sessionToken: 'wst_dead', sessionId: 'x', conversationId: 'old' }),
@@ -74,7 +78,7 @@ test('an expired stored session is replaced by a new one, once', async () => {
   })
 })
 
-test('visitorToken goes in the body; external_user_id is never sent', async () => {
+add('contract')('visitorToken goes in the body; external_user_id is never sent', async () => {
   await withGateway({}, async (gw, connect) => {
     await connect({ visitorToken: 'vt_abc' })
     const [open] = gw.requests('POST', '/sessions')
@@ -82,7 +86,29 @@ test('visitorToken goes in the body; external_user_id is never sent', async () =
   })
 })
 
-test('storage:null keeps nothing and always opens a fresh session', async () => {
+add('contract')('a stored session belongs to whoever opened it: another visitor, a login or a logout never inherits it', async () => {
+  await withGateway({}, async (gw, connect) => {
+    const storage = memoryStorage()
+    const anon = await connect({ storage })
+    anon.disconnect()
+    const alice = await connect({ storage, visitorToken: 'vt_alice' })
+    assert.equal(gw.state.sessionCount, 2, 'login opens a new session carrying the token')
+    assert.equal(gw.requests('POST', '/sessions')[1].body.visitorToken, 'vt_alice')
+    alice.disconnect()
+    const again = await connect({ storage, visitorToken: 'vt_alice' })
+    assert.equal(gw.state.sessionCount, 2, 'the same visitor resumes')
+    again.disconnect()
+    const bob = await connect({ storage, visitorToken: 'vt_bob' })
+    assert.equal(gw.state.sessionCount, 3, 'another visitor opens its own')
+    bob.disconnect()
+    await connect({ storage })
+    assert.equal(gw.state.sessionCount, 4, 'logout opens an anonymous session')
+    assert.ok(!storage.getItem(`lab019:session:${KEY}`).includes('vt_'), 'the token itself is never stored')
+  })
+})
+
+
+add('contract')('storage:null keeps nothing and always opens a fresh session', async () => {
   await withGateway({}, async (gw, connect) => {
     const a = await connect({ storage: null })
     a.disconnect()
@@ -91,7 +117,7 @@ test('storage:null keeps nothing and always opens a fresh session', async () => 
   })
 })
 
-test('a throwing storage never breaks connect', async () => {
+add('contract')('a throwing storage never breaks connect', async () => {
   await withGateway({}, async (gw, connect) => {
     const boom = {
       getItem() {
@@ -109,7 +135,7 @@ test('a throwing storage never breaks connect', async () => {
   })
 })
 
-test('send posts the text with an idempotency key and returns the messageId', async () => {
+add('contract')('send posts the text with an idempotency key and returns the messageId', async () => {
   await withGateway({}, async (gw, connect) => {
     const c = await connect()
     const out = await c.send('oi')
@@ -121,7 +147,7 @@ test('send posts the text with an idempotency key and returns the messageId', as
   })
 })
 
-test('send with files encodes attachments as base64', async () => {
+add('contract')('send with files encodes attachments as base64', async () => {
   await withGateway({}, async (gw, connect) => {
     const c = await connect()
     await c.send('veja', { files: [{ name: 'a.txt', type: 'text/plain', bytes: new TextEncoder().encode('hello') }] })
@@ -130,7 +156,7 @@ test('send with files encodes attachments as base64', async () => {
   })
 })
 
-test('a send whose answer is lost is retried with the SAME key: one turn, not two', async () => {
+add('network')('a send whose answer is lost is retried with the SAME key: one turn, not two', async () => {
   await withGateway({}, async (gw, connect) => {
     gw.state.failSendAfterProcessing = 1 // the gateway handled it, then the network died
     const c = await connect()
@@ -143,7 +169,7 @@ test('a send whose answer is lost is retried with the SAME key: one turn, not tw
   })
 })
 
-test('a 503 on send is retried with the same key', async () => {
+add('network')('a 503 on send is retried with the same key', async () => {
   await withGateway({}, async (gw, connect) => {
     gw.state.sendFailures = 2
     const c = await connect()
@@ -154,7 +180,7 @@ test('a 503 on send is retried with the same key', async () => {
   })
 })
 
-test('two sends use two different keys', async () => {
+add('network')('two sends use two different keys', async () => {
   await withGateway({}, async (gw, connect) => {
     const c = await connect()
     await c.send('a')
@@ -164,7 +190,7 @@ test('two sends use two different keys', async () => {
   })
 })
 
-test('429 rejects with code rate_limited and retryAfter, and is not retried blindly', async () => {
+add('network')('429 rejects with code rate_limited and retryAfter, and is not retried blindly', async () => {
   const http = await import('node:http')
   const srv = http.createServer((req, res) => {
     if (req.url.endsWith('/sessions')) {
@@ -195,7 +221,7 @@ test('429 rejects with code rate_limited and retryAfter, and is not retried blin
   await new Promise((r) => srv.close(r))
 })
 
-test('on / off / "*": events reach listeners, off stops them, unknown events are ignored by named listeners', async () => {
+add('contract')('on / off / "*": events reach listeners, off stops them, unknown events are ignored by named listeners', async () => {
   await withGateway({}, async (gw, connect) => {
     const c = await connect()
     const deltas = []
@@ -216,7 +242,7 @@ test('on / off / "*": events reach listeners, off stops them, unknown events are
   })
 })
 
-test('a throwing listener does not stop the others or the stream', async () => {
+add('contract')('a throwing listener does not stop the others or the stream', async () => {
   await withGateway({}, async (gw, connect) => {
     const c = await connect()
     const seen = []
@@ -232,7 +258,7 @@ test('a throwing listener does not stop the others or the stream', async () => {
   })
 })
 
-test('SSE frames split across chunks, CRLF and comments are parsed', async () => {
+add('network')('SSE frames split across chunks, CRLF and comments are parsed', async () => {
   await withGateway({}, async (gw, connect) => {
     const c = await connect()
     const seen = []
@@ -247,7 +273,7 @@ test('SSE frames split across chunks, CRLF and comments are parsed', async () =>
   })
 })
 
-test('cut and restore the network: reconnects with Last-Event-ID, nothing duplicated, nothing lost', async () => {
+add('network')('cut and restore the network: reconnects with Last-Event-ID, nothing duplicated, nothing lost', async () => {
   await withGateway({}, async (gw, connect) => {
     const c = await connect()
     const seen = []
@@ -268,7 +294,7 @@ test('cut and restore the network: reconnects with Last-Event-ID, nothing duplic
   })
 })
 
-test('if the gateway replays the last seen event too, the SDK drops the duplicate', async () => {
+add('network')('if the gateway replays the last seen event too, the SDK drops the duplicate', async () => {
   await withGateway({}, async (gw, connect) => {
     gw.state.replayInclusive = true
     const c = await connect()
@@ -286,7 +312,7 @@ test('if the gateway replays the last seen event too, the SDK drops the duplicat
   })
 })
 
-test('repeated cuts keep recovering', async () => {
+add('network')('repeated cuts keep recovering', async () => {
   await withGateway({}, async (gw, connect) => {
     const c = await connect()
     const seen = []
@@ -303,7 +329,7 @@ test('repeated cuts keep recovering', async () => {
   })
 })
 
-test('lastEventId is persisted, so a reload resumes without replaying what was already shown', async () => {
+add('network')('lastEventId is persisted, so a reload resumes without replaying what was already shown', async () => {
   await withGateway({}, async (gw, connect) => {
     const storage = memoryStorage()
     const c = await connect({ storage })
@@ -325,7 +351,7 @@ test('lastEventId is persisted, so a reload resumes without replaying what was a
   })
 })
 
-test('replay_gap and conversation_rolled are surfaced to the page', async () => {
+add('network')('replay_gap and conversation_rolled are surfaced to the page', async () => {
   await withGateway({}, async (gw, connect) => {
     const c = await connect()
     const names = []
@@ -340,7 +366,7 @@ test('replay_gap and conversation_rolled are surfaced to the page', async () => 
   })
 })
 
-test('connection state changes are emitted as connection events', async () => {
+add('network')('connection state changes are emitted as connection events', async () => {
   await withGateway({}, async (gw, connect) => {
     const c = await connect()
     const states = []
@@ -352,7 +378,7 @@ test('connection state changes are emitted as connection events', async () => {
   })
 })
 
-test('an expired session while streaming emits session_expired and opens a new session', async () => {
+add('renewal')('an expired session while streaming emits session_expired and opens a new session', async () => {
   await withGateway({}, async (gw, connect) => {
     const storage = memoryStorage()
     const c = await connect({ storage })
@@ -368,7 +394,7 @@ test('an expired session while streaming emits session_expired and opens a new s
   })
 })
 
-test('a send that meets an expired token renews the session once and replays with the SAME key', async () => {
+add('renewal')('a send that meets an expired token renews the session once and replays with the SAME key', async () => {
   await withGateway({}, async (gw, connect) => {
     const c = await connect()
     await until(() => gw.state.streams.size === 1)
@@ -383,7 +409,7 @@ test('a send that meets an expired token renews the session once and replays wit
   })
 })
 
-test('a renewal that keeps failing backs off instead of hammering the gateway', async () => {
+add('renewal')('a renewal that keeps failing backs off instead of hammering the gateway', async () => {
   await withGateway({}, async (gw, connect) => {
     const c = await connect()
     await until(() => gw.state.streams.size === 1)
@@ -400,7 +426,7 @@ test('a renewal that keeps failing backs off instead of hammering the gateway', 
   })
 })
 
-test('history, stop, conversations, newConversation and approve call the me routes', async () => {
+add('contract')('history, stop, conversations, newConversation and approve call the me routes', async () => {
   await withGateway({}, async (gw, connect) => {
     const c = await connect()
     await c.send('oi')
@@ -422,7 +448,7 @@ test('history, stop, conversations, newConversation and approve call the me rout
 
 const fakeMic = async () => ({ getTracks: () => [{ stop() {} }] })
 
-test('voice.start without consent:true rejects before any request', async () => {
+add('contract')('voice.start without consent:true rejects before any request', async () => {
   await withGateway({}, async (gw, connect) => {
     const c = await connect()
     await assert.rejects(c.voice.start(), (e) => e.code === 'consent_required')
@@ -431,7 +457,7 @@ test('voice.start without consent:true rejects before any request', async () => 
   })
 })
 
-test('voice disabled by the gateway rejects with voice_disabled', async () => {
+add('contract')('voice disabled by the gateway rejects with voice_disabled', async () => {
   await withGateway({}, async (gw, connect) => {
     gw.state.voiceStatus = 403
     const c = await connect({ runtime: { getUserMedia: fakeMic } })
@@ -439,7 +465,7 @@ test('voice disabled by the gateway rejects with voice_disabled', async () => {
   })
 })
 
-test('voice.start with consent asks for a voice-session with consent:true and joins the room', async () => {
+add('contract')('voice.start with consent asks for a voice-session with consent:true and joins the room', async () => {
   await withGateway({}, async (gw, connect) => {
     const calls = []
     class Room {
@@ -480,7 +506,7 @@ test('voice.start with consent asks for a voice-session with consent:true and jo
   })
 })
 
-test('disconnect closes the stream and keeps the stored session', async () => {
+add('contract')('disconnect closes the stream and keeps the stored session', async () => {
   await withGateway({}, async (gw, connect) => {
     const storage = memoryStorage()
     const c = await connect({ storage })
@@ -493,11 +519,11 @@ test('disconnect closes the stream and keeps the stored session', async () => {
   })
 })
 
-test('connect without a key fails with a coded error', async () => {
+add('contract')('connect without a key fails with a coded error', async () => {
   await assert.rejects(Lab019.connect({}), (e) => e.code === 'key_required')
 })
 
-test('connect with a rejected key (opaque 404) fails with a coded error', async () => {
+add('contract')('connect with a rejected key (opaque 404) fails with a coded error', async () => {
   const gw = await startGateway()
   await assert.rejects(
     Lab019.connect({ key: '', baseUrl: gw.baseUrl, storage: null }),
@@ -508,7 +534,7 @@ test('connect with a rejected key (opaque 404) fails with a coded error', async 
 
 // --- markdown: the same subset as chat.js, returned as a safe HTML string ---
 
-test('markdown escapes raw html and never emits script or event handlers', () => {
+add('contract')('markdown escapes raw html and never emits script or event handlers', () => {
   const out = Lab019.markdown('<script>alert(1)</script> <img src=x onerror=alert(1)> a & b "q"')
   assert.ok(!out.includes('<script'))
   assert.ok(!out.includes('<img'))
@@ -516,7 +542,7 @@ test('markdown escapes raw html and never emits script or event handlers', () =>
   assert.ok(out.includes('&amp;'))
 })
 
-test('markdown links allow only http(s) and mailto, open in a new tab with noopener', () => {
+add('contract')('markdown links allow only http(s) and mailto, open in a new tab with noopener', () => {
   const ok = Lab019.markdown('[site](https://lab019.ai/x?a=1&b=2)')
   assert.ok(ok.includes('href="https://lab019.ai/x?a=1&amp;b=2"'))
   assert.ok(ok.includes('target="_blank"') && ok.includes('rel="noopener noreferrer"'))
@@ -527,12 +553,12 @@ test('markdown links allow only http(s) and mailto, open in a new tab with noope
   }
 })
 
-test('markdown quote characters in link targets cannot break out of the attribute', () => {
+add('contract')('markdown quote characters in link targets cannot break out of the attribute', () => {
   const out = Lab019.markdown('[x](https://a.co/"onmouseover="alert(1))')
   assert.ok(!/ onmouseover=/.test(out))
 })
 
-test('markdown renders the chat subset: bold, italic, code, fences, headings, lists, paragraphs', () => {
+add('contract')('markdown renders the chat subset: bold, italic, code, fences, headings, lists, paragraphs', () => {
   const out = Lab019.markdown('# Título\n\nOlá **negrito** e *itálico* e `code`\n\n- a\n- b\n\n1. um\n2. dois\n\n```\nlet x = 1 < 2\n```')
   assert.ok(out.includes('<strong>negrito</strong>'))
   assert.ok(out.includes('<em>itálico</em>'))
@@ -544,7 +570,7 @@ test('markdown renders the chat subset: bold, italic, code, fences, headings, li
   assert.ok(out.includes('<p>'))
 })
 
-test('markdown tolerates non-strings and an unterminated fence', () => {
+add('contract')('markdown tolerates non-strings and an unterminated fence', () => {
   assert.equal(Lab019.markdown(null), '')
   assert.equal(Lab019.markdown(undefined), '')
   assert.ok(Lab019.markdown('```\nunterminated <b>').includes('&lt;b&gt;'))
@@ -554,7 +580,7 @@ test('markdown tolerates non-strings and an unterminated fence', () => {
 
 const SOURCE = readFileSync(fileURLToPath(new URL('../../site/sdk/v1/lab019.js', import.meta.url)), 'utf8')
 
-test('no fixed pt-BR phrase in the SDK (labels belong to the page)', () => {
+add('deps')('no fixed pt-BR phrase in the SDK (labels belong to the page)', () => {
   const stripped = SOURCE.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
   const strings = stripped.match(/'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"|`(?:[^`\\]|\\.)*`/g) || []
   const ptWords = /\b(você|voce|erro|mensagem|enviar|conectar|tente|falha|não|nao|olá|ola|obrigad|ligação|voz de|microfone)\b/i
@@ -562,7 +588,7 @@ test('no fixed pt-BR phrase in the SDK (labels belong to the page)', () => {
   assert.deepEqual(offenders, [])
 })
 
-test('no dependency outside voice: the only external URL is the LiveKit CDN with SRI', () => {
+add('deps')('no dependency outside voice: the only external URL is the LiveKit CDN with SRI', () => {
   assert.ok(!/^\s*import\s/m.test(SOURCE), 'static import found')
   const urls = [...new Set(SOURCE.match(/https?:\/\/[^\s'"`)]+/g) || [])].filter((u) => !/lab019\.ai/.test(u))
   assert.deepEqual(
@@ -571,3 +597,23 @@ test('no dependency outside voice: the only external URL is the LiveKit CDN with
   )
   assert.ok(/sha384-[A-Za-z0-9+/=]+/.test(SOURCE))
 })
+
+const titles = {
+  "contract": "criterion 1: the SDK follows the contract of section 4 (session, send, events, routes, voice, markdown)",
+  "deps": "criterion 1: no dependency outside voice and no fixed phrase in the SDK",
+  "network": "criterion 2: cutting and restoring the network loses and duplicates nothing, and writes are idempotent",
+  "renewal": "criterion 2: an expired session is renewed once, replayed with the same key, with backoff"
+}
+
+for (const [area, list] of Object.entries(cases)) {
+  test(titles[area], async () => {
+    for (const [name, fn] of list) {
+      try {
+        await fn()
+      } catch (err) {
+        err.message = `[${name}] ${err.message}`
+        throw err
+      }
+    }
+  })
+}

@@ -21,6 +21,14 @@ const SEND_ATTEMPTS = 4
 const RETRYABLE_STATUS = new Set([502, 503, 504])
 const REQUEST_TIMEOUT_MS = 30000
 
+/** Short non-reversible tag of the visitor token, to tell sessions apart without keeping the token in storage. */
+function fingerprint(token) {
+  if (!token) return null
+  let h = 5381
+  for (let i = 0; i < token.length; i++) h = ((h * 33) ^ token.charCodeAt(i)) >>> 0
+  return h.toString(16)
+}
+
 // ---------------------------------------------------------------------------------------------------------------
 // errors
 
@@ -233,6 +241,7 @@ class Client {
           sessionId: this.sessionId,
           conversationId: this.conversationId,
           lastEventId: this.lastEventId,
+          visitor: fingerprint(this.visitorToken),
         }),
       )
     } catch {
@@ -317,7 +326,12 @@ class Client {
   // -- session ----------------------------------------------------------------------------------------------------
 
   async _init() {
-    const saved = this._load()
+    let saved = this._load()
+    // a session belongs to whoever opened it: another visitor (or a login/logout) must never inherit it
+    if (saved && (saved.visitor || null) !== fingerprint(this.visitorToken)) {
+      this._forget()
+      saved = null
+    }
     if (saved) {
       this.sessionToken = saved.sessionToken
       this.sessionId = saved.sessionId || null
