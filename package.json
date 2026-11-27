@@ -1,0 +1,9 @@
+{
+  "name": "agent-website",
+  "private": true,
+  "type": "module",
+  "description": "Static site; this file only lets node run the SDK tests (tests/sdk).",
+  "scripts": {
+    "test:sdk": "node --test tests/sdk/*.test.mjs"
+  }
+}
