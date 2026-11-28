@@ -12,6 +12,7 @@
  * Os textos desta página ficam aqui, não no SDK: o SDK só devolve códigos de erro.
  */
 import { createTurnIds } from './turn-ids.js'
+import { mountDemoLine } from './demo-line.js'
 import { askStop, bubble, busyCycles, minimizedStore, sendButtons } from './home-controls.js'
 
 const SDK_URL = '/sdk/v1/lab019.js'
@@ -555,6 +556,8 @@ $('#mini').addEventListener('submit', (event) => {
   ask(field.value || field.placeholder.replace(/^Ex\.:\s*/, ''), false)
   field.value = ''
 })
+
+mountDemoLine(document)
 
 document.addEventListener('click', (event) => {
   const asking = event.target.closest('[data-ask]')

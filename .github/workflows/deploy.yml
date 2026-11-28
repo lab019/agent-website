@@ -90,6 +90,25 @@ jobs:
             echo "::warning::PUBLIC_API_BASE inválido (esperado https://host). Usando o default do chat.js."
           fi
 
+      # Linha de teste do site (botões WhatsApp e ligação, assets/demo-line.js): o
+      # número da linha demo, em E.164, vem da Variable DEMO_LINE_E164 (config, não
+      # segredo) e NUNCA fica no repositório. Sem a Variable o token permanece e os
+      # botões não aparecem (sem número, sem fallback). Valor malformado: aviso e
+      # publica sem os botões.
+      - name: Inject demo line number
+        env:
+          DEMO_LINE_E164: ${{ vars.DEMO_LINE_E164 }}
+        run: |
+          num="$(printf '%s' "$DEMO_LINE_E164" | tr -d '[:space:]')"
+          if [ -z "$num" ]; then
+            echo "vars.DEMO_LINE_E164 não definido — site publicado sem os botões da linha de teste."
+          elif printf '%s' "$num" | grep -qE '^\+55[0-9]{10,11}$'; then
+            sed -i "s|__DEMO_LINE_E164__|${num}|g" site/assets/demo-line.js
+            echo "Número da linha de teste injetado."
+          else
+            echo "::warning::DEMO_LINE_E164 inválido (esperado +55DDNNNNNNNNN). Publicando sem os botões."
+          fi
+
       # Renderiza preço, franquia e crédito de teste nas páginas (tokens
       # {{plan_price|…}}, {{plan_franchise|…}}, {{trial_credit|…}}) a partir do
       # endpoint público do billing (GET <API base>/billing/v1/public/plan) —
