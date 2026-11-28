@@ -1,13 +1,14 @@
-"""Acceptance: anonymous test through the site — WhatsApp and call buttons for the demo line, next to the site chat.
+"""Acceptance: anonymous test through the site — WhatsApp and call buttons for the demo line, above the site chat.
 
 criterion -> test (max 2 per criterion)
 c1 | the home has a wa.me and a tel: button with the full number visible, built from the platform's public route | DemoLine::test_c1_buttons_are_built_from_the_public_route_with_the_full_number
 c2 | the number is not in the repo nor in the deploy config: nothing in site/ carries a phone, the page reads it live | DemoLine::test_c2_the_number_is_not_in_the_repo_and_is_read_live
-c3 | the texts are pt-BR and say it is a test with AI | DemoLine::test_c3_texts_are_pt_br_and_say_it_is_a_test_with_ai
+c3 | the texts are pt-BR and say it is a test with AI (the block's label; the visible copy was cut to the button names) | DemoLine::test_c3_texts_are_pt_br_and_say_it_is_a_test_with_ai
 c4 | no "call me" form and no typed phone number | DemoLine::test_c4_no_call_me_form_and_no_typed_number
 c5 | the block uses the DS tokens the home already has and hides in the chat state | DemoLine::test_c5_block_uses_existing_tokens_and_hides_in_chat_state
 c6 | when the fetch fails the buttons do not appear and there is no fallback number | DemoLine::test_c6_when_the_fetch_fails_the_buttons_do_not_appear
 
+Since the split WhatsApp button, the block is nav.try-ways above the composer (tests/test_home_whatsapp_split.py).
 Tests use a fictitious number only.  Prints at 1440 and 390 px are attached to the PR.  Stdlib only; Node runs the
 config's functions with a fake fetch when present.
 """
@@ -30,7 +31,7 @@ FICTITIOUS = "+5511900000000"
 
 
 def _block() -> str:
-    match = re.search(r'<section class="demo-line".*?</section>', HOME, re.S)
+    match = re.search(r'<nav class="try-ways".*?</nav>', HOME, re.S)
     assert match, "the demo-line block is missing from the home"
     return match.group(0)
 
@@ -82,8 +83,9 @@ class DemoLine(unittest.TestCase):
     def test_c3_texts_are_pt_br_and_say_it_is_a_test_with_ai(self):
         block = _block()
         text = re.sub(r"<[^>]+>", " ", block)
-        self.assertRegex(text, r"(?i)teste")
-        self.assertRegex(text, r"(?i)inteligência artificial|\bIA\b")
+        said = text + " " + " ".join(re.findall(r'aria-label="([^"]+)"', block))
+        self.assertRegex(said, r"(?i)\btest(?:e|ar)\b")
+        self.assertRegex(said, r"(?i)inteligência artificial|\bIA\b")
         self.assertRegex(block, r"(?i)WhatsApp")
         self.assertRegex(block, r"(?i)Ligar")
         self.assertNotRegex(text, r"(?i)\b(call|chat with|free)\b")  # no English copy
@@ -95,18 +97,19 @@ class DemoLine(unittest.TestCase):
         self.assertNotRegex(block, r"(?i)me liga")
 
     def test_c5_block_uses_existing_tokens_and_hides_in_chat_state(self):
-        self.assertRegex(HOME_CSS, r"\.stage\.is-chat[^{]*\.demo-line")
-        rules = "".join(re.findall(r"\.(?:demo-line|demo-btn)[^{]*\{[^}]*\}", HOME_CSS))
+        self.assertRegex(HOME, r'(?s)<div class="hero-copy">(?:(?!</div>\s*<div class="feed").)*<nav class="try-ways"')
+        self.assertRegex(HOME_CSS, r"\.stage\.is-chat \.hero-copy[,\s]")  # the block lives in the hero copy and hides with it
+        rules = "".join(re.findall(r"\.(?:try-ways?|try-ico|try-txt|try-go|wa-block|wa-split|wa-half|wa-new|tel-way|qr-[\w-]+)[^{]*\{[^}]*\}", HOME_CSS))
         self.assertIn("--support-ink", rules)
         for token in re.findall(r"var\((--[\w-]+)", rules):
             self.assertIn(f"{token}:", HOME_CSS + (ASSETS / "styles.css").read_text(encoding="utf-8"), token)
         self.assertNotRegex(rules, r"#[0-9a-fA-F]{3,6}\b")  # DS tokens only, no new colours
 
     def test_c6_when_the_fetch_fails_the_buttons_do_not_appear(self):
-        self.assertRegex(_block(), r'<section class="demo-line" hidden')  # hidden until a number is mounted
+        self.assertRegex(_block(), r'<nav class="try-ways" hidden')  # hidden until a number is mounted
         out = _node(
             "Promise.all([m.fetchDemoLine(%s), m.fetchDemoLine(%s), m.fetchDemoLine(%s), m.fetchDemoLine(%s),"
-            " m.fetchDemoLine(%s), m.fetchDemoLine(undefined), m.mountDemoLine(%s, %s)])"
+            " m.fetchDemoLine(%s), m.fetchDemoLine(null), m.mountDemoLine(%s, %s)])"  # null: no fetch, and no live call
             % (
                 "() => Promise.reject(new Error('offline'))",
                 _fake_fetch(None, ok=False, status=503),

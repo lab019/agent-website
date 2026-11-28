@@ -1,4 +1,7 @@
-"""Acceptance LIC-3792: on the home, "Conversar com a equipe" opens the conversation and asks for a person (no e-mail).
+"""Acceptance LIC-3792: on the home, the shortcut to the team opens the conversation and asks for a person (no e-mail).
+
+Since the split WhatsApp button the shortcut is the "Falar com uma pessoa" suggestion under the composer (it replaced
+the "Conversar com a equipe" link of the "Prefere ir direto?" line, which left the page).
 
 criterion -> test (max 2 per criterion; the SDK call is covered by tests/sdk/sdk.test.mjs)
 c1 | the shortcut is not a mailto and the home's chat code shows no e-mail address | Equipe::test_c1_the_shortcut_is_not_a_mailto_and_shows_no_address
@@ -17,17 +20,17 @@ HOME_JS = (SITE / "assets" / "home.js").read_text(encoding="utf-8")
 HOME_CSS = (SITE / "assets" / "home.css").read_text(encoding="utf-8")
 
 
-def _alt_cta() -> str:
-    return re.search(r'<p class="alt-cta">.*?</p>', HOME, re.S).group(0)
+def _shortcut() -> str:
+    return re.search(r'<div class="chips start" id="chips">.*?</div>', HOME, re.S).group(0)
 
 
 class Equipe(unittest.TestCase):
     def test_c1_the_shortcut_is_not_a_mailto_and_shows_no_address(self):
-        cta = _alt_cta()
-        self.assertIn("Conversar com a equipe", cta)
+        cta = _shortcut()
+        self.assertIn("Falar com uma pessoa", cta)
         self.assertNotIn("mailto:", cta)
         self.assertNotIn("@lab019.ai", cta)
-        self.assertRegex(cta, r"<button[^>]*data-team[^>]*>\s*Conversar com a equipe")
+        self.assertRegex(cta, r"<button[^>]*data-team[^>]*>[^<]*Falar com uma pessoa")
         self.assertNotIn("mailto:", HOME_JS)
 
     def test_c2_the_click_opens_the_chat_and_requests_a_person_without_sending_text(self):
