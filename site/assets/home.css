@@ -69,7 +69,7 @@ h1 { margin:0; font-size:clamp(32px, 4.2vw, 54px); line-height:1.06; letter-spac
 .hero-sub { margin:18px auto 0; max-width:640px; font-size:clamp(16px, 1.5vw, 18.5px); color:var(--ink-2); text-wrap:pretty; }
 
 /* Composer — o mesmo componente nos dois estados */
-.composer-zone { width:min(1000px, 100%); margin-top:32px; }
+.composer-zone { width:min(1000px, 100%); margin-top:18px; }
 .composer-zone .composer { max-width:var(--homew); margin:0 auto; }
 .composer { position:relative; background:var(--surface); border:1px solid var(--border-strong); border-radius:var(--radius); box-shadow:var(--shadow-lg); padding:14px 12px 10px 18px; transition:border-color var(--t) ease, box-shadow var(--t) ease; view-transition-name:composer; }
 .composer:focus-within { border-color:var(--brand); box-shadow:0 0 0 4px var(--brand-soft), var(--shadow-lg); }
@@ -98,24 +98,46 @@ h1 { margin:0; font-size:clamp(32px, 4.2vw, 54px); line-height:1.06; letter-spac
 .chip:hover { border-color:#bcd6f0; color:var(--brand-ink); background:var(--brand-soft); }
 
 /* Prova + saída direta */
-.proof { display:flex; flex-wrap:wrap; justify-content:center; gap:10px 22px; margin:26px auto 0; padding:0; list-style:none; font-size:13.5px; color:var(--ink-2); width:max-content; max-width:min(1120px, 100%); }
+.proof { display:flex; flex-wrap:wrap; justify-content:center; gap:8px 22px; margin:22px auto 0; padding:0; list-style:none; font-size:13px; color:var(--ink-3); width:max-content; max-width:min(1120px, 100%); }
 .proof li { display:inline-flex; align-items:center; gap:7px; }
 .proof svg { width:16px; height:16px; color:var(--support-ink); flex:0 0 auto; }
-.alt-cta { margin-top:18px; font-size:14px; color:var(--ink-3); display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:6px 12px; }
-.alt-cta a { font-weight:600; }
-.alt-cta button, .msg.bot.err button.link { font:inherit; font-weight:600; color:var(--ink-2); background:none; border:0; padding:0; cursor:pointer; }
-.alt-cta button:hover { color:var(--ink); text-decoration:underline; text-underline-offset:2px; }
-.alt-cta .sep { color:var(--border-strong); }
+.proof a { color:var(--brand-ink); font-weight:600; }
+.msg.bot.err button.link { font:inherit; font-weight:600; color:var(--ink-2); background:none; border:0; padding:0; cursor:pointer; }
 
-/* Linha de teste: WhatsApp e ligação para o número de demonstração, ao lado do chat */
-.demo-line { margin:22px auto 0; width:min(var(--chatw, 760px), 100%); text-align:center; }
-.demo-line-title { margin:0 0 10px; font-size:14px; color:var(--ink-2); }
-.demo-line-btns { display:flex; flex-wrap:wrap; justify-content:center; gap:8px 10px; }
-.demo-btn { display:inline-flex; align-items:center; gap:8px; border:1px solid var(--border); background:var(--surface); color:var(--ink-2); border-radius:999px; padding:9px 16px; font-size:14px; font-weight:600; transition:border-color var(--t-fast) ease, color var(--t-fast) ease, background var(--t-fast) ease; }
-.demo-btn:hover { border-color:var(--support); color:var(--support-ink); background:var(--support-soft); }
-.demo-btn svg { width:16px; height:16px; color:var(--support-ink); flex:0 0 auto; }
-.demo-line-note { margin:10px 0 0; font-size:12.5px; color:var(--ink-3); }
-.demo-line-note strong { color:var(--ink-2); font-weight:600; white-space:nowrap; }
+/* Testar pelo celular, acima do composer: WhatsApp (texto | ligação de voz) e ligação telefônica para o número de demonstração */
+.try-ways { display:grid; grid-template-columns:1fr auto; width:min(680px, 100%); margin:24px auto 0; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow-sm), 0 6px 20px -10px rgba(15,23,32,.12); overflow:hidden; }
+.try-ways[hidden], .wa-half[hidden] { display:none; }
+.try-way { display:flex; align-items:center; gap:12px; padding:14px 16px; text-align:left; color:var(--ink); text-decoration:none; }
+.try-way + .try-way { border-left:1px solid var(--border); }
+.try-ico { flex:0 0 auto; width:40px; height:40px; border-radius:12px; display:grid; place-items:center; }
+.try-ico svg { width:20px; height:20px; }
+.try-ico.wa { background:var(--support-soft); color:var(--support-ink); }
+.try-ico.tel { background:var(--brand-soft); color:var(--brand-ink); }
+.try-txt { display:flex; flex-direction:column; min-width:0; }
+.try-txt b { font-size:15px; font-weight:600; line-height:1.3; white-space:nowrap; }
+.try-txt small { font-size:12.5px; color:var(--ink-3); line-height:1.4; white-space:nowrap; }
+.wa-block .try-txt { flex:1 1 auto; }
+.wa-split { display:grid; grid-auto-flow:column; grid-auto-columns:1fr; margin-top:7px; border:1px solid color-mix(in srgb, var(--support) 28%, var(--support-soft)); border-radius:var(--radius-sm); background:var(--support-soft); overflow:hidden; }
+.wa-half { display:flex; align-items:center; justify-content:center; gap:6px; padding:8px; color:var(--support-ink); font-size:13.5px; font-weight:600; line-height:1.3; white-space:nowrap; text-decoration:none; transition:background var(--t-fast) ease; }
+.wa-half + .wa-half { border-left:1px solid color-mix(in srgb, var(--support) 28%, var(--support-soft)); }
+.wa-half:hover { background:color-mix(in srgb, var(--support) 16%, var(--support-soft)); text-decoration:none; }
+.wa-half svg { width:15px; height:15px; flex:0 0 auto; }
+.wa-new { margin-left:2px; padding:0 6px; border-radius:999px; background:var(--support-ink); color:var(--surface); font-size:10px; font-weight:700; letter-spacing:.06em; line-height:16px; text-transform:uppercase; }
+.tel-way { gap:10px; padding:14px 18px; transition:background var(--t-fast) ease; }
+.tel-way:hover { background:var(--bg-soft); text-decoration:none; }
+.tel-way .try-ico { width:32px; height:32px; border-radius:10px; } .tel-way .try-ico svg { width:16px; height:16px; }
+.tel-way .try-txt b { font-size:13.5px; } .tel-way .try-txt small { font-size:12px; }
+.try-go { display:none; }
+/* Ligação pelo WhatsApp no computador: o link wa.me/call só abre no celular, então mostra um QR para escanear */
+.qr-pop { width:min(320px, calc(100vw - 32px)); padding:22px 24px 20px; border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); color:var(--ink); box-shadow:var(--shadow-lg); text-align:center; }
+.qr-pop::backdrop { background:rgba(15,23,32,.35); }
+.qr-title { margin:0 0 14px; padding:0 28px; font-size:16px; font-weight:700; line-height:1.35; }
+.qr-code { display:grid; place-items:center; min-height:200px; }
+.qr-code svg { display:block; width:200px; height:200px; }
+.qr-note { margin:14px 0 0; font-size:13px; color:var(--ink-3); line-height:1.5; }
+.qr-x { position:absolute; top:10px; right:10px; width:32px; height:32px; display:grid; place-items:center; border:0; border-radius:8px; background:none; color:var(--ink-3); cursor:pointer; }
+.qr-x:hover { background:var(--bg-soft); color:var(--ink); }
+.qr-x svg { width:16px; height:16px; }
 
 /* Faixa de modelos no pé da primeira dobra */
 .models { width:100%; margin-top:clamp(24px, 4svh, 56px); padding:0 0 20px; text-align:center; }
@@ -127,7 +149,7 @@ h1 { margin:0; font-size:clamp(32px, 4.2vw, 54px); line-height:1.06; letter-spac
 /* ---------- Estado conversa ---------- */
 .chat-head, .feed, .chat-foot-note, .voicebar { display:none; }
 .stage.is-chat { height:calc(100svh - var(--nav-h)); min-height:540px; justify-content:flex-start; padding:0; }
-.stage.is-chat .hero-copy, .stage.is-chat .chips.start, .stage.is-chat .proof, .stage.is-chat .demo-line, .stage.is-chat .alt-cta, .stage.is-chat .models { display:none; }
+.stage.is-chat .hero-copy, .stage.is-chat .chips.start, .stage.is-chat .proof, .stage.is-chat .models { display:none; }
 .stage.is-chat::before { opacity:.55; }
 .stage.is-chat .chat-head { display:block; width:100%; border-bottom:1px solid var(--border); background:rgba(255,255,255,.72); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
 .chat-head-in { width:min(var(--chatw), 100% - 32px); margin:0 auto; height:58px; display:flex; align-items:center; gap:11px; }
@@ -359,16 +381,26 @@ h2 { margin:10px 0 0; font-size:clamp(28px, 3.4vw, 42px); line-height:1.12; lett
   .hero-copy .live-pill { margin-bottom:14px; font-size:12.5px; }
   h1 { font-size:31px; }
   .hero-sub { margin-top:12px; font-size:15.5px; }
-  .alt-cta { flex-direction:column; gap:4px; } .alt-cta .sep { display:none; }
   .stage.is-chat .chat-foot-note a { display:none; }
-  .composer-zone { margin-top:22px; }
+  .composer-zone { margin-top:18px; }
   .composer textarea { font-size:16px; min-height:3em; }
   .icon-btn.mic-label { width:42px; padding:0; }
   .icon-btn.mic-label .lbl { display:none; }
   .chips.start { flex-wrap:nowrap; justify-content:flex-start; overflow-x:auto; margin:14px -16px 0; padding:0 16px 4px; scrollbar-width:none; -webkit-mask-image:linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 28px), transparent); mask-image:linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 28px), transparent); }
   .chips.start::-webkit-scrollbar { display:none; }
-  .proof { width:auto; display:grid; grid-template-columns:1fr 1fr; gap:10px 12px; margin-top:20px; font-size:12.5px; text-align:left; }
+  .proof { display:grid; grid-template-columns:1fr; width:max-content; max-width:100%; gap:8px; margin:20px auto 0; font-size:12.5px; text-align:left; }
   .proof li { align-items:flex-start; } .proof svg { margin-top:1px; }
+  .try-ways { grid-template-columns:1fr; margin-top:18px; }
+  .try-way { padding:12px 14px; }
+  .try-way + .try-way { border-left:0; border-top:1px solid var(--border); }
+  .try-ico { width:36px; height:36px; border-radius:10px; } .try-ico svg { width:18px; height:18px; }
+  .wa-half { font-size:13px; padding:8px 4px; gap:5px; }
+  .wa-half .lg { display:none; }
+  .tel-way { padding:9px 14px; background:var(--bg-soft); }
+  .tel-way .try-ico { width:28px; height:28px; border-radius:8px; } .tel-way .try-ico svg { width:14px; height:14px; }
+  .tel-way .try-txt { flex-direction:row; align-items:baseline; gap:6px; }
+  .tel-way .try-txt small::before { content:"· "; }
+  .try-go { display:block; margin-left:auto; width:16px; height:16px; color:var(--ink-3); flex:0 0 auto; }
   .models { margin-top:28px; } .models-row { gap:6px 16px; font-size:14px; }
   .stage.is-chat { min-height:0; height:calc(100svh - var(--nav-h)); }
   .chat-head-in { height:52px; }

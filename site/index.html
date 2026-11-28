@@ -195,6 +195,8 @@
     <symbol id="i-ask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/></symbol>
     <symbol id="i-whatsapp" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20.5l1.7-5.2A8.5 8.5 0 1 1 21 11.5z"/><path d="M9 8.5c.3 2.7 2.8 5.2 5.5 5.5l1.2-1.3-2-1-.8.7a4 4 0 0 1-1.7-1.7l.7-.8-1-2z"/></symbol>
     <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></symbol>
     <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></symbol>
     <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
   </defs>
@@ -233,6 +235,29 @@
     <span class="live-pill"><span class="live-dot"></span>Este chat é um agente da Lab019, ao vivo</span>
     <h1>Agentes de IA que atendem, cobram e executam. <span class="hl">Com você no controle.</span></h1>
     <p class="hero-sub">Pergunte qualquer coisa. Quem responde é um agente da Lab019, o mesmo tipo de agente que vai atender seus clientes no WhatsApp, no telefone e no seu site.</p>
+    <nav class="try-ways" hidden aria-label="Testar o agente de IA da Lab019 pelo WhatsApp ou pelo telefone, sem cadastro">
+      <div class="try-way wa-block" role="group" aria-labelledby="wa-title">
+        <span class="try-ico wa"><svg><use href="#i-whatsapp"/></svg></span>
+        <span class="try-txt">
+          <b id="wa-title">Conversar no WhatsApp</b>
+          <span class="wa-split">
+            <a class="wa-half" data-demo-line="whatsapp" href="#" target="_blank" rel="noopener"><svg><use href="#i-chat"/></svg>Texto ou áudio</a>
+            <a class="wa-half" data-demo-line="whatsapp-call" hidden href="#" target="_blank" rel="noopener"><svg><use href="#i-phone"/></svg><span>Ligação<span class="lg"> de voz</span></span><span class="wa-new">Novo</span></a>
+          </span>
+        </span>
+      </div>
+      <a class="try-way tel-way" data-demo-line="call" href="#">
+        <span class="try-ico tel"><svg><use href="#i-phone"/></svg></span>
+        <span class="try-txt"><b>Ligar pelo telefone</b><small data-demo-line="number"></small></span>
+        <svg class="try-go"><use href="#i-chev"/></svg>
+      </a>
+    </nav>
+    <div class="qr-pop" id="wa-call-qr" popover aria-labelledby="wa-call-qr-title">
+      <button class="qr-x" type="button" popovertarget="wa-call-qr" popovertargetaction="hide" aria-label="Fechar"><svg><use href="#i-x"/></svg></button>
+      <p class="qr-title" id="wa-call-qr-title">Ligue pelo WhatsApp do celular</p>
+      <div class="qr-code" data-qr></div>
+      <p class="qr-note">Aponte a câmera do celular para o código. A ligação abre no WhatsApp, com o agente de IA da Lab019. É um teste, sem cadastro.</p>
+    </div>
   </div>
 
   <div class="feed" id="feed" aria-live="polite"><div class="feed-in" id="feed-in"></div></div>
@@ -266,7 +291,7 @@
     <div class="chips start" id="chips">
       <button class="chip" type="button" data-ask="Quanto custa?">💳 Quanto custa?</button>
       <button class="chip" type="button" data-ask="Funciona no WhatsApp?">🟢 Funciona no WhatsApp?</button>
-      <button class="chip" type="button" data-ask="Atende por telefone?">🎙️ Atende por telefone?</button>
+      <button class="chip" type="button" data-team>🙋 Falar com uma pessoa</button>
       <button class="chip" type="button" data-ask="Como eu configuro?">⚙️ Como eu configuro?</button>
       <button class="chip" type="button" data-ask="Posso testar grátis?">🎁 Posso testar grátis?</button>
     </div>
@@ -276,18 +301,8 @@
   <ul class="proof">
     <li><svg><use href="#i-check"/></svg>WhatsApp pela API oficial da Meta</li>
     <li><svg><use href="#i-check"/></svg>Voz em português, com interrupção</li>
-    <li><svg><use href="#i-check"/></svg>Passa para uma pessoa na hora</li>
-    <li><svg><use href="#i-check"/></svg>14 dias de teste, sem cartão e sem CNPJ</li>
+    <li><svg><use href="#i-check"/></svg><a href="https://app.lab019.ai" data-signup>14 dias grátis, sem cartão e sem CNPJ →</a></li>
   </ul>
-  <section class="demo-line" hidden aria-labelledby="demo-line-title">
-    <p class="demo-line-title" id="demo-line-title">Prefere testar pelo celular? Fale com o agente do site por WhatsApp, áudio ou ligação.</p>
-    <div class="demo-line-btns">
-      <a class="demo-btn" data-demo-line="whatsapp" href="#" target="_blank" rel="noopener"><svg><use href="#i-whatsapp"/></svg>Conversar no WhatsApp</a>
-      <a class="demo-btn" data-demo-line="call" href="#"><svg><use href="#i-phone"/></svg>Ligar agora</a>
-    </div>
-    <p class="demo-line-note">Número de teste: <strong data-demo-line="number"></strong> · É um teste com inteligência artificial, sem cadastro.</p>
-  </section>
-  <p class="alt-cta">Prefere ir direto? <a href="https://app.lab019.ai" data-signup>Testar grátis por 14 dias →</a><span class="sep">·</span><button type="button" data-team>Conversar com a equipe</button></p>
 
   <div class="models">
     <p>Funciona com os modelos que você escolher</p>
