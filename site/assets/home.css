@@ -107,6 +107,16 @@ h1 { margin:0; font-size:clamp(32px, 4.2vw, 54px); line-height:1.06; letter-spac
 .alt-cta button:hover { color:var(--ink); text-decoration:underline; text-underline-offset:2px; }
 .alt-cta .sep { color:var(--border-strong); }
 
+/* Linha de teste: WhatsApp e ligação para o número de demonstração, ao lado do chat */
+.demo-line { margin:22px auto 0; width:min(var(--chatw, 760px), 100%); text-align:center; }
+.demo-line-title { margin:0 0 10px; font-size:14px; color:var(--ink-2); }
+.demo-line-btns { display:flex; flex-wrap:wrap; justify-content:center; gap:8px 10px; }
+.demo-btn { display:inline-flex; align-items:center; gap:8px; border:1px solid var(--border); background:var(--surface); color:var(--ink-2); border-radius:999px; padding:9px 16px; font-size:14px; font-weight:600; transition:border-color var(--t-fast) ease, color var(--t-fast) ease, background var(--t-fast) ease; }
+.demo-btn:hover { border-color:var(--support); color:var(--support-ink); background:var(--support-soft); }
+.demo-btn svg { width:16px; height:16px; color:var(--support-ink); flex:0 0 auto; }
+.demo-line-note { margin:10px 0 0; font-size:12.5px; color:var(--ink-3); }
+.demo-line-note strong { color:var(--ink-2); font-weight:600; white-space:nowrap; }
+
 /* Faixa de modelos no pé da primeira dobra */
 .models { width:100%; margin-top:clamp(24px, 4svh, 56px); padding:0 0 20px; text-align:center; }
 .models p { margin:0 0 10px; font-size:12px; font-family:var(--mono); letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); }
@@ -117,7 +127,7 @@ h1 { margin:0; font-size:clamp(32px, 4.2vw, 54px); line-height:1.06; letter-spac
 /* ---------- Estado conversa ---------- */
 .chat-head, .feed, .chat-foot-note, .voicebar { display:none; }
 .stage.is-chat { height:calc(100svh - var(--nav-h)); min-height:540px; justify-content:flex-start; padding:0; }
-.stage.is-chat .hero-copy, .stage.is-chat .chips.start, .stage.is-chat .proof, .stage.is-chat .alt-cta, .stage.is-chat .models { display:none; }
+.stage.is-chat .hero-copy, .stage.is-chat .chips.start, .stage.is-chat .proof, .stage.is-chat .demo-line, .stage.is-chat .alt-cta, .stage.is-chat .models { display:none; }
 .stage.is-chat::before { opacity:.55; }
 .stage.is-chat .chat-head { display:block; width:100%; border-bottom:1px solid var(--border); background:rgba(255,255,255,.72); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
 .chat-head-in { width:min(var(--chatw), 100% - 32px); margin:0 auto; height:58px; display:flex; align-items:center; gap:11px; }
