@@ -131,6 +131,7 @@ h1 { margin:0; font-size:clamp(32px, 4.2vw, 54px); line-height:1.06; letter-spac
 /* Ligação pelo WhatsApp no computador: o link wa.me/call só abre no celular, então mostra um QR para escanear */
 .qr-pop { width:min(320px, calc(100vw - 32px)); padding:22px 24px 20px; border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); color:var(--ink); box-shadow:var(--shadow-lg); text-align:center; }
 .qr-pop::backdrop { background:rgba(15,23,32,.35); }
+@supports not selector(:popover-open) { .qr-pop { display:none; } } /* no popover: the call link opens as is */
 .qr-title { margin:0 0 14px; padding:0 28px; font-size:16px; font-weight:700; line-height:1.35; }
 .qr-code { display:grid; place-items:center; min-height:200px; }
 .qr-code svg { display:block; width:200px; height:200px; }

@@ -3,7 +3,7 @@
 // served as browser modules; they are copied to .mjs files so node loads them as ESM. A fictitious number only.
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtempSync, copyFileSync } from 'node:fs'
+import { mkdtempSync, copyFileSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -147,4 +147,16 @@ test('c3: a phone opens the WhatsApp call link; a computer shows its QR code', a
   } finally {
     globalThis.open = realOpen
   }
+
+  // the page: the popover the click opens, the QR code loaded on the first click only, and a browser without popover
+  // support never shows the panel
+  const site = (path) => readFileSync(fileURLToPath(new URL(`../../site/${path}`, import.meta.url)), 'utf8')
+  const home = site('index.html')
+  const pop = home.match(/<div class="qr-pop" id="wa-call-qr" popover[^>]*>[\s\S]*?<\/div>\s*<\/div>/)
+  assert.ok(pop, 'QR code popover')
+  assert.match(pop[0], /data-qr/)
+  assert.match(pop[0], /popovertarget="wa-call-qr" popovertargetaction="hide" aria-label="Fechar"/)
+  assert.match(site('assets/demo-line.js'), /import\('\.\/qr\.js'\)/)
+  assert.doesNotMatch(home, /<script[^>]*qr\.js/)
+  assert.match(site('assets/home.css'), /@supports not selector\(:popover-open\) \{ \.qr-pop \{ display:none; \} \}/)
 })

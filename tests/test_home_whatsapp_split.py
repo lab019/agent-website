@@ -3,7 +3,7 @@
 criterion -> test (max 2 per criterion)
 c1 | above the composer, one "Conversar no WhatsApp" button split in "Texto ou áudio" (wa.me) and "Ligação de voz · Novo" (wa.me/call), and a smaller "Ligar pelo telefone" with the number; the old block and the "Prefere ir direto?" line are gone | WhatsAppSplit::test_c1_split_whatsapp_button_and_smaller_phone_call_above_the_composer
 c2 | the call half only with whatsapp_calls: true; without it the text half takes the whole button; the route down shows nothing | WhatsAppSplit::test_c2_without_calls_the_text_half_takes_the_whole_button + tests/sdk/demo-line.test.mjs
-c3 | on a phone the call half opens WhatsApp; on a computer it shows a QR code of the same link | WhatsAppSplit::test_c3_the_computer_gets_a_qr_code_popover + tests/sdk/demo-line.test.mjs (+ tests/sdk/qr.test.mjs for the encoder)
+c3 | on a phone the call half opens WhatsApp; on a computer it shows a QR code of the same link | tests/sdk/demo-line.test.mjs c3 (handler, popover markup, lazy QR, no-popover fallback) + tests/sdk/qr.test.mjs c3
 c4 | under the composer: the suggestions ("Falar com uma pessoa" in place of "Atende por telefone?", opening the handoff), a short proof row with the 14-day trial link, the models | WhatsAppSplit::test_c4_under_the_composer_suggestions_proof_row_and_models + tests/test_home_equipe_handoff.py
 c5 | the demo number never enters the repo; the front only reads it from the public route | tests/test_home_demo_line.py c2 and c6
 c6 | the layout holds at 1440 and 390 px | WhatsAppSplit::test_c6_one_column_on_the_phone + prints in the LIC-3810 comment
@@ -61,16 +61,6 @@ class WhatsAppSplit(unittest.TestCase):
         self.assertIn("grid-auto-flow:column", split)  # one column per visible half
         self.assertIn("grid-auto-columns:1fr", split)
         self.assertNotIn("grid-template-columns", split)
-
-    def test_c3_the_computer_gets_a_qr_code_popover(self):
-        pop = re.search(r'<div class="qr-pop" id="wa-call-qr" popover[^>]*>.*?</div>\s*</div>', HOME, re.S)
-        self.assertTrue(pop, "QR code popover")
-        self.assertIn("data-qr", pop.group(0))
-        self.assertRegex(pop.group(0), r'popovertarget="wa-call-qr" popovertargetaction="hide" aria-label="Fechar"')
-        self.assertRegex(pop.group(0), r"(?i)celular")
-        source = (SITE / "assets" / "demo-line.js").read_text(encoding="utf-8")
-        self.assertIn("import('./qr.js')", source)  # loaded on the first click only
-        self.assertNotRegex(HOME, r'<script[^>]*qr\.js')
 
     def test_c4_under_the_composer_suggestions_proof_row_and_models(self):
         chips = re.search(r'<div class="chips start" id="chips">.*?</div>', HOME, re.S).group(0)
